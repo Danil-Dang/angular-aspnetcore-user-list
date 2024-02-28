@@ -1,0 +1,3 @@
+[submodule "Angular Client"]
+	path = Angular Client
+	url = https://github.com/Danil-Dang/angular-aspnetcore-user-list.git
