@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Users.Repository;
+using Users.Migrations;
+using Users.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddSingleton<DapperContext>();
+builder.Services.AddSingleton<Database>();
 
 
 builder.Services.AddControllers();
@@ -24,6 +27,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MigrateDatabase();
 
 app.UseHttpsRedirection();
 
