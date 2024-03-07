@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Users.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddSingleton<DapperContext>();
 
 
 builder.Services.AddControllers();
