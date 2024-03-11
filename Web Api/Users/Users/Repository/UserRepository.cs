@@ -1,5 +1,7 @@
 ﻿using System;
 using Users.Contracts;
+using Users.Entities.Models;
+using Dapper;
 
 namespace Users.Repository
 {
@@ -11,6 +13,17 @@ namespace Users.Repository
 		{
 			_context = context;
         }
+
+		public async Task<IEnumerable<User>> GetUsers()
+		{
+			var query = "SELECT * FROM Users";
+			
+			using (var connection = _context.CreateConnection())
+			{
+				var users = await connection.QueryAsync<User>(query);
+				return users.ToList();
+			}
+		}
 	}
 }
 
