@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Users.Repository;
-using Users.Migrations;
-using Users.Extensions;
-using FluentMigrator.Runner;
-using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Users.Contracts;
 
@@ -12,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddSingleton<DapperContext>();
-builder.Services.AddSingleton<Database>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
@@ -32,8 +27,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.MigrateDatabase();
 
 app.UseHttpsRedirection();
 
