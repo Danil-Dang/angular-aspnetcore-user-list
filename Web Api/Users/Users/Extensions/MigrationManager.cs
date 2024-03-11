@@ -18,7 +18,6 @@ namespace Users.Extensions
                 }
                 catch
                 {
-                    //log errors or ...
                     throw;
                 }
             }

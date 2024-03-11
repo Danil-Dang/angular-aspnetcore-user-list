@@ -28,4 +28,10 @@
     <PackageReference Include="FluentMigrator.Runner" Version="5.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Repository\Contracts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Repository\Contracts\" />
+  </ItemGroup>
 </Project>
