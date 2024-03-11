@@ -6,6 +6,7 @@ namespace Users.Contracts
 	public interface IUserRepository
 	{
 		public Task<IEnumerable<User>> GetUsers();
+		public Task<User> GetUser(int id);
 	}
 }
 

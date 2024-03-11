@@ -28,6 +28,22 @@ namespace Users.Repository.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
+		[HttpGet("{id}", Name = "UserById")]
+		public async Task<IActionResult> GetUser(int id)
+		{
+			try
+			{
+				var user = await _userRepo.GetUser(id);
+				if (user == null) return NotFound();
+
+				return Ok(user);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 	}
 }
 
