@@ -1,11 +1,23 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Users.Repository;
+using Users.Migrations;
+using Users.Extensions;
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddSingleton<DapperContext>();
+builder.Services.AddSingleton<Database>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+
 
 var app = builder.Build();
 
@@ -16,6 +28,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MigrateDatabase();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -23,4 +37,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
