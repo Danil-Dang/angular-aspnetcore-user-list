@@ -1,15 +1,17 @@
 ﻿using System;
+using FluentMigrator.Runner;
 using Users.Migrations;
 
 namespace Users.Extensions
 {
 	public static class MigrationManager
 	{
-        public static IHost MigrateDatabase(this IHost host)
+        public static WebApplication MigrateDatabase(this WebApplication webApp)
         {
-            using (var scope = host.Services.CreateScope())
+            using (var scope = webApp.Services.CreateScope())
             {
                 var databaseService = scope.ServiceProvider.GetRequiredService<Database>();
+
                 try
                 {
                     databaseService.CreateDatabase("ngNetDB");
@@ -20,7 +22,7 @@ namespace Users.Extensions
                     throw;
                 }
             }
-            return host;
+            return webApp;
         }
     }
 }

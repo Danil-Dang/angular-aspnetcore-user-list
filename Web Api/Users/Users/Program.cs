@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Users.Repository;
 using Users.Migrations;
 using Users.Extensions;
+using FluentMigrator.Runner;
+using System.Reflection;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
