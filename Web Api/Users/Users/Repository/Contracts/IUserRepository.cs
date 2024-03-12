@@ -1,4 +1,5 @@
 ﻿using System;
+using Users.Entities.Dto;
 using Users.Entities.Models;
 
 namespace Users.Contracts
@@ -7,6 +8,7 @@ namespace Users.Contracts
 	{
 		public Task<IEnumerable<User>> GetUsers();
 		public Task<User> GetUser(int id);
+		public Task<User> CreateUser(UserForCreationDto user);
 	}
 }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using Users.Contracts;
+using Users.Entities.Dto;
 
 namespace Users.Repository.Controllers
 {
@@ -44,6 +45,22 @@ namespace Users.Repository.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
+		[HttpPost]
+		public async Task<IActionResult> CreateUser(UserForCreationDto user)
+		{
+			try
+			{
+				var createdUser = await _userRepo.CreateUser(user);
+				return CreatedAtRoute("UserById", new { id = createdUser.Id }, createdUser);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+
 	}
 }
 
