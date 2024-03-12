@@ -11,6 +11,9 @@ namespace Users.Contracts
 		public Task<User> CreateUser(UserForCreationDto user);
 		public Task UpdateUser(int id, UserForUpdateDto user);
 		public Task DeleteUser(int id);
+
+		// public Task LoginUser(UserForLoginDto model);
+		public Task<User> FindUserByUsername(string username);
 	}
 }
 

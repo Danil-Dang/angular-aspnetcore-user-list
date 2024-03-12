@@ -6,6 +6,7 @@ namespace Users.Entities.Dto
         public int Id { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        public string? Username { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
         public string? ConfirmPassword { get; set; }
@@ -19,6 +20,7 @@ namespace Users.Entities.Dto
 // {
 //     "firstname": "Second",
 //     "lastname": "User",
+//     "username": "User",
 //     "email": "seconduser@gmail.com",
 //     "password": "1234567",
 //     "confirmPassword": "1234567"

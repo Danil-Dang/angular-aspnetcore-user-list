@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Users.Contracts;
 using Users.Entities.Dto;
+using Users.Entities.Models;
+using  Users.Helpers;
 
 namespace Users.Repository.Controllers
 {
@@ -10,10 +14,12 @@ namespace Users.Repository.Controllers
 	public class UsersController : ControllerBase
 	{
 		private readonly IUserRepository _userRepo;
+		private readonly JwtUtils _jwtUtils;
 		
-		public UsersController(IUserRepository userRepo)
+		public UsersController(IUserRepository userRepo, JwtUtils jwtUtils)
 		{
 			_userRepo = userRepo;
+			_jwtUtils = jwtUtils;
 		}
 
 		[HttpGet]
@@ -77,6 +83,7 @@ namespace Users.Repository.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteUser(int id)
 		{
@@ -93,6 +100,19 @@ namespace Users.Repository.Controllers
 			{
 				return StatusCode(500, ex.Message);
 			}
+		}
+
+		[HttpPost("login")]
+		[AllowAnonymous]
+		public async Task<IActionResult> LoginUser(UserForLoginDto model)
+		{
+			var user = await _userRepo.FindUserByUsername(model.Username);
+			var PasswordHash = Encoding.UTF8.GetString(user.PasswordHash);
+			if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, PasswordHash))
+				return Unauthorized();
+
+			var token = _jwtUtils.GenerateToken(user);
+			return Ok(new { token }); 
 		}
 	}
 }

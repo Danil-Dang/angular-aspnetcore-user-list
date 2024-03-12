@@ -47,12 +47,13 @@ namespace Users.Repository
     		var PasswordSalt = BCrypt.Net.BCrypt.GenerateSalt();
     		user.PasswordSalt = Encoding.UTF8.GetBytes(PasswordSalt);
 			
-			var query = "INSERT INTO Users (FirstName, LastName, Email, PasswordHash, PasswordSalt, IsActive, CreatedDate) VALUES (@FirstName, @LastName, @Email, @PasswordHash, @PasswordSalt, @IsActive, @CreatedDate)" +
+			var query = "INSERT INTO Users (FirstName, LastName, Username, Email, PasswordHash, PasswordSalt, IsActive, CreatedDate) VALUES (@FirstName, @LastName, @Username, @Email, @PasswordHash, @PasswordSalt, @IsActive, @CreatedDate)" +
 				"SELECT CAST(SCOPE_IDENTITY() as int)";
 
 			var parameters = new DynamicParameters();
 			parameters.Add("FirstName", user.FirstName, DbType.String);
 			parameters.Add("LastName", user.LastName, DbType.String);
+			parameters.Add("Username", user.Username, DbType.String);
 			parameters.Add("Email", user.Email, DbType.String);
 			parameters.Add("PasswordHash", user.PasswordHash, DbType.Binary);
 			parameters.Add("PasswordSalt", user.PasswordSalt, DbType.Binary);
@@ -68,6 +69,7 @@ namespace Users.Repository
 					Id = id,
 					FirstName = user.FirstName,
 					LastName = user.LastName,
+					Username = user.Username,
 					Email = user.Email,
 					Password = user.Password,
 					IsActive = user.IsActive,
@@ -80,12 +82,13 @@ namespace Users.Repository
 
 		public async Task UpdateUser(int id, UserForUpdateDto user)
 		{
-			var query = "UPDATE Users SET FirstName = @FirstName, LastName = @LastName, Email = @Email WHERE Id = @Id";
+			var query = "UPDATE Users SET FirstName = @FirstName, LastName = @LastName, Username = @Username, Email = @Email WHERE Id = @Id";
 
 			var parameters = new DynamicParameters();
 			parameters.Add("Id", id, DbType.Int32);
 			parameters.Add("FirstName", user.FirstName, DbType.String);
 			parameters.Add("LastName", user.LastName, DbType.String);
+			parameters.Add("Username", user.Username, DbType.String);
 			parameters.Add("Email", user.Email, DbType.String);
 
 			using (var connection = _context.CreateConnection())
@@ -101,6 +104,16 @@ namespace Users.Repository
 			using (var connection = _context.CreateConnection())
 			{
 				await connection.ExecuteAsync(query, new { id });
+			}
+		}
+
+		public async Task<User> FindUserByUsername(string username)
+		{
+			var query = "SELECT * FROM Users WHERE Username = @username";
+			
+			using (var connection = _context.CreateConnection()) 
+			{
+				return await connection.QueryFirstOrDefaultAsync<User>(query, new { username });
 			}
 		}
 	}
