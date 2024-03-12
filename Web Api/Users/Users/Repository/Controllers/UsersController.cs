@@ -60,7 +60,40 @@ namespace Users.Repository.Controllers
 			}
 		}
 
+		[HttpPut("{id}")]
+		public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto user)
+		{
+			try
+			{
+				var dbUser = await _userRepo.GetUser(id);
+				if (dbUser == null)
+					return NotFound();
+				
+				await _userRepo.UpdateUser(id, user);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteUser(int id)
+		{
+			try
+			{
+				var dbUser = await _userRepo.GetUser(id);
+				if (dbUser == null)
+					return NotFound();
 
+				await _userRepo.DeleteUser(id);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 	}
 }
 

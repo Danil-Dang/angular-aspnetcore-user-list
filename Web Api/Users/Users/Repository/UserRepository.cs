@@ -77,6 +77,32 @@ namespace Users.Repository
 				return createdUser;
 			}
 		}
+
+		public async Task UpdateUser(int id, UserForUpdateDto user)
+		{
+			var query = "UPDATE Users SET FirstName = @FirstName, LastName = @LastName, Email = @Email WHERE Id = @Id";
+
+			var parameters = new DynamicParameters();
+			parameters.Add("Id", id, DbType.Int32);
+			parameters.Add("FirstName", user.FirstName, DbType.String);
+			parameters.Add("LastName", user.LastName, DbType.String);
+			parameters.Add("Email", user.Email, DbType.String);
+
+			using (var connection = _context.CreateConnection())
+			{
+				await connection.ExecuteAsync(query, parameters);
+			}
+		}
+
+		public async Task DeleteUser(int id)
+		{
+			var query = "DELETE FROM Users WHERE Id = @Id";
+
+			using (var connection = _context.CreateConnection())
+			{
+				await connection.ExecuteAsync(query, new { id });
+			}
+		}
 	}
 }
 
