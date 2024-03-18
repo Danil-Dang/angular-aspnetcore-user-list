@@ -1,1 +1,27 @@
-<p>login works!</p>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+    <div class="col-8 loginForm">
+        <div class="card card-container border rounded p-3 my-3">
+
+            <div *ngIf="loading">Loading...</div>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" formControlName="username">
+              </div>
+            
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" formControlName="password">
+              </div>
+            
+              <button type="submit" class="btn btn-danger">Login</button>
+            </form>
+            
+            <div *ngIf="error" class="error">{{ error }}</div>
+
+        </div>
+    </div>
+    </div>
+</div>

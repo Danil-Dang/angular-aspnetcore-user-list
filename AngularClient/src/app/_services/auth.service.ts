@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    private apiUrl = 'http://localhost:5000/api/users'; // Adjust your API URL
+    private apiUrl = 'http://localhost:5000/api/users';
     private currentUserSubject: BehaviorSubject<any>;
 
     constructor(private http: HttpClient) {
