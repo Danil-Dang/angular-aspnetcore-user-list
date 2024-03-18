@@ -52,7 +52,7 @@ namespace Users.Repository.Controllers
 			}
 		}
 
-		[HttpPost]
+		[HttpPost("register")]
 		public async Task<IActionResult> CreateUser(UserForCreationDto user)
 		{
 			try
