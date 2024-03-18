@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
 import { AuthService } from '../_services/auth.service';
+import { StorageService } from '../_services/storage.service';
 
 @Component({
   selector: 'app-login',
@@ -11,47 +13,85 @@ import { AuthService } from '../_services/auth.service';
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup = this.formBuilder.group({});
-  loading = false; 
-  submitted = false;
-  error = '';
+  // loginForm: any = this.formBuilder.group({
+  //   username: ['', Validators.required],
+  //   password: ['', Validators.required]
+  // });
+  loginForm: any = {
+    username: null,
+    password: null
+  };
+  isLoggedIn = false;
+  isLoginFailed = false;
+  errorMessage = '';
+  roles: string[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private storageService: StorageService
   ) {}
 
-  ngOnInit() {
-    this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
-    });
+  ngOnInit() : void {
+    if (this.storageService.isLoggedIn()) {
+        this.isLoggedIn = true;
+        // this.roles = this.storageService.getUser().roles;
+        this.router.navigate(["/home"]);
+    }
   }
 
-  get formControls() { return this.loginForm.controls; }
+  // get formControls() { return this.loginForm.controls; }
 
-  onSubmit() {
-    this.submitted = true;
+  onSubmit(): void {
+    // this.submitted = true;
 
-    if (this.loginForm.invalid) {
-      return;
-    }
+    // if (this.loginForm.invalid) {
+    //   return;
+    // }
 
-    this.loading = true;
+    // this.loading = true;
 
-    this.authService.login(this.formControls['username'].value, this.formControls['password'].value)
-      .pipe(first())
-      .subscribe({
-        next: () => {
-          const redirectUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-          this.router.navigate([redirectUrl]);
+    // this.authService.login(this.formControls['username'].value, this.formControls['password'].value)
+    //   .pipe(first())
+    //   .subscribe({
+    //     next: data => {
+    //       this.storageService.saveUser(data);
+    //       this.storageService.saveToken(data.accessToken);
+
+    //       this.isLoginFailed = false;
+    //       this.isLoggedIn = true;
+    //       this.roles = this.storageService.getUser().roles;
+    //       this.reloadPage();
+    //       // const redirectUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    //       // this.router.navigate([redirectUrl]);
+    //     },
+    //     error: err => {
+    //       this.errorMessage = err.error.message;
+    //       this.isLoginFailed = true;
+    //     }
+    //   });
+
+      const { username, password } = this.loginForm;
+
+      this.authService.login(username, password).subscribe({
+        next: data => {
+          this.storageService.saveUser(data);
+          this.storageService.saveToken(data.accessToken);
+
+          this.isLoginFailed = false;
+          this.isLoggedIn = true;
+          this.roles = this.storageService.getUser().roles;
+          this.reloadPage();
         },
-        error: error => {
-          this.error = error;
-          this.loading = false;
+        error: err => {
+          this.errorMessage = err.error.message;
+          this.isLoginFailed = true;
         }
       });
-  }
+    }
+
+    reloadPage(): void {
+      window.location.reload();
+    }
 }

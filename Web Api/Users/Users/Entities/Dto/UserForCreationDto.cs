@@ -18,10 +18,10 @@ namespace Users.Entities.Dto
 }
 
 // {
-//     "firstname": "Second",
+//     "firstname": "First",
 //     "lastname": "User",
-//     "username": "User",
-//     "email": "seconduser@gmail.com",
+//     "username": "FirstUser",
+//     "email": "userfirst@gmail.com",
 //     "password": "1234567",
 //     "confirmPassword": "1234567"
 // }

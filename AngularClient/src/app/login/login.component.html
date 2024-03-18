@@ -1,27 +1,77 @@
+@if (!isLoggedIn) {
 <div class="container-fluid">
     <div class="row justify-content-center">
     <div class="col-8 loginForm">
         <div class="card card-container border rounded p-3 my-3">
 
-            <div *ngIf="loading">Loading...</div>
+            <!-- <div *ngIf="loading">Loading...</div> -->
 
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- [formGroup]="loginForm"  -->
+            <form 
+                name="loginForm"
+                (ngSubmit)="f.form.valid && onSubmit()" 
+                #f="ngForm"
+                novalidate
+            >
               <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" class="form-control" formControlName="username">
+                <!-- formControlName="username" -->
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    name="username"
+                    [(ngModel)]="loginForm.username"
+                    required
+                    #username="ngModel"
+                    [ngClass]="{ 'is-invalid': f.submitted && username.errors }"
+                >
+                @if (username.errors && f.submitted) {
+                    <div class="invalid-feedback">Username is required!</div>
+                }
               </div>
             
-              <div class="form-group">
+              <div class="form-group mt-3">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" formControlName="password">
+                <!-- formControlName="password" -->
+                <input 
+                    type="password" 
+                    class="form-control" 
+                    name="password"
+                    [(ngModel)]="loginForm.password"
+                    required
+                    minlength="6"
+                    #password="ngModel"
+                    [ngClass]="{ 'is-invalid': f.submitted && password.errors }"
+                >
+                @if (password.errors && f.submitted) {
+                    <div class="invalid-feedback">
+                      @if (password.errors['required']) {
+                        <div>Password is required!</div>
+                      }
+                      @if (password.errors['minlength']) {
+                        <div>Password must be at least 6 characters</div>
+                      }
+                    </div>
+                }
               </div>
             
-              <button type="submit" class="btn btn-danger">Login</button>
+              <div class="form-group mt-3" align="center">
+                <button class="btn btn-primary btn-block">Login</button>
+              </div>
+
+              <div class="form-group">
+                @if (f.submitted && isLoginFailed) {
+                  <div class="alert alert-danger" role="alert">
+                    Login failed: {{ errorMessage }}
+                  </div>
+                }
+              </div>
             </form>
             
-            <div *ngIf="error" class="error">{{ error }}</div>
+            <!-- <div *ngIf="error" class="error">{{ error }}</div> -->
 
         </div>
     </div>
     </div>
 </div>
+}
