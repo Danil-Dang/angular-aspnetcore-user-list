@@ -1,1 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+/* ? Nav ------------------------------------------ */
+/* * General */
+nav .d-flex a,
+nav .d-flex a:visited {
+    /* color: rgb(122, 199, 237); */
+    color: rgb(98, 168, 203);
+    font-size: 1.1em;
+}
+nav .d-flex a:hover {
+    color: rgb(80, 139, 168);
+}
+
+.nav-link, .navbar-brand{
+    cursor: pointer;
+}
+
+
+.breadcrumb {
+    background-color: initial;
+}
+.dropdown-menu {
+    position: absolute;
+    left: -70px;
+    top: 40px;
+    background-color: rgb(79, 79, 79);
+}

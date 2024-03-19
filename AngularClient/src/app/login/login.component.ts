@@ -36,59 +36,36 @@ export class LoginComponent implements OnInit {
   ngOnInit() : void {
     if (this.storageService.isLoggedIn()) {
         this.isLoggedIn = true;
-        // this.roles = this.storageService.getUser().roles;
+        this.roles = this.storageService.getUser().roles;
         this.router.navigate(["/home"]);
     }
   }
 
-  // get formControls() { return this.loginForm.controls; }
-
   onSubmit(): void {
-    // this.submitted = true;
-
-    // if (this.loginForm.invalid) {
-    //   return;
-    // }
-
-    // this.loading = true;
-
-    // this.authService.login(this.formControls['username'].value, this.formControls['password'].value)
-    //   .pipe(first())
-    //   .subscribe({
-    //     next: data => {
-    //       this.storageService.saveUser(data);
-    //       this.storageService.saveToken(data.accessToken);
-
-    //       this.isLoginFailed = false;
-    //       this.isLoggedIn = true;
-    //       this.roles = this.storageService.getUser().roles;
-    //       this.reloadPage();
-    //       // const redirectUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-    //       // this.router.navigate([redirectUrl]);
-    //     },
-    //     error: err => {
-    //       this.errorMessage = err.error.message;
-    //       this.isLoginFailed = true;
-    //     }
-    //   });
-
       const { username, password } = this.loginForm;
 
-      this.authService.login(username, password).subscribe({
-        next: data => {
-          this.storageService.saveUser(data);
-          this.storageService.saveToken(data.accessToken);
+      this.authService.login(username, password)
+        .pipe(first())
+        .subscribe({
+          next: data => {
+            this.storageService.saveUser(data);
+            this.storageService.saveToken(data.token);
 
-          this.isLoginFailed = false;
-          this.isLoggedIn = true;
-          this.roles = this.storageService.getUser().roles;
-          this.reloadPage();
-        },
-        error: err => {
-          this.errorMessage = err.error.message;
-          this.isLoginFailed = true;
-        }
-      });
+            this.isLoginFailed = false;
+            this.isLoggedIn = true;
+            // this.roles = this.storageService.getUser().roles;
+            this.reloadPage();
+          },
+          error: err => {            
+            if (err.error.error && err.error.error.message) {
+              this.errorMessage = err.error.error.message;
+            } else { 
+              this.errorMessage = "An unknown error occurred.";
+            }
+            
+            this.isLoginFailed = true;
+          }
+        });
     }
 
     reloadPage(): void {

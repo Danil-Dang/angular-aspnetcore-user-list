@@ -1,1 +1,28 @@
-<p>profile works!</p>
+@if (currentUser.username) {
+    <div class="container">
+      <header class="jumbotron mb-4">
+        <h3>
+          <strong>{{ currentUser.username }}</strong> Profile
+        </h3>
+      </header>
+      <p>
+        <strong>Token:</strong>
+        {{ currentUser.token.substring(0, 20) }} ...
+        {{ currentUser.token.substr(currentUser.token.length - 20) }}
+      </p>
+      <p>
+        <strong>Email:</strong>
+        {{ currentUser.email }}
+        <!-- {{currentUserr}} -->
+        <!-- {{currentUserrr}} -->
+      </p>
+      <strong>Roles:</strong>
+      <ul>
+        @for (role of currentUser.roles; track role) {
+        <li>{{ role }}</li>
+        }
+      </ul>
+    </div>
+} @else {
+    <p class="mt-3">Please login.</p>
+}

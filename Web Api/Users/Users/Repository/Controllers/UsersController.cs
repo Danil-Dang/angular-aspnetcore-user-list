@@ -108,12 +108,26 @@ namespace Users.Repository.Controllers
 		public async Task<IActionResult> LoginUser(UserForLoginDto model)
 		{
 			var user = await _userRepo.FindUserByUsername(model.Username);
+			if (user == null) {
+				return NotFound(new { error = new { message = "User Not Found!" } });
+			}
+
 			var PasswordHash = Encoding.UTF8.GetString(user.PasswordHash);
-			if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, PasswordHash))
-				return Unauthorized();
+			if (!BCrypt.Net.BCrypt.Verify(model.Password, PasswordHash)) {
+				return Unauthorized(new { error = new { message = "Invalid Password!" } });
+			}
 
 			var token = _jwtUtils.GenerateToken(user);
-			return Ok(new { token }); 
+
+			// var userRoles = user.Roles.Select(r => r.Name).ToList();
+
+			return Ok(new { 
+				token,
+				user.Id,
+    			user.Username, 
+    			user.Email,
+				// user.Roles
+			}); 
 		}
 	}
 }
