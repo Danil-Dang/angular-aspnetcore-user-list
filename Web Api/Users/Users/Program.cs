@@ -1,14 +1,25 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Cors;
+
 using Users.Repository;
-using Users.Migrations;
-using Users.Extensions;
+using Users.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddSingleton<DapperContext>();
-builder.Services.AddSingleton<Database>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<Users.Helpers.JwtUtils>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowAngularOrigin",
+        policy => policy.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+});
 
 
 builder.Services.AddControllers();
@@ -28,12 +39,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MigrateDatabase();
+app.UseCors("AllowAngularOrigin");
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();
