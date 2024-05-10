@@ -14,6 +14,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { BoardAdminComponent } from './board-admin/board-admin.component';
 import { BoardModeratorComponent } from './board-moderator/board-moderator.component';
 import { BoardUserComponent } from './board-user/board-user.component';
+import { ManagerUserComponent } from './manager-user/manager-user.component';
+import { EditComponent } from './manager-user/edit/edit.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { BoardUserComponent } from './board-user/board-user.component';
     ProfileComponent,
     BoardAdminComponent,
     BoardModeratorComponent,
-    BoardUserComponent
+    BoardUserComponent,
+    ManagerUserComponent,
+    EditComponent
   ],
   imports: [
     BrowserModule,
