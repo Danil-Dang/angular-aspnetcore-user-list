@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, timestamp } from 'rxjs';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { BehaviorSubject, Observable, timestamp } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { AuthService } from '../_services/auth.service';
 import { StorageService } from '../_services/storage.service';
@@ -14,7 +16,6 @@ import { ListService } from '../_services/list.service';
   styleUrl: './register.component.css',
 })
 export class RegisterComponent implements OnInit {
-  // list: BehaviorSubject<ListUser> = new BehaviorSubject({});
   list: BehaviorSubject<ListUser> = new BehaviorSubject<ListUser>({
     id: 0,
     firstName: '',
@@ -24,6 +25,8 @@ export class RegisterComponent implements OnInit {
     isActive: true,
     createdDate: new Date(),
   });
+  // form!: FormGroup;
+  // form: FormGroup = this.fb.group {
   form: any = {
     firstName: null,
     lastName: null,
@@ -31,13 +34,19 @@ export class RegisterComponent implements OnInit {
     email: null,
     password: null,
   };
+
   isLoggedIn = false;
   isSuccessful = false;
   isSignUpFailed = false;
-  isManager!: boolean;
-  editUser!: boolean;
-  userId!: number;
+  isManager: boolean = false;
+  editUser: boolean = false;
+  userId: number = 0;
   errorMessage = '';
+  list$: Observable<ListUser> = new Observable();
+  placeFirstnName = '';
+  placeLastName = '';
+  placeUsername = '';
+  placeEmail = '';
 
   constructor(
     private authService: AuthService,
@@ -45,42 +54,59 @@ export class RegisterComponent implements OnInit {
     private route: ActivatedRoute,
     private storageService: StorageService,
     private dataService: DataService,
-    private listService: ListService
+    private listService: ListService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
 
+    // this.form = this.fb.group({
+    //   firstName: [''],
+    //   lastName: [''],
+    //   username: ['', Validators.required],
+    //   email: ['', Validators.required],
+    //   password: ['', Validators.required],
+    // });
+
     this.dataService.variableChangedBoolean$.subscribe((newValue: boolean) => {
       this.isManager = newValue;
-      window.localStorage.setItem('admin-add-user', newValue.toString());
     });
-    const storedIsManager = localStorage.getItem('admin-add-user');
-    this.isManager = storedIsManager === 'true' ? true : false;
 
-    // this.dataService.variableChangedNumber$.subscribe((newValue: number) => {
-    //   this.userId = newValue;
-    //   window.localStorage.setItem('admin-edit-user', newValue.toString());
-    // });
-    // // const storedUserId = Number(this.route.snapshot.paramMap.get('id'));
-    // this.userId = Number(localStorage.getItem('admin-edit-user'));
-    // if (!this.userId || this.userId === 0) {
-    //   this.editUser = false;
-    //   console.log('No id provided');
-    // } else {
-    //   this.editUser = true;
-    // }
-    // this.listService.getList(this.userId!).subscribe((list) => {
-    //   this.list.next(list);
-    // });
+    this.dataService.variableChangedNumber$.subscribe((newValue: number) => {
+      this.userId = newValue;
+    });
+    if (this.userId === 0) {
+      this.editUser = false;
+      console.log('No id provided');
+    } else {
+      this.editUser = true;
+      this.fetchList();
+      this.list$.subscribe((data) => {
+        this.form.firstName = data.firstName;
+        this.form.lastName = data.lastName;
+        this.form.username = data.username;
+        this.form.email = data.email;
+      });
+      // this.list$.subscribe((userData) => {
+      //   if (userData) {
+      //     this.form.setValue(userData);
+      //   }
+      // });
+      // this.form = this.list$;
+    }
 
-    if (this.isLoggedIn && !this.isManager) {
+    if (this.isLoggedIn && !this.isManager && !this.editUser) {
       this._router.navigate(['/home']);
     }
   }
 
+  private fetchList(): void {
+    this.list$ = this.listService.getList(this.userId);
+  }
+
   onSubmit(): void {
-    const { firstName, lastName, username, email, password } = this.form;
+    const { firstName, lastName, username, email, password } = this.form.value;
 
     this.authService
       .register({ firstName, lastName, username, email, password })
@@ -99,20 +125,29 @@ export class RegisterComponent implements OnInit {
   }
 
   onCancel(): void {
+    this.isManager = false;
+    this.userId = 0;
     this._router.navigate(['/list/users']);
   }
 
-  editList(list: ListUser) {
-    const { firstName, lastName, username, email, password } = this.form;
+  // onEditList(list: ListUser) {
+  onEditList() {
+    const { firstName, lastName, username, email } = this.form;
+    // const { firstName, lastName, username, email } = this.form.value;
+    // console.log('Log:', { firstName, lastName, username, email });
 
-    this.listService.updateList(this.list.value.id, list).subscribe({
-      next: () => {
-        this._router.navigate(['/list/users']);
-      },
-      error: (error) => {
-        alert('Failed to update user');
-        console.error(error);
-      },
-    });
+    this.listService
+      .updateList(this.userId, { firstName, lastName, username, email })
+      .subscribe({
+        next: () => {
+          this.isSuccessful = true;
+          this.isSignUpFailed = false;
+          this._router.navigate(['/list/users']);
+        },
+        error: (error) => {
+          alert('Failed to update user');
+          console.error(error);
+        },
+      });
   }
 }

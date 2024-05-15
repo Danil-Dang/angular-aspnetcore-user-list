@@ -1,9 +1,6 @@
-export interface ListUser {
-  id: number;
+export interface UpdateUser {
   firstName?: string;
   lastName?: string;
   username?: string;
   email?: string;
-  isActive: boolean;
-  createdDate: Date;
 }
