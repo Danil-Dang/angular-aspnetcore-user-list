@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IHotelsRepository, HotelsRepository>();
 
 builder.Services.AddScoped<Users.Helpers.JwtUtils>();
 builder.Services.AddCors(options =>

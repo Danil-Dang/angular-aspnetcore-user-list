@@ -16,4 +16,3 @@ namespace Users.Contracts
 		public Task<User> FindUserByUsername(string username);
 	}
 }
-
