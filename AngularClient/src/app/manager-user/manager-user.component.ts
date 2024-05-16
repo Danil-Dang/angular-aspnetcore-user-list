@@ -17,6 +17,7 @@ import {
 } from '@angular/forms';
 
 import { ListUser } from './list-user';
+import { ListHotel } from './list-hotel';
 import { ListService } from '../_services/list.service';
 import { DataService } from '../_services/data.service';
 import { StorageService } from '../_services/storage.service';
@@ -27,15 +28,14 @@ import { StorageService } from '../_services/storage.service';
   styleUrl: './manager-user.component.css',
 })
 export class ManagerUserComponent implements OnInit {
-  // lists$?: Observable<ListUser[]> ;
-  // filteredLists$?: Observable<ListUser[]>;
   lists$: Observable<ListUser[]> = new Observable();
   list$: Observable<ListUser> = new Observable();
-  // filteredLists$: Observable<ListUser[]> = new Observable();
   // lists$: Observable<ListUser[]> = new BehaviorSubject<ListUser[]>([]);
-  // filteredLists$: Observable<ListUser[]> = new BehaviorSubject<ListUser[]>([]);
   userId?: number;
   listLists: number;
+
+  hoteLists$: Observable<ListHotel[]> = new Observable();
+  hotelId?: number;
 
   loggedIn: boolean;
   currentUser: any;
@@ -61,10 +61,20 @@ export class ManagerUserComponent implements OnInit {
     this.currentUser = this.storageService.getUser();
   }
 
-  deleteList(id: number): void {
-    this.listsService.deleteList(id).subscribe({
-      next: () => this.fetchLists(),
-    });
+  private fetchLists(): void {
+    this.lists$ = this.listsService.getLists();
+    this.hoteLists$ = this.listsService.getHotelLists();
+  }
+
+  onAddUser() {
+    this._router.navigate(['/register']);
+    this.dataService.changeVariableBoolean(true);
+    this.dataService.changeVariableNumber(0);
+  }
+
+  addHotel() {
+    this._router.navigate(['/list/hotels/edit']);
+    this.dataService.changeVariableNumber(0.5);
   }
 
   editList(id: number): void {
@@ -73,8 +83,21 @@ export class ManagerUserComponent implements OnInit {
     this.dataService.changeVariableBoolean(false);
   }
 
-  private fetchLists(): void {
-    this.lists$ = this.listsService.getLists();
+  editHotel(id: number) {
+    this._router.navigate(['/list/hotels/edit']);
+    this.dataService.changeVariableNumber(id);
+  }
+
+  deleteList(id: number): void {
+    this.listsService.deleteList(id).subscribe({
+      next: () => this.fetchLists(),
+    });
+  }
+
+  deleteHotel(id: number) {
+    this.listsService.deleteHotelList(id).subscribe({
+      next: () => this.fetchLists(),
+    });
   }
 
   onIdFilterChange(id: string) {
@@ -89,12 +112,6 @@ export class ManagerUserComponent implements OnInit {
       this.listLists = 0;
       this.fetchLists();
     }
-  }
-
-  onAddUser() {
-    this._router.navigate(['/register']);
-    this.dataService.changeVariableBoolean(true);
-    this.dataService.changeVariableNumber(0);
   }
 
   // @Input()

@@ -16,6 +16,7 @@ import { BoardModeratorComponent } from './board-moderator/board-moderator.compo
 import { BoardUserComponent } from './board-user/board-user.component';
 import { ManagerUserComponent } from './manager-user/manager-user.component';
 import { EditComponent } from './manager-user/edit/edit.component';
+import { HotelsComponent } from './hotels/hotels.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { EditComponent } from './manager-user/edit/edit.component';
     BoardModeratorComponent,
     BoardUserComponent,
     ManagerUserComponent,
-    EditComponent
+    EditComponent,
+    HotelsComponent
   ],
   imports: [
     BrowserModule,

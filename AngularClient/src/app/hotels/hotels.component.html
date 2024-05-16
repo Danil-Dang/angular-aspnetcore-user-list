@@ -1,0 +1,38 @@
+<div>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div class="table-responsive border rounded p-3 my-3">
+          <h2 class="text-center m-5">Hotel List</h2>
+          <div class="d-flex justify-content-evenly">
+            <div class="dropdown inline-block loc-flex">
+              <button
+                class="btn btn-secondary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Location
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="">Dalat</a></li>
+                <li><a class="dropdown-item" href="">Da Nang</a></li>
+                <li><a class="dropdown-item" href="">Hanoi</a></li>
+                <li><a class="dropdown-item" href="">Ho Chi Minh City</a></li>
+                <li><a class="dropdown-item" href=""></a></li>
+              </ul>
+            </div>
+            <div class="loc-flex">Rating</div>
+            <div class="loc-flex">Price</div>
+          </div>
+        </div>
+
+        <div class="table-responsive border rounded p-3 my-3">
+          <!-- <ul *ngFor="let list of lists$ | async; let i = index">
+            <li class="table-primary">{{ i + 1 }}</li>
+          </ul> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

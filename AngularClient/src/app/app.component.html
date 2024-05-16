@@ -6,71 +6,92 @@
     </div>
 </div> -->
 
-  <div id="app">
-    <nav class="navbar navbar-expand navbar-dark bg-dark px-2">
-      <a href="#" class="navbar-brand">NgNet</a>
-      <ul class="navbar-nav mr-auto" routerLinkActive="active">
-        <li class="nav-item">
-          <a href="/home" class="nav-link" routerLink="home">Home</a>
-        </li>
-        @if (showAdminBoard) {
-          <li class="nav-item">
-            <a href="/admin" class="nav-link" routerLink="admin">Admin Board</a>
-          </li>
-        }
-        @if (showModeratorBoard) {
-          <li class="nav-item">
-            <a href="/mod" class="nav-link" routerLink="mod">Moderator Board</a>
-          </li>
-        }
-        @if (isLoggedIn) {
+<div id="app">
+  <nav class="navbar navbar-expand navbar-dark bg-dark px-2">
+    <a href="#" class="navbar-brand">NgNet</a>
+    <ul class="navbar-nav mr-auto" routerLinkActive="active">
+      <li class="nav-item">
+        <a href="/home" class="nav-link" routerLink="home">Home</a>
+      </li>
+      <li class="nav-item">
+        <a href="/hotels" class="nav-link" routerLink="hotels">Hotels</a>
+      </li>
+      @if (showAdminBoard) {
+      <li class="nav-item">
+        <a href="/admin" class="nav-link" routerLink="admin">Admin Board</a>
+      </li>
+      } @if (showModeratorBoard) {
+      <li class="nav-item">
+        <a href="/mod" class="nav-link" routerLink="mod">Moderator Board</a>
+      </li>
+      }
+      <!-- @if (isLoggedIn) {
           <li class="nav-item">
             <a href="user" class="nav-link" routerLink="user">User</a>
           </li>
-        }
+        } -->
+    </ul>
+
+    @if (!isLoggedIn) {
+    <div class="container-fluid">
+      <div></div>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a href="/register" class="nav-link" routerLink="register">Sign Up</a>
+        </li>
+        <li class="nav-item">
+          <a href="/login" class="nav-link" routerLink="login">Login</a>
+        </li>
       </ul>
-  
-      @if (!isLoggedIn) {
-        <div class="container-fluid">
-          <div></div>
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a href="/register" class="nav-link" routerLink="register">Sign Up</a>
-            </li>
-            <li class="nav-item">
-              <a href="/login" class="nav-link" routerLink="login">Login</a>
-            </li>
-          </ul>
-        </div>
-      } @else {
-        <div class="container-fluid">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <!-- <a href="/list" class="nav-link" routerLink="list">List</a> -->
-              <a href="/list/users" class="nav-link" routerLink="list/users">Admin Board</a>
-            </li>
-          </ul>
-          <div class="d-flex align-items-center">
-            <a href="/profile" class="nav-link" routerLink="profile">{{ username }}</a>
-            
-            <div class="dropdown px-2">
-              <a href="#" class="dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                  <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <li><a class="dropdown-item" href="#">New project</a></li>
-                  <li><a class="dropdown-item" href="#">Settings</a></li>
-                  <li><a class="dropdown-item" href="#">Profile</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li align="center"><button class="btn btn-danger" (click)="logout()">Log out</button></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      }
-    </nav>
-  
-    <div class="container-fluid div-router">
-      <router-outlet class="px-4"></router-outlet>
     </div>
+    } @else {
+    <div class="container-fluid">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <!-- <a href="/list" class="nav-link" routerLink="list">List</a> -->
+          <a href="/list/users" class="nav-link" routerLink="list/users"
+            >Admin Board</a
+          >
+        </li>
+      </ul>
+      <div class="d-flex align-items-center">
+        <a href="/profile" class="nav-link" routerLink="profile">{{
+          username
+        }}</a>
+
+        <div class="dropdown px-2">
+          <a
+            href="#"
+            class="dropdown-toggle"
+            role="button"
+            id="dropdownMenuLink"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <img
+              src="https://github.com/mdo.png"
+              alt="mdo"
+              width="32"
+              height="32"
+              class="rounded-circle"
+            />
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <li><a class="dropdown-item" href="#">New project</a></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li align="center">
+              <button class="btn btn-danger" (click)="logout()">Log out</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    }
+  </nav>
+
+  <div class="container-fluid div-router">
+    <router-outlet class="px-4"></router-outlet>
   </div>
+</div>

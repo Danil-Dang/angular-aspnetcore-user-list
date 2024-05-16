@@ -1,0 +1,116 @@
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-12 formRegister">
+      <div class="card card-container border rounded p-3 my-3">
+        <form name="form" (ngSubmit)="(f.form.valid)" #f="ngForm" novalidate>
+          @if (hotelId === 0.5) {
+          <h1>Add Hotel</h1>
+          } @else {
+          <h1>Edit Hotel</h1>
+          }
+          <h1>{{ hotelId }}</h1>
+          <div class="form-group row pb-3">
+            <div class="col-6">
+              <label for="hotelName">Hotel Name</label>
+              <input
+                type="text"
+                class="form-control"
+                name="hotelName"
+                [(ngModel)]="form.hotelName"
+                required
+                minlength="3"
+                maxlength="20"
+                #name="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted && name.errors }"
+              />
+              @if (name.errors && f.submitted) {
+              <div class="invalid-feedback">
+                @if (name.errors['required']) {
+                <div>Hotel name is required</div>
+                } @if (name.errors['minlength']) {
+                <div>Hotel name must be at least 3 characters</div>
+                } @if (name.errors['maxlength']) {
+                <div>Hotel name must be at most 20 characters</div>
+                }
+              </div>
+              }
+            </div>
+            <div class="col-6">
+              <label for="hotelStar">Hotel Star</label>
+              <input
+                type="number"
+                class="form-control"
+                name="hotelStar"
+                [(ngModel)]="form.hotelStar"
+              />
+            </div>
+          </div>
+          <div class="form-group pb-3">
+            <label for="roomTotal">Total Rooms</label>
+            <input
+              type="number"
+              class="form-control"
+              name="roomTotal"
+              [(ngModel)]="form.roomTotal"
+            />
+          </div>
+          <div class="form-group pb-3">
+            <label for="location">Location</label>
+            <input
+              class="form-control"
+              name="location"
+              [(ngModel)]="form.location"
+              required
+              #location="ngModel"
+              [ngClass]="{ 'is-invalid': f.submitted && location.errors }"
+            />
+            @if (location.errors && f.submitted) {
+            <div class="invalid-feedback">
+              @if (location.errors['required']) {
+              <div>Location is required</div>
+              }
+            </div>
+            }
+          </div>
+          <div class="form-group pb-3">
+            <label for="roomTotal">Upload image</label>
+            <input
+              type="file"
+              class="form-control"
+              name="picture"
+              (change)="onFileSelected($event)"
+              accept="image/*"
+            />
+          </div>
+          @if (hotelId === 0.5) {
+          <div class="form-group mt-3" align="center">
+            <button
+              type="button"
+              (click)="onCancel()"
+              class="btn btn-danger btn-block me-3"
+            >
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-block" (click)="onSubmit()">
+              Add
+            </button>
+          </div>
+          } @else {
+          <div class="form-group mt-3" align="center">
+            <button
+              type="button"
+              (click)="onCancel()"
+              class="btn btn-danger btn-block me-3"
+            >
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-block" (click)="onEditList()">
+              Edit
+            </button>
+          </div>
+          }
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

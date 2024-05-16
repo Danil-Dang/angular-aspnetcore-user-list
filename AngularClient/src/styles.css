@@ -1,0 +1,10 @@
+.loc-flex {
+    width: 110px;
+    text-align: center;
+}
+
+.card, form {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}

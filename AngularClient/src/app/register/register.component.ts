@@ -16,17 +16,6 @@ import { ListService } from '../_services/list.service';
   styleUrl: './register.component.css',
 })
 export class RegisterComponent implements OnInit {
-  list: BehaviorSubject<ListUser> = new BehaviorSubject<ListUser>({
-    id: 0,
-    firstName: '',
-    lastName: '',
-    username: '',
-    email: '',
-    isActive: true,
-    createdDate: new Date(),
-  });
-  // form!: FormGroup;
-  // form: FormGroup = this.fb.group {
   form: any = {
     firstName: null,
     lastName: null,
@@ -43,10 +32,6 @@ export class RegisterComponent implements OnInit {
   userId: number = 0;
   errorMessage = '';
   list$: Observable<ListUser> = new Observable();
-  placeFirstnName = '';
-  placeLastName = '';
-  placeUsername = '';
-  placeEmail = '';
 
   constructor(
     private authService: AuthService,
@@ -60,14 +45,6 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
-
-    // this.form = this.fb.group({
-    //   firstName: [''],
-    //   lastName: [''],
-    //   username: ['', Validators.required],
-    //   email: ['', Validators.required],
-    //   password: ['', Validators.required],
-    // });
 
     this.dataService.variableChangedBoolean$.subscribe((newValue: boolean) => {
       this.isManager = newValue;
@@ -88,12 +65,6 @@ export class RegisterComponent implements OnInit {
         this.form.username = data.username;
         this.form.email = data.email;
       });
-      // this.list$.subscribe((userData) => {
-      //   if (userData) {
-      //     this.form.setValue(userData);
-      //   }
-      // });
-      // this.form = this.list$;
     }
 
     if (this.isLoggedIn && !this.isManager && !this.editUser) {
@@ -106,7 +77,7 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const { firstName, lastName, username, email, password } = this.form.value;
+    const { firstName, lastName, username, email, password } = this.form;
 
     this.authService
       .register({ firstName, lastName, username, email, password })
@@ -130,11 +101,8 @@ export class RegisterComponent implements OnInit {
     this._router.navigate(['/list/users']);
   }
 
-  // onEditList(list: ListUser) {
   onEditList() {
     const { firstName, lastName, username, email } = this.form;
-    // const { firstName, lastName, username, email } = this.form.value;
-    // console.log('Log:', { firstName, lastName, username, email });
 
     this.listService
       .updateList(this.userId, { firstName, lastName, username, email })
