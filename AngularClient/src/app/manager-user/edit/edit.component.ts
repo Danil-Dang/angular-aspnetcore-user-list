@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import {
+  HttpClient,
+  HttpEventType,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -20,7 +25,8 @@ export class EditComponent implements OnInit {
     hotelStar: 0,
     roomTotal: 0,
     location: null,
-    picture: null,
+    // picture: { dbPath: '' },
+    // picture: null,
   };
 
   isLoggedIn = false;
@@ -30,7 +36,10 @@ export class EditComponent implements OnInit {
   hotelId: number = 0;
   errorMessage = '';
 
-  selectedFile: File | null = null;
+  // progress!: number;
+  // message!: string;
+  // @Output() public onUploadFinished = new EventEmitter();
+  // selectedFile: File | null = null;
 
   constructor(
     private authService: AuthService,
@@ -38,7 +47,8 @@ export class EditComponent implements OnInit {
     private route: ActivatedRoute,
     private storageService: StorageService,
     private dataService: DataService,
-    private listService: ListService
+    private listService: ListService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -122,18 +132,44 @@ export class EditComponent implements OnInit {
       });
   }
 
-  onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0];
-    if (this.selectedFile) {
-      // Validate file size and type (example)
-      if (this.selectedFile.size > 1024 * 1024 * 5) {
-        // Max 5MB
-        alert('File size exceeds limit!');
-        this.selectedFile = null;
-      } else if (!this.selectedFile.type.match('image/')) {
-        alert('Only image files are allowed!');
-        this.selectedFile = null;
-      }
-    }
-  }
+  // uploadFile = (files: any) => {
+  //   if (files.length === 0) {
+  //     return;
+  //   }
+  //   let fileToUpload = <File>files[0];
+  //   const formData = new FormData();
+  //   formData.append('file', fileToUpload, fileToUpload.name);
+
+  //   this.http
+  //     .post('https://localhost:4201/api/upload', formData, {
+  //       reportProgress: true,
+  //       observe: 'events',
+  //     })
+  //     .subscribe({
+  //       next: (event) => {
+  //         if (event.type === HttpEventType.UploadProgress)
+  //           this.progress = Math.round((100 * event.loaded) / event.total!);
+  //         else if (event.type === HttpEventType.Response) {
+  //           this.message = 'Upload success.';
+  //           this.onUploadFinished.emit(event.body);
+  //         }
+  //       },
+  //       error: (err: HttpErrorResponse) => console.log(err),
+  //     });
+  // };
+
+  // onFileSelected(event: any) {
+  //   this.selectedFile = event.target.files[0];
+  //   if (this.selectedFile) {
+  //     // Validate file size and type (example)
+  //     if (this.selectedFile.size > 1024 * 1024 * 5) {
+  //       // Max 5MB
+  //       alert('File size exceeds limit!');
+  //       this.selectedFile = null;
+  //     } else if (!this.selectedFile.type.match('image/')) {
+  //       alert('Only image files are allowed!');
+  //       this.selectedFile = null;
+  //     }
+  //   }
+  // }
 }

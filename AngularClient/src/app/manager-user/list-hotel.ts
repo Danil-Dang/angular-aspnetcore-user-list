@@ -4,6 +4,7 @@ export interface ListHotel {
   hotelStar?: number;
   roomTotal?: number;
   location?: string;
+  imgPath: string;
   isActive: boolean;
   createdDate: Date;
 }

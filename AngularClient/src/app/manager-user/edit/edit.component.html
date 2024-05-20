@@ -8,7 +8,6 @@
           } @else {
           <h1>Edit Hotel</h1>
           }
-          <h1>{{ hotelId }}</h1>
           <div class="form-group row pb-3">
             <div class="col-6">
               <label for="hotelName">Hotel Name</label>
@@ -72,16 +71,31 @@
             </div>
             }
           </div>
-          <div class="form-group pb-3">
-            <label for="roomTotal">Upload image</label>
-            <input
-              type="file"
-              class="form-control"
-              name="picture"
-              (change)="onFileSelected($event)"
-              accept="image/*"
-            />
-          </div>
+          <!-- <div class="form-group row" style="margin-bottom: 15px">
+            <div class="col-md-3">
+              <input
+                type="file"
+                #file
+                placeholder="Choose file"
+                (change)="uploadFile(file.files)"
+                style="display: none"
+                multiple
+              />
+              <button
+                type="button"
+                class="btn btn-success"
+                (click)="file.click()"
+              >
+                Upload File
+              </button>
+            </div>
+            <div class="col-md-4">
+              <span class="upload" *ngIf="progress > 0"> {{ progress }}% </span>
+              <span class="upload" *ngIf="message">
+                {{ message }}
+              </span>
+            </div>
+          </div> -->
           @if (hotelId === 0.5) {
           <div class="form-group mt-3" align="center">
             <button
