@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row justify-content-center">
       <div class="col-12">
-        <div class="table-responsive border rounded p-3 my-3">
+        <div class="border rounded p-3 my-3 hotel-header">
           <h2 class="text-center m-5">Hotel List</h2>
           <div class="d-flex justify-content-evenly">
             <div class="dropdown inline-block loc-flex">
@@ -27,10 +27,66 @@
           </div>
         </div>
 
-        <div class="table-responsive border rounded p-3 my-3">
-          <!-- <ul *ngFor="let list of lists$ | async; let i = index">
-            <li class="table-primary">{{ i + 1 }}</li>
-          </ul> -->
+        <div class="container-fluid">
+          <div class="row justify-content-evenly">
+            <div
+              *ngFor="let hoteList of hoteLists$ | async; let i = index"
+              class="col-sm-12 col-md-5 border rounded p-3 my-3 hotel-card"
+            >
+              <div class="row row-room">
+                <div class="col-sm-5 col-md-12 img-room">
+                  <img
+                    class="rounded"
+                    src="../../assets/rooms/sample_room.jpeg"
+                    alt=""
+                  />
+                </div>
+                <div class="col-sm-7 col-md-12">
+                  <div class="row">
+                    <div class="col-sm-7 col-md-12">
+                      <div class="row row-roomm">
+                        <div class="col-7">
+                          <h1 class="fs-3 m-0">
+                            {{ hoteList.hotelName }}
+                          </h1>
+                          <div class="star-rating">
+                            <img
+                              class="star empty"
+                              *ngFor="
+                                let star of generateStars(hoteList.hotelStar!)
+                              "
+                              src="../../assets/rooms/star.png"
+                            />
+                          </div>
+                          <h2 class="fs-6">{{ hoteList.location }}</h2>
+                        </div>
+                        <div class="col-5" align="right">
+                          <div>
+                            <h2 class="fs-6 mt-1">Reviews</h2>
+                            <p class="fs-6">100 reviews</p>
+                          </div>
+                          <div></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-5 col-md-12">
+                      <div class="row rounded hotel-price p-2">
+                        <div class="col-md-6 col-sm-12">
+                          <p class="m-0" align="left">From 100$</p>
+                        </div>
+                        <div
+                          class="col-md-6 col-sm-12 hotel-price-button p-0"
+                          align="end"
+                        >
+                          <button class="btn btn-primary">See Prices</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
