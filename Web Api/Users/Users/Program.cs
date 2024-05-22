@@ -4,6 +4,9 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 using Users.Repository;
 using Users.Contracts;
@@ -15,7 +18,25 @@ builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IHotelsRepository, HotelsRepository>();
 
-builder.Services.AddScoped<Users.Helpers.JwtUtils>();
+builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "https://localhost:4201",
+            ValidAudience = "https://localhost:4201",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("secretKey@3"))
+        };
+    });
+// builder.Services.AddScoped<Users.Helpers.JwtUtils>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "AllowAngularOrigin",
@@ -52,6 +73,7 @@ app.UseCors("AllowAngularOrigin");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

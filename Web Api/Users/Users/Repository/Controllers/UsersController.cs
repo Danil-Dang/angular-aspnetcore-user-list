@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Users.Contracts;
 using Users.Entities.Dto;
 using Users.Entities.Models;
-using  Users.Helpers;
+using Users.Helpers;
 
 namespace Users.Repository.Controllers
 {
@@ -16,7 +16,7 @@ namespace Users.Repository.Controllers
 	{
 		private readonly IUserRepository _userRepo;
 		private readonly JwtUtils _jwtUtils;
-		
+
 		public UsersController(IUserRepository userRepo, JwtUtils jwtUtils)
 		{
 			_userRepo = userRepo;
@@ -75,7 +75,7 @@ namespace Users.Repository.Controllers
 				var dbUser = await _userRepo.GetUser(id);
 				if (dbUser == null)
 					return NotFound();
-				
+
 				await _userRepo.UpdateUser(id, user);
 				return NoContent();
 			}
@@ -108,26 +108,29 @@ namespace Users.Repository.Controllers
 		public async Task<IActionResult> LoginUser(UserForLoginDto model)
 		{
 			var user = await _userRepo.FindUserByUsername(model.Username);
-			if (user == null) {
+			if (user == null)
+			{
 				return NotFound(new { error = new { message = "User Not Found!" } });
 			}
 
 			var PasswordHash = Encoding.UTF8.GetString(user.PasswordHash);
-			if (!BCrypt.Net.BCrypt.Verify(model.Password, PasswordHash)) {
+			if (!BCrypt.Net.BCrypt.Verify(model.Password, PasswordHash))
+			{
 				return Unauthorized(new { error = new { message = "Invalid Password!" } });
 			}
 
-			var token = _jwtUtils.GenerateToken(user);
+			// var token = _jwtUtils.GenerateToken(user);
 
 			// var userRoles = user.Roles.Select(r => r.Name).ToList();
 
-			return Ok(new { 
-				token,
+			return Ok(new
+			{
+				// token,
 				user.Id,
-    			user.Username, 
-    			user.Email,
+				user.Username,
+				user.Email,
 				// user.Roles
-			}); 
+			});
 		}
 	}
 }
