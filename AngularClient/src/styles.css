@@ -1,8 +1,3 @@
-.loc-flex {
-    width: 110px;
-    text-align: center;
-}
-
 .card, form {
     max-width: 400px;
     margin-left: auto;
@@ -10,12 +5,22 @@
 }
 
 .hotel-header {
-    background-color: rgb(131, 162, 177);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  
+    /* background-color: rgb(131, 162, 177); */
+    /* background-color: rgb(99, 135, 154); */
+    background-color: rgb(64, 74, 79);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 .hotel-header h2 {
     color: rgb(252, 252, 53);
+}
+.loc-flex {
+    width: 110px;
+    text-align: center;
+    color: rgb(217, 226, 241);
+    cursor: pointer;
+}
+.loc-flex button {
+    color: rgb(217, 226, 241);
 }
 .hotel-card {
     position: relative;
