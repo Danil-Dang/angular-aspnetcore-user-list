@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Text;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 using Users.Contracts;
 using Users.Entities.Dto;
@@ -120,12 +123,22 @@ namespace Users.Repository.Controllers
 			}
 
 			// var token = _jwtUtils.GenerateToken(user);
+			var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SecretKey@3"));
+			var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+			var tokeOptions = new JwtSecurityToken(
+				issuer: "https://localhost:4201",
+				audience: "https://localhost:4201",
+				claims: new List<Claim>(),
+				expires: DateTime.Now.AddMinutes(5),
+				signingCredentials: signinCredentials
+			);
+			var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
 
 			// var userRoles = user.Roles.Select(r => r.Name).ToList();
 
 			return Ok(new
 			{
-				// token,
+				token = tokenString,
 				user.Id,
 				user.Username,
 				user.Email,
