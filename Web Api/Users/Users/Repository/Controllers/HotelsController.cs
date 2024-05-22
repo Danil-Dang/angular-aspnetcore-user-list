@@ -21,7 +21,7 @@ namespace Users.Repository.Controllers
             _hotelRepo = hotelRepo;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize]
         public async Task<IActionResult> GetHotels()
         {
             try
@@ -35,7 +35,7 @@ namespace Users.Repository.Controllers
             }
         }
 
-        [HttpGet("{id}", Name = "HotelById")]
+        [HttpGet("{id}", Name = "HotelById"), Authorize]
         public async Task<IActionResult> GetHotel(int id)
         {
             try
@@ -51,7 +51,7 @@ namespace Users.Repository.Controllers
             }
         }
 
-        [HttpPost("register")]
+        [HttpPost("register"), Authorize]
         public async Task<IActionResult> CreateHotel(HotelForCreationDto hotel)
         {
             try
@@ -65,7 +65,7 @@ namespace Users.Repository.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize]
         public async Task<IActionResult> UpdateUser(int id, HotelForUpdateDto hotel)
         {
             try
@@ -83,7 +83,7 @@ namespace Users.Repository.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize]
         public async Task<IActionResult> DeleteHotel(int id)
         {
             try

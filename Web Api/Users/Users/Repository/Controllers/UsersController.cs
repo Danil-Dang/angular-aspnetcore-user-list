@@ -23,7 +23,7 @@ namespace Users.Repository.Controllers
 			_jwtUtils = jwtUtils;
 		}
 
-		[HttpGet]
+		[HttpGet, Authorize]
 		public async Task<IActionResult> GetUsers()
 		{
 			try
@@ -37,7 +37,7 @@ namespace Users.Repository.Controllers
 			}
 		}
 
-		[HttpGet("{id}", Name = "UserById")]
+		[HttpGet("{id}", Name = "UserById"), Authorize]
 		public async Task<IActionResult> GetUser(int id)
 		{
 			try
@@ -67,7 +67,7 @@ namespace Users.Repository.Controllers
 			}
 		}
 
-		[HttpPut("{id}")]
+		[HttpPut("{id}"), Authorize]
 		public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto user)
 		{
 			try
@@ -85,7 +85,7 @@ namespace Users.Repository.Controllers
 			}
 		}
 
-		[HttpDelete("{id}")]
+		[HttpDelete("{id}"), Authorize]
 		public async Task<IActionResult> DeleteUser(int id)
 		{
 			try
