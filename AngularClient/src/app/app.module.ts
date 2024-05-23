@@ -20,9 +20,9 @@ import { EditComponent } from './manager-user/edit/edit.component';
 import { HotelsComponent } from './hotels/hotels.component';
 // import { StorageService } from './_services/storage.service';
 
-// export function tokenGetter() {
-//   return localStorage.getItem('jwt');
-// }
+export function tokenGetter() {
+  return localStorage.getItem('jwt');
+}
 
 @NgModule({
   declarations: [
@@ -45,13 +45,13 @@ import { HotelsComponent } from './hotels/hotels.component';
     ReactiveFormsModule,
     CommonModule,
     HttpClientModule,
-    // JwtModule.forRoot({
-    //   config: {
-    //     tokenGetter: tokenGetter,
-    //     allowedDomains: ["localhost:4201"],
-    //     disallowedRoutes: []
-    //   }
-    // })
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ['localhost:4201'],
+        disallowedRoutes: [],
+      },
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],
