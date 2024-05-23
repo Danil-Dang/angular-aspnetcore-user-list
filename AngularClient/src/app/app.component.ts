@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { JwtHelperService } from '@auth0/angular-jwt';
 // import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { StorageService } from './_services/storage.service';
@@ -21,9 +22,9 @@ export class AppComponent implements OnInit {
 
   constructor(
     private storageService: StorageService,
-    private authService: AuthService
-  ) // private http: HttpClient
-  {}
+    private authService: AuthService,
+    private jwtHelper: JwtHelperService // private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
@@ -43,6 +44,14 @@ export class AppComponent implements OnInit {
     this.storageService.clean();
     window.location.reload();
   }
+
+  isUserAuthenticated = (): boolean => {
+    const token = localStorage.getItem('jwt');
+    if (token && !this.jwtHelper.isTokenExpired(token)) {
+      return true;
+    }
+    return false;
+  };
 
   // getToken() {
   //   return localStorage.getItem('jwt');

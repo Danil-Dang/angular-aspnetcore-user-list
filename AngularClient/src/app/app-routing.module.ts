@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { AuthGuard } from './_guards/auth.guard';
+
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
@@ -24,8 +26,16 @@ const routes: Routes = [
   // { path: 'mod', component: BoardModeratorComponent },
   // { path: 'admin', component: BoardAdminComponent },
 
-  { path: 'list/users', component: ManagerUserComponent },
-  { path: 'list/hotels/edit', component: EditComponent },
+  {
+    path: 'list/users',
+    component: ManagerUserComponent,
+    // canActivate: [AuthGuard],
+  },
+  {
+    path: 'list/hotels/edit',
+    component: EditComponent,
+    // canActivate: [AuthGuard],
+  },
   // { path: 'list', component: TodosListComponent },
   // { path: 'list/new', component: AddTodoComponent },
   // { path: 'list/edit/:id', component: EditTodoComponent },
