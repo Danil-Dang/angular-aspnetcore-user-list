@@ -16,12 +16,12 @@ namespace Users.Repository
 		public UserRepository(DapperContext context)
 		{
 			_context = context;
-        }
+		}
 
 		public async Task<IEnumerable<User>> GetUsers()
 		{
 			var query = "SELECT * FROM Users";
-			
+
 			using (var connection = _context.CreateConnection())
 			{
 				var users = await connection.QueryAsync<User>(query);
@@ -32,7 +32,7 @@ namespace Users.Repository
 		public async Task<User> GetUser(int id)
 		{
 			var query = "SELECT * FROM Users WHERE Id = @Id";
-			
+
 			using (var connection = _context.CreateConnection())
 			{
 				var user = await connection.QuerySingleOrDefaultAsync<User>(query, new { id });
@@ -44,9 +44,9 @@ namespace Users.Repository
 		{
 			var PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.Password);
 			user.PasswordHash = Encoding.UTF8.GetBytes(PasswordHash);
-    		var PasswordSalt = BCrypt.Net.BCrypt.GenerateSalt();
-    		user.PasswordSalt = Encoding.UTF8.GetBytes(PasswordSalt);
-			
+			var PasswordSalt = BCrypt.Net.BCrypt.GenerateSalt();
+			user.PasswordSalt = Encoding.UTF8.GetBytes(PasswordSalt);
+
 			var query = "INSERT INTO Users (FirstName, LastName, Username, Email, PasswordHash, PasswordSalt, IsActive, CreatedDate) VALUES (@FirstName, @LastName, @Username, @Email, @PasswordHash, @PasswordSalt, @IsActive, @CreatedDate)" +
 				"SELECT CAST(SCOPE_IDENTITY() as int)";
 
@@ -59,11 +59,11 @@ namespace Users.Repository
 			parameters.Add("PasswordSalt", user.PasswordSalt, DbType.Binary);
 			parameters.Add("IsActive", user.IsActive, DbType.Boolean);
 			parameters.Add("CreatedDate", user.CreatedDate, DbType.DateTime2);
-			
+
 			using (var connection = _context.CreateConnection())
 			{
 				var id = await connection.QuerySingleAsync<int>(query, parameters);
-				
+
 				var createdUser = new User
 				{
 					Id = id,
@@ -110,10 +110,11 @@ namespace Users.Repository
 		public async Task<User> FindUserByUsername(string username)
 		{
 			var query = "SELECT * FROM Users WHERE Username = @username";
-			
-			using (var connection = _context.CreateConnection()) 
+
+			using (var connection = _context.CreateConnection())
 			{
-				return await connection.QueryFirstOrDefaultAsync<User>(query, new { username });
+				var user = await connection.QueryFirstOrDefaultAsync<User>(query, new { username });
+				return user;
 			}
 		}
 	}

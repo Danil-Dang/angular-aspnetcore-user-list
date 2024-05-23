@@ -18,15 +18,17 @@ namespace Users.Repository.Controllers
 	public class UsersController : ControllerBase
 	{
 		private readonly IUserRepository _userRepo;
-		private readonly JwtUtils _jwtUtils;
+		// private readonly JwtUtils _jwtUtils;
 
-		public UsersController(IUserRepository userRepo, JwtUtils jwtUtils)
+		public UsersController(IUserRepository userRepo
+		// JwtUtils jwtUtils
+		)
 		{
 			_userRepo = userRepo;
-			_jwtUtils = jwtUtils;
+			// _jwtUtils = jwtUtils;
 		}
 
-		[HttpGet, Authorize]
+		[HttpGet]
 		public async Task<IActionResult> GetUsers()
 		{
 			try
@@ -40,12 +42,28 @@ namespace Users.Repository.Controllers
 			}
 		}
 
-		[HttpGet("{id}", Name = "UserById"), Authorize]
+		[HttpGet("{id}", Name = "UserById")]
 		public async Task<IActionResult> GetUser(int id)
 		{
 			try
 			{
 				var user = await _userRepo.GetUser(id);
+				if (user == null) return NotFound();
+
+				return Ok(user);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet("by-username/{username}", Name = "UserByUsername")]
+		public async Task<IActionResult> FindUserByUsername(string username)
+		{
+			try
+			{
+				var user = await _userRepo.FindUserByUsername(username);
 				if (user == null) return NotFound();
 
 				return Ok(user);
@@ -70,7 +88,7 @@ namespace Users.Repository.Controllers
 			}
 		}
 
-		[HttpPut("{id}"), Authorize]
+		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto user)
 		{
 			try
@@ -88,7 +106,7 @@ namespace Users.Repository.Controllers
 			}
 		}
 
-		[HttpDelete("{id}"), Authorize]
+		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteUser(int id)
 		{
 			try
@@ -123,7 +141,7 @@ namespace Users.Repository.Controllers
 			}
 
 			// var token = _jwtUtils.GenerateToken(user);
-			var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SecretKey@3"));
+			var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ultraSuperPuperExtraSecretKey@369963"));
 			var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 			var tokeOptions = new JwtSecurityToken(
 				issuer: "https://localhost:4201",
@@ -136,12 +154,12 @@ namespace Users.Repository.Controllers
 
 			// var userRoles = user.Roles.Select(r => r.Name).ToList();
 
-			return Ok(new
+			return Ok(new AuthenticatedResponse
 			{
-				token = tokenString,
-				user.Id,
-				user.Username,
-				user.Email,
+				Token = tokenString
+				// user.Id,
+				// user.Username,
+				// user.Email,
 				// user.Roles
 			});
 		}

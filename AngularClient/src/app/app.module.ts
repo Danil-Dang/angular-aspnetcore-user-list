@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 // import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { JwtModule } from '@auth0/angular-jwt';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,6 +18,11 @@ import { BoardUserComponent } from './board-user/board-user.component';
 import { ManagerUserComponent } from './manager-user/manager-user.component';
 import { EditComponent } from './manager-user/edit/edit.component';
 import { HotelsComponent } from './hotels/hotels.component';
+// import { StorageService } from './_services/storage.service';
+
+// export function tokenGetter() {
+//   return localStorage.getItem('jwt');
+// }
 
 @NgModule({
   declarations: [
@@ -30,7 +36,7 @@ import { HotelsComponent } from './hotels/hotels.component';
     BoardUserComponent,
     ManagerUserComponent,
     EditComponent,
-    HotelsComponent
+    HotelsComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,9 +44,16 @@ import { HotelsComponent } from './hotels/hotels.component';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    HttpClientModule
+    HttpClientModule,
+    // JwtModule.forRoot({
+    //   config: {
+    //     tokenGetter: tokenGetter,
+    //     allowedDomains: ["localhost:4201"],
+    //     disallowedRoutes: []
+    //   }
+    // })
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

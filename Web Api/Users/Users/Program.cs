@@ -33,7 +33,7 @@ builder.Services.AddAuthentication(opt =>
             ValidateIssuerSigningKey = true,
             ValidIssuer = "https://localhost:4201",
             ValidAudience = "https://localhost:4201",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("secretKey@3"))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ultraSuperPuperExtraSecretKey@369963"))
         };
     });
 // builder.Services.AddScoped<Users.Helpers.JwtUtils>();

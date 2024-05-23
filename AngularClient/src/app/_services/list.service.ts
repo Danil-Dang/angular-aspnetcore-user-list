@@ -32,6 +32,12 @@ export class ListService {
     return this.httpClient.get<ListUser>(`${this.urlUser}/${id}`);
   }
 
+  getUserByUsername(username: string): Observable<ListUser> {
+    return this.httpClient.get<ListUser>(
+      `${this.urlUser}/by-username/${username}`
+    );
+  }
+
   createList(list: ListUser): Observable<string> {
     return this.httpClient.post(`${this.urlUser}`, list, {
       responseType: 'text',

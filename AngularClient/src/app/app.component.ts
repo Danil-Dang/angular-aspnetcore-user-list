@@ -6,7 +6,7 @@ import { AuthService } from './_services/auth.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit {
   private roles: string[] = [];
@@ -17,21 +17,21 @@ export class AppComponent implements OnInit {
   visible = false;
 
   constructor(
-    private storageService: StorageService, 
-    private authService: AuthService,
-    // private _router: Router,
-    // private httpClient: HttpClient,
-    // private jwtInterceptor: authInterceptor,
-  ) {}
+    private storageService: StorageService,
+    private authService: AuthService
+  ) // private _router: Router,
+  // private httpClient: HttpClient,
+  // private jwtInterceptor: authInterceptor,
+  {}
 
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
 
     if (this.isLoggedIn) {
       const user = this.storageService.getUser();
-      this.roles = user.roles;
+      // this.roles = user.roles;
       this.username = user.username;
-      
+
       // this.showAdminBoard = this.roles.includes('ROLE_ADMIN');
       // this.showModeratorBoard = this.roles.includes('ROLE_MODERATOR');
     }
