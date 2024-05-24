@@ -31,9 +31,6 @@ export class HotelsComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
-    if (!this.isLoggedIn) {
-      this._router.navigate(['/home']);
-    }
 
     this.currentUser = this.storageService.getUser();
     this.fetchLists();

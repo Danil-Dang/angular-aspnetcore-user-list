@@ -21,7 +21,7 @@ const routes: Routes = [
   { path: 'hotels', component: HotelsComponent },
   // { path: 'hotels/edit', component: EditComponent },
 
-  { path: 'profile', component: ProfileComponent },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   // { path: 'user', component: BoardUserComponent },
   // { path: 'mod', component: BoardModeratorComponent },
   // { path: 'admin', component: BoardAdminComponent },
@@ -29,12 +29,12 @@ const routes: Routes = [
   {
     path: 'list/users',
     component: ManagerUserComponent,
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: 'list/hotels/edit',
     component: EditComponent,
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   // { path: 'list', component: TodosListComponent },
   // { path: 'list/new', component: AddTodoComponent },

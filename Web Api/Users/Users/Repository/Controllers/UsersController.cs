@@ -28,6 +28,7 @@ namespace Users.Repository.Controllers
 			// _jwtUtils = jwtUtils;
 		}
 
+		// [HttpGet, Authorize]
 		[HttpGet]
 		public async Task<IActionResult> GetUsers()
 		{
@@ -42,6 +43,7 @@ namespace Users.Repository.Controllers
 			}
 		}
 
+		// [HttpGet("{id}", Name = "UserById"), Authorize]
 		[HttpGet("{id}", Name = "UserById")]
 		public async Task<IActionResult> GetUser(int id)
 		{
@@ -58,6 +60,7 @@ namespace Users.Repository.Controllers
 			}
 		}
 
+		// [HttpGet("by-username/{username}", Name = "UserByUsername"), Authorize]
 		[HttpGet("by-username/{username}", Name = "UserByUsername")]
 		public async Task<IActionResult> FindUserByUsername(string username)
 		{
@@ -88,6 +91,7 @@ namespace Users.Repository.Controllers
 			}
 		}
 
+		// [HttpPut("{id}"), Authorize]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto user)
 		{
@@ -106,6 +110,7 @@ namespace Users.Repository.Controllers
 			}
 		}
 
+		// [HttpDelete("{id}"), Authorize]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteUser(int id)
 		{

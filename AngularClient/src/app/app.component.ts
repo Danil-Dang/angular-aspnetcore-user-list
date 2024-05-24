@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
   showModeratorBoard = false;
   username?: string;
   visible = false;
+  reloadOnce = false;
 
   // data: any;
 
@@ -27,6 +28,13 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.reloadOnce = JSON.parse(localStorage.getItem('reloadOnce')!);
+    if (!this.reloadOnce && !this.isUserAuthenticated()) {
+      this.logout();
+    } else {
+      localStorage.removeItem('reloadOnce');
+    }
+
     this.isLoggedIn = this.storageService.isLoggedIn();
 
     if (this.isLoggedIn) {
@@ -42,6 +50,7 @@ export class AppComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.storageService.clean();
+    localStorage.setItem('reloadOnce', 'true');
     window.location.reload();
   }
 

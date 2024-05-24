@@ -3,14 +3,12 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.css',
 })
 export class HomeComponent implements OnInit {
   content?: string;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-    
-  }
+  ngOnInit(): void {}
 }
