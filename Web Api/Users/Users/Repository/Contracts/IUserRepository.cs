@@ -14,5 +14,7 @@ namespace Users.Contracts
 
 		// public Task LoginUser(UserForLoginDto model);
 		public Task<User> FindUserByUsername(string username);
+		// public Task<GetRoleResponse> GetUserRole(int id);
+		public Task<IEnumerable<GetRoleResponse>> GetUserRole(int id);
 	}
 }

@@ -117,6 +117,20 @@ namespace Users.Repository
 				return user;
 			}
 		}
+
+		// public async Task<GetRoleResponse> GetUserRole(int id)
+		public async Task<IEnumerable<GetRoleResponse>> GetUserRole(int id)
+		{
+			var query = "SELECT r.Role FROM UserRoles ur INNER JOIN Roles r ON ur.RoleId = r.Id WHERE ur.UserId = @Id";
+
+			using (var connection = _context.CreateConnection())
+			{
+				// var user = await connection.QueryFirstOrDefaultAsync<GetRoleResponse>(query, new { id });
+				// return user;
+				var user = await connection.QueryAsync<GetRoleResponse>(query, new { id });
+				return user.ToList();
+			}
+		}
 	}
 }
 

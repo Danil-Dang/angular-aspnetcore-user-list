@@ -28,7 +28,7 @@ namespace Users.Repository.Controllers
 			// _jwtUtils = jwtUtils;
 		}
 
-		// [HttpGet, Authorize]
+		// [HttpGet, Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<IActionResult> GetUsers()
 		{
@@ -67,6 +67,22 @@ namespace Users.Repository.Controllers
 			try
 			{
 				var user = await _userRepo.FindUserByUsername(username);
+				if (user == null) return NotFound();
+
+				return Ok(user);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet("role-by-id/{id}", Name = "UserRoleById")]
+		public async Task<IActionResult> GetUserRole(int id)
+		{
+			try
+			{
+				var user = await _userRepo.GetUserRole(id);
 				if (user == null) return NotFound();
 
 				return Ok(user);
@@ -148,10 +164,18 @@ namespace Users.Repository.Controllers
 			// var token = _jwtUtils.GenerateToken(user);
 			var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ultraSuperPuperExtraSecretKey@369963"));
 			var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+
+			var claims = new List<Claim>
+			{
+				new Claim(ClaimTypes.Name, user.Username),
+				new Claim(ClaimTypes.Role, "Manager")
+			};
+
 			var tokeOptions = new JwtSecurityToken(
 				issuer: "https://localhost:4201",
 				audience: "https://localhost:4201",
-				claims: new List<Claim>(),
+				// claims: new List<Claim>(),
+				claims: claims,
 				expires: DateTime.Now.AddMinutes(5),
 				signingCredentials: signinCredentials
 			);
@@ -162,10 +186,6 @@ namespace Users.Repository.Controllers
 			return Ok(new AuthenticatedResponse
 			{
 				Token = tokenString
-				// user.Id,
-				// user.Username,
-				// user.Email,
-				// user.Roles
 			});
 		}
 	}
