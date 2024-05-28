@@ -18,18 +18,20 @@
       </li>
       @if (showAdminBoard) {
       <li class="nav-item">
-        <a href="/admin" class="nav-link" routerLink="admin">Admin Board</a>
+        <!-- <a href="/admin" class="nav-link" routerLink="admin">Admin Board</a> -->
+        <a href="/list/users" class="nav-link" routerLink="list/users"
+          >Admin Board</a
+        >
       </li>
       } @if (showModeratorBoard) {
       <li class="nav-item">
         <a href="/mod" class="nav-link" routerLink="mod">Moderator Board</a>
       </li>
+      } @if (isLoggedIn && !showModeratorBoard && !showAdminBoard) {
+      <li class="nav-item">
+        <a href="user" class="nav-link" routerLink="user">User</a>
+      </li>
       }
-      <!-- @if (isLoggedIn) {
-          <li class="nav-item">
-            <a href="user" class="nav-link" routerLink="user">User</a>
-          </li>
-        } -->
     </ul>
 
     @if (!isLoggedIn) {
@@ -46,14 +48,7 @@
     </div>
     } @else {
     <div class="container-fluid">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <!-- <a href="/list" class="nav-link" routerLink="list">List</a> -->
-          <a href="/list/users" class="nav-link" routerLink="list/users"
-            >Admin Board</a
-          >
-        </li>
-      </ul>
+      <ul class="navbar-nav ml-auto"></ul>
       <div class="d-flex align-items-center">
         <a href="/profile" class="nav-link" routerLink="profile">{{
           username

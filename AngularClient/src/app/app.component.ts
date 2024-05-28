@@ -11,7 +11,7 @@ import { AuthService } from './_services/auth.service';
   styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit {
-  private roles: string[] = [];
+  roles: string[] = [];
   isLoggedIn = false;
   showAdminBoard = false;
   showModeratorBoard = false;
@@ -39,11 +39,11 @@ export class AppComponent implements OnInit {
 
     if (this.isLoggedIn) {
       const user = this.storageService.getUser();
-      // this.roles = user.roles;
       this.username = user.username;
+      this.roles = JSON.parse(localStorage.getItem('user-role')!);
 
-      // this.showAdminBoard = this.roles.includes('ROLE_ADMIN');
-      // this.showModeratorBoard = this.roles.includes('ROLE_MODERATOR');
+      this.showAdminBoard = this.roles.includes('Admin');
+      this.showModeratorBoard = this.roles.includes('Manager');
     }
   }
 

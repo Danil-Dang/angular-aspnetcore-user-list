@@ -10,6 +10,7 @@ using Users.Contracts;
 using Users.Entities.Dto;
 using Users.Entities.Models;
 using Users.Helpers;
+using System.Security.Principal;
 
 namespace Users.Repository.Controllers
 {
@@ -165,10 +166,24 @@ namespace Users.Repository.Controllers
 			var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ultraSuperPuperExtraSecretKey@369963"));
 			var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
+			var roles = await _userRepo.GetUserRole(user.Id);
+			var combinedRoles = "";
+			if (roles != null)
+			{
+				foreach (var role in roles)
+				{
+					combinedRoles += role.Role;
+				}
+			}
+			else
+			{
+				Console.WriteLine("No roles found for user.");
+			}
+
 			var claims = new List<Claim>
 			{
 				new Claim(ClaimTypes.Name, user.Username),
-				new Claim(ClaimTypes.Role, "Manager")
+				new Claim(ClaimTypes.Role, combinedRoles),
 			};
 
 			var tokeOptions = new JwtSecurityToken(

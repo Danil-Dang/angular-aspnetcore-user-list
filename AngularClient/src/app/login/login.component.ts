@@ -14,6 +14,7 @@ import { AuthService } from '../_services/auth.service';
 import { StorageService } from '../_services/storage.service';
 import { ListService } from '../_services/list.service';
 import { ListUser } from '../manager-user/list-user';
+import { UserRole } from '../manager-user/user-role';
 
 @Component({
   selector: 'app-login',
@@ -30,7 +31,9 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   list$: Observable<ListUser> = new Observable();
   username = '';
-  // roles: string[] = [];
+  userId = 0;
+  roles: string[] = [];
+  roles$: Observable<UserRole[]> = new Observable();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -63,14 +66,29 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: (data) => {
           // this.list$ = this.listService.getUserByUsername(username);
+          // this.list$.subscribe((data) => {
+          //   this.userId = data.id!;
+          //   this.roles$ = this.listService.getUserRole(this.userId);
+
+          //   this.roles$.subscribe((roles) => {
+          //     if (roles) {
+          //       for (const role of roles) {
+          //         this.roles.push(role.role!);
+          //       }
+          //       localStorage.setItem('userRole2', JSON.stringify(this.roles));
+          //     } else {
+          //       console.log('No roles found');
+          //     }
+          //   });
+          // });
+
           this.storageService.saveUser({
             username: username,
+            // role: this.roles,
           });
-          // this.storageService.saveToken(data.token);
 
           this.isLoginFailed = false;
           this.isLoggedIn = true;
-          // this.roles = this.storageService.getUser().roles;
           this.reloadPage();
         },
         error: (err) => {
@@ -83,6 +101,23 @@ export class LoginComponent implements OnInit {
           this.isLoginFailed = true;
         },
       });
+
+    this.list$ = this.listService.getUserByUsername(username);
+    this.list$.subscribe((data) => {
+      this.userId = data.id!;
+      this.roles$ = this.listService.getUserRole(this.userId);
+
+      this.roles$.subscribe((roles) => {
+        if (roles) {
+          for (const role of roles) {
+            this.roles.push(role.role!);
+          }
+          localStorage.setItem('user-role', JSON.stringify(this.roles));
+        } else {
+          console.log('No roles found');
+        }
+      });
+    });
   }
 
   reloadPage(): void {

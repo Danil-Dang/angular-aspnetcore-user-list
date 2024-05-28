@@ -5,6 +5,9 @@
 
 /* ? Nav ------------------------------------------ */
 /* * General */
+.nav-link {
+    white-space: nowrap;
+}
 nav .d-flex a,
 nav .d-flex a:visited {
     /* color: rgb(122, 199, 237); */

@@ -125,8 +125,6 @@ namespace Users.Repository
 
 			using (var connection = _context.CreateConnection())
 			{
-				// var user = await connection.QueryFirstOrDefaultAsync<GetRoleResponse>(query, new { id });
-				// return user;
 				var user = await connection.QueryAsync<GetRoleResponse>(query, new { id });
 				return user.ToList();
 			}

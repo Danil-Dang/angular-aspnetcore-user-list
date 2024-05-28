@@ -32,20 +32,10 @@ export class AuthService {
       .pipe(
         map((response) => {
           // localStorage.setItem('currentUser', JSON.stringify(response.token));
-          //   localStorage.setItem('currentUser', JSON.stringify(response));
           localStorage.setItem('jwt', JSON.stringify(response));
           this.currentUserSubject.next(response);
           return response;
         })
-        //   catchError(err => {
-        //     // console.log('Original error object:', err);
-
-        //     let errorMessage = 'An unknown error occurred.';
-        //     if (err.error) {
-        //         errorMessage = err.error.message || errorMessage;
-        //      }
-        //      return throwError(() => new Error(errorMessage));
-        //   })
       );
   }
 

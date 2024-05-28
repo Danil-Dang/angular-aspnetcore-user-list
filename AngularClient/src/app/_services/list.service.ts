@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { ListUser } from '../manager-user/list-user';
 import { ListHotel } from '../manager-user/list-hotel';
 import { UpdateUser } from '../manager-user/list-user-update';
+import { UserRole } from '../manager-user/user-role';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ export class ListService {
   private urlHotel = 'http://localhost:4201/api/hotels';
   private lists$: Subject<ListUser[]> = new Subject();
   private hotels$: Subject<ListHotel[]> = new Subject();
+  private roles$: Subject<UserRole[]> = new Subject();
 
   constructor(private httpClient: HttpClient) {}
 
@@ -90,5 +92,18 @@ export class ListService {
     return this.httpClient.delete(`${this.urlHotel}/${id}`, {
       responseType: 'text',
     });
+  }
+
+  private refreshUserRole(id: number) {
+    this.httpClient
+      .get<UserRole[]>(`${this.urlUser}/role-by-id/${id}`)
+      .subscribe((roles) => {
+        this.roles$.next(roles);
+      });
+  }
+
+  getUserRole(id: number): Subject<UserRole[]> {
+    this.refreshUserRole(id);
+    return this.roles$;
   }
 }

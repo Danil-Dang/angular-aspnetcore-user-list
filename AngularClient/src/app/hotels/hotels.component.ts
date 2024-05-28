@@ -43,7 +43,7 @@ export class HotelsComponent implements OnInit {
   generateStars(ratingValue: number): any[] {
     const stars = [];
     for (let i = 0; i < ratingValue; i++) {
-      stars.push({}); // Placeholder for each star element
+      stars.push({});
     }
     return stars;
   }

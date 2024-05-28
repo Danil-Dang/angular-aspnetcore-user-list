@@ -21,6 +21,7 @@ import { ListHotel } from './list-hotel';
 import { ListService } from '../_services/list.service';
 import { DataService } from '../_services/data.service';
 import { StorageService } from '../_services/storage.service';
+import { UserRole } from './user-role';
 
 @Component({
   selector: 'app-manager-user',
@@ -30,7 +31,6 @@ import { StorageService } from '../_services/storage.service';
 export class ManagerUserComponent implements OnInit {
   lists$: Observable<ListUser[]> = new Observable();
   list$: Observable<ListUser> = new Observable();
-  // lists$: Observable<ListUser[]> = new BehaviorSubject<ListUser[]>([]);
   userId?: number;
   listLists: number;
 
@@ -45,7 +45,7 @@ export class ManagerUserComponent implements OnInit {
     private listsService: ListService,
     private storageService: StorageService,
     private _router: Router,
-    private dataService: DataService // private fb: FormBuilder,
+    private dataService: DataService
   ) {
     this.loggedIn = false;
     this.listLists = 0;
@@ -113,35 +113,4 @@ export class ManagerUserComponent implements OnInit {
       this.fetchLists();
     }
   }
-
-  // @Input()
-  // initialState: BehaviorSubject<ListUser> = new BehaviorSubject({});
-  // @Output()
-  // formValuesChanged = new EventEmitter<ListUser>();
-  // @Output()
-  // formSubmitted = new EventEmitter<ListUser>();
-  // listForm: FormGroup = new FormGroup({});
-
-  // get firstName() { return this.listForm.get('firstName')!; }
-  // get lastName() { return this.listForm.get('lastName')!; }
-  // get username() { return this.listForm.get('username')!; }
-  // get email() { return this.listForm.get('email')!; }
-  // get password() { return this.listForm.get('password')!; }
-
-  // this.initialState.subscribe(list => {
-  //   this.listForm = this.fb.group({
-  //     description: [ list.description, [Validators.required] ],
-  //     status: [ list.status, [Validators.required] ]
-  //   });
-  // });
-  // this.listForm.valueChanges.subscribe((val) => { this.formValuesChanged.emit(val); });
-
-  // submitForm() {
-  //   this.formSubmitted.emit(this.listForm.value);
-  //   this.lists$ = this.listsService.getLists();
-  //   this._router.navigate(["/list/users"]);
-  // }
-  // cancel() {
-  //   this._router.navigate(["/list/users"]);
-  // }
 }
