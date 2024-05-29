@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {
   Observable,
+  forkJoin,
   BehaviorSubject,
   combineLatest,
   of,
@@ -36,6 +37,9 @@ export class ManagerUserComponent implements OnInit {
 
   hoteLists$: Observable<ListHotel[]> = new Observable();
   hotelId?: number;
+
+  roles$: Observable<UserRole[]> = new Observable();
+  roles: any;
 
   loggedIn: boolean;
   currentUser: any;
@@ -89,8 +93,29 @@ export class ManagerUserComponent implements OnInit {
   }
 
   deleteList(id: number): void {
-    this.listsService.deleteList(id).subscribe({
-      next: () => this.fetchLists(),
+    this.roles$ = this.listsService.getUserRoles(id);
+    this.roles$.subscribe((roles) => {
+      if (roles) {
+        const deleteRoleObservables = [];
+        for (const role of roles) {
+          deleteRoleObservables.push(this.listsService.deleteRole(role.id));
+        }
+
+        forkJoin(deleteRoleObservables).subscribe({
+          next: () => {
+            console.log('All roles deleted successfully');
+            this.listsService.deleteList(id).subscribe({
+              next: () => this.fetchLists(),
+            });
+          },
+          error: (error) => console.error('Error deleting roles:', error),
+        });
+      } else {
+        console.log('No roles found');
+        this.listsService.deleteList(id).subscribe({
+          next: () => this.fetchLists(),
+        });
+      }
     });
   }
 

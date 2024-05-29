@@ -119,14 +119,77 @@ namespace Users.Repository
 		}
 
 		// public async Task<GetRoleResponse> GetUserRole(int id)
-		public async Task<IEnumerable<GetRoleResponse>> GetUserRole(int id)
+		public async Task<IEnumerable<GetRoleResponse>> GetUserRoles(int id)
 		{
-			var query = "SELECT r.Role FROM UserRoles ur INNER JOIN Roles r ON ur.RoleId = r.Id WHERE ur.UserId = @Id";
+			// var query = "SELECT r.Role FROM UserRoles ur INNER JOIN Roles r ON ur.RoleId = r.Id WHERE ur.UserId = @Id";
+			var query = "SELECT ur.Id, r.Role FROM UserRoles ur INNER JOIN Roles r ON ur.RoleId = r.Id WHERE ur.UserId = @Id";
 
 			using (var connection = _context.CreateConnection())
 			{
 				var user = await connection.QueryAsync<GetRoleResponse>(query, new { id });
 				return user.ToList();
+			}
+		}
+
+		public async Task<Role> GetUserRole(int id)
+		{
+			var query = "SELECT * FROM UserRoles WHERE Id = @Id";
+
+			using (var connection = _context.CreateConnection())
+			{
+				var user = await connection.QuerySingleOrDefaultAsync<Role>(query, new { id });
+				return user;
+			}
+		}
+
+		public async Task<UserRoleForCreationDto> CreateUserRole(UserRoleForCreationDto user)
+		{
+			var query = "INSERT INTO UserRoles (UserId, RoleId, CreatedDate) VALUES (@UserId, @RoleId, @CreatedDate)";
+
+			var parameters = new DynamicParameters();
+			parameters.Add("UserId", user.UserId, DbType.Int32);
+			parameters.Add("RoleId", user.RoleId, DbType.Int32);
+			parameters.Add("CreatedDate", user.CreatedDate, DbType.DateTime2);
+
+			using (var connection = _context.CreateConnection())
+			{
+				// await connection.ExecuteAsync(query, parameters);
+				var id = await connection.QuerySingleAsync<int>(query, parameters);
+
+				var createdRole = new UserRoleForCreationDto
+				{
+					Id = id,
+					UserId = user.UserId,
+					RoleId = user.RoleId,
+					CreatedDate = user.CreatedDate
+				};
+
+				return createdRole;
+			}
+		}
+
+		public async Task UpdateUserRole(int id, UserRoleForUpdateDto user)
+		{
+			var query = "UPDATE UserRoles SET UserId = @UserId, RoleId = @RoleId WHERE Id = @Id";
+
+			var parameters = new DynamicParameters();
+			parameters.Add("Id", id, DbType.Int32);
+			parameters.Add("UserId", user.UserId, DbType.Int32);
+			parameters.Add("RoleId", user.RoleId, DbType.Int32);
+
+			using (var connection = _context.CreateConnection())
+			{
+				await connection.ExecuteAsync(query, parameters);
+			}
+		}
+
+		public async Task DeleteUserRole(int id)
+		{
+			var query = "DELETE FROM UserRoles WHERE Id = @Id";
+
+			using (var connection = _context.CreateConnection())
+			{
+				await connection.ExecuteAsync(query, new { id });
 			}
 		}
 	}

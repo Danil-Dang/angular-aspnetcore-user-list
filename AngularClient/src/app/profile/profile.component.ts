@@ -16,7 +16,7 @@ export class ProfileComponent implements OnInit {
   list$: Observable<ListUser> = new Observable();
   currentUser: any;
   currentUserr: any;
-  currentUserrr: any;
+  roles: { [key: number]: string } = {};
 
   constructor(
     private storageService: StorageService,
@@ -36,5 +36,10 @@ export class ProfileComponent implements OnInit {
     this.list$.subscribe((data) => {
       this.currentUser.email = data.email;
     });
+
+    const storedRoles = localStorage.getItem('user-role');
+    if (storedRoles) {
+      this.roles = JSON.parse(storedRoles);
+    }
   }
 }

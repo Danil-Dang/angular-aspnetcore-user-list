@@ -78,22 +78,6 @@ namespace Users.Repository.Controllers
 			}
 		}
 
-		[HttpGet("role-by-id/{id}", Name = "UserRoleById")]
-		public async Task<IActionResult> GetUserRole(int id)
-		{
-			try
-			{
-				var user = await _userRepo.GetUserRole(id);
-				if (user == null) return NotFound();
-
-				return Ok(user);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, ex.Message);
-			}
-		}
-
 		[HttpPost("register")]
 		public async Task<IActionResult> CreateUser(UserForCreationDto user)
 		{
@@ -166,7 +150,7 @@ namespace Users.Repository.Controllers
 			var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ultraSuperPuperExtraSecretKey@369963"));
 			var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
-			var roles = await _userRepo.GetUserRole(user.Id);
+			var roles = await _userRepo.GetUserRoles(user.Id);
 			var combinedRoles = "";
 			if (roles != null)
 			{
@@ -191,7 +175,7 @@ namespace Users.Repository.Controllers
 				audience: "https://localhost:4201",
 				// claims: new List<Claim>(),
 				claims: claims,
-				expires: DateTime.Now.AddMinutes(5),
+				expires: DateTime.Now.AddMinutes(50),
 				signingCredentials: signinCredentials
 			);
 			var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
@@ -202,6 +186,89 @@ namespace Users.Repository.Controllers
 			{
 				Token = tokenString
 			});
+		}
+
+
+		[HttpGet("role-by-id/{id}")]
+		public async Task<IActionResult> GetUserRoles(int id)
+		{
+			try
+			{
+				var user = await _userRepo.GetUserRoles(id);
+				if (user == null) return NotFound();
+
+				return Ok(user);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet("role/{id}", Name = "UserRoleById")]
+		public async Task<IActionResult> GetUserRole(int id)
+		{
+			try
+			{
+				var user = await _userRepo.GetUserRole(id);
+				if (user == null) return NotFound();
+
+				return Ok(user);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPost("role/register")]
+		public async Task<IActionResult> CreateRole(UserRoleForCreationDto role)
+		{
+			try
+			{
+				var createdRole = await _userRepo.CreateUserRole(role);
+				return CreatedAtRoute("UserRoleById", new { id = createdRole.Id }, createdRole);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPut("role/{id}")]
+		public async Task<IActionResult> UpdateRole(int id, UserRoleForUpdateDto role)
+		{
+			try
+			{
+				var dbHotel = await _userRepo.GetUserRole(id);
+				if (dbHotel == null)
+					return NotFound();
+
+				await _userRepo.UpdateUserRole(id, role);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpDelete("role/{id}", Name = "RoleDelete")]
+		public async Task<IActionResult> DeleteRole(int id)
+		{
+			try
+			{
+				var dbRole = await _userRepo.GetUserRole(id);
+				if (dbRole == null)
+					return NotFound();
+
+				await _userRepo.DeleteUserRole(id);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
 		}
 	}
 }

@@ -22,8 +22,6 @@
                 [(ngModel)]="form.firstName"
               />
             </div>
-            <!-- </div> -->
-            <!-- <div class="form-group pb-3"> -->
             <div class="col-6">
               <label for="username">Last Name</label>
               <input
@@ -82,7 +80,7 @@
             }
           </div>
           @if (!editUser) {
-          <div class="form-group">
+          <div class="form-group pb-3">
             <label for="password">Password</label>
             <input
               type="password"
@@ -105,6 +103,46 @@
             }
           </div>
           } @if (isManager) {
+          <div class="form-group row justify-content-center">
+            <div class="col-6">
+              <label for="role1">Select Role:</label>
+              <select
+                class="form-select"
+                name="role1"
+                [(ngModel)]="form.role1"
+                (change)="resetOtherDropdowns()"
+              >
+                <option></option>
+                <option value="1">Admin</option>
+                <option value="2">Manager</option>
+              </select>
+              <!-- <input
+                  type="text"
+                  class="form-control"
+                  name="role1"
+                  [(ngModel)]="form.role1"
+                /> -->
+            </div>
+            @if (form.role1 == 1) {
+            <div class="col-6">
+              <label for="role2">Select Role 2:</label>
+              <select class="form-select" name="role2" [(ngModel)]="form.role2">
+                <!-- <option value="1">Admin</option> -->
+                <option></option>
+                <option value="2">Manager</option>
+              </select>
+            </div>
+            } @else if (form.role1 == 2) {
+            <div class="col-6">
+              <label for="role2">Select Role 2:</label>
+              <select class="form-select" name="role2" [(ngModel)]="form.role2">
+                <option></option>
+                <option value="1">Admin</option>
+                <!-- <option value="2">Manager</option> -->
+              </select>
+            </div>
+            }
+          </div>
           <div class="form-group mt-3" align="center">
             <button
               type="button"

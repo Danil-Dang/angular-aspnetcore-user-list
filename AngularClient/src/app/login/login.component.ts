@@ -46,13 +46,6 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     if (this.storageService.isLoggedIn()) {
       this.isLoggedIn = true;
-
-      // this.list$ = this.listService.getList(this.userId);
-      // this.list$.subscribe((data) => {
-      //   this.username = data.username!;
-      // });
-      // this.roles = this.storageService.getUser().roles;
-
       this.router.navigate(['/home']);
     }
   }
@@ -65,26 +58,8 @@ export class LoginComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (data) => {
-          // this.list$ = this.listService.getUserByUsername(username);
-          // this.list$.subscribe((data) => {
-          //   this.userId = data.id!;
-          //   this.roles$ = this.listService.getUserRole(this.userId);
-
-          //   this.roles$.subscribe((roles) => {
-          //     if (roles) {
-          //       for (const role of roles) {
-          //         this.roles.push(role.role!);
-          //       }
-          //       localStorage.setItem('userRole2', JSON.stringify(this.roles));
-          //     } else {
-          //       console.log('No roles found');
-          //     }
-          //   });
-          // });
-
           this.storageService.saveUser({
             username: username,
-            // role: this.roles,
           });
 
           this.isLoginFailed = false;
@@ -105,14 +80,16 @@ export class LoginComponent implements OnInit {
     this.list$ = this.listService.getUserByUsername(username);
     this.list$.subscribe((data) => {
       this.userId = data.id!;
-      this.roles$ = this.listService.getUserRole(this.userId);
+      this.roles$ = this.listService.getUserRoles(this.userId);
 
       this.roles$.subscribe((roles) => {
         if (roles) {
+          const roleMap: any = {};
           for (const role of roles) {
-            this.roles.push(role.role!);
+            // this.roles.push(role.role!);
+            roleMap[role.id] = role.role!;
           }
-          localStorage.setItem('user-role', JSON.stringify(this.roles));
+          localStorage.setItem('user-role', JSON.stringify(roleMap));
         } else {
           console.log('No roles found');
         }

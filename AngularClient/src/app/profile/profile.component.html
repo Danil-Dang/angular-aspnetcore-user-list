@@ -16,10 +16,8 @@
     {{ currentUser.email }}
   </p>
   <strong>Roles:</strong>
-  <ul>
-    @for (role of currentUser.roles; track role) {
-    <li>{{ role }}</li>
-    }
+  <ul *ngFor="let role of roles | keyvalue" class="m-1">
+    <li>{{ role.key }} - {{ role.value }}</li>
   </ul>
 </div>
 } @else {

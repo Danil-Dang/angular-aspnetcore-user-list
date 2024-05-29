@@ -4,6 +4,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { StorageService } from './_services/storage.service';
 import { AuthService } from './_services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -11,26 +12,29 @@ import { AuthService } from './_services/auth.service';
   styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit {
-  roles: string[] = [];
+  // roles: string[] = [];
+  roles: { [key: number]: string } = {};
   isLoggedIn = false;
   showAdminBoard = false;
   showModeratorBoard = false;
   username?: string;
-  visible = false;
   reloadOnce = false;
 
+  // visible = false;
   // data: any;
 
   constructor(
     private storageService: StorageService,
     private authService: AuthService,
-    private jwtHelper: JwtHelperService // private http: HttpClient
+    private jwtHelper: JwtHelperService,
+    private router: Router // private http: HttpClient
   ) {}
 
   ngOnInit(): void {
     this.reloadOnce = JSON.parse(localStorage.getItem('reloadOnce')!);
     if (!this.reloadOnce && !this.isUserAuthenticated()) {
       this.logout();
+      this.router.navigate(['/home']);
     } else {
       localStorage.removeItem('reloadOnce');
     }
@@ -42,8 +46,9 @@ export class AppComponent implements OnInit {
       this.username = user.username;
       this.roles = JSON.parse(localStorage.getItem('user-role')!);
 
-      this.showAdminBoard = this.roles.includes('Admin');
-      this.showModeratorBoard = this.roles.includes('Manager');
+      // this.showAdminBoard = this.roles.includes('Admin');
+      this.showAdminBoard = Object.values(this.roles).includes('Admin');
+      this.showModeratorBoard = Object.values(this.roles).includes('Manager');
     }
   }
 

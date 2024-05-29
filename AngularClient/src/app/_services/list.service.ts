@@ -102,8 +102,31 @@ export class ListService {
       });
   }
 
-  getUserRole(id: number): Subject<UserRole[]> {
+  getUserRoles(id: number): Subject<UserRole[]> {
     this.refreshUserRole(id);
     return this.roles$;
+  }
+
+  // getUserRole(id: number): Observable<UserRole> {
+  //   return this.httpClient.get<UserRole>(`${this.urlUser}/role/${id}`);
+  // }
+
+  createRole(list: object) {
+    return this.httpClient.post(`${this.urlUser}/role/register`, list, {
+      responseType: 'text',
+    });
+  }
+
+  // updateList(id: number, list: UpdateUser): Observable<string> {
+  updateRole(id: number, list: object) {
+    return this.httpClient.put(`${this.urlUser}/role/${id}`, list, {
+      responseType: 'text',
+    });
+  }
+
+  deleteRole(id: number): Observable<string> {
+    return this.httpClient.delete(`${this.urlUser}/role/${id}`, {
+      responseType: 'text',
+    });
   }
 }

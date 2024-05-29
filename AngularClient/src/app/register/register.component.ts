@@ -22,6 +22,8 @@ export class RegisterComponent implements OnInit {
     username: null,
     email: null,
     password: null,
+    role1: '',
+    role2: '',
   };
 
   isLoggedIn = false;
@@ -78,12 +80,23 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(): void {
     const { firstName, lastName, username, email, password } = this.form;
+    const { role1 } = this.form.role1;
+    // if (this.form.role1 != null) {
+    //   this.role1 = this.form.role1;
+    // }
+    const { role2 } = this.form.role2;
 
     this.authService
       .register({ firstName, lastName, username, email, password })
       .subscribe({
         next: (data) => {
-          console.log(data);
+          // console.log(data);
+          if (this.form.role1 != null) {
+            this.listService.createRole({ role1 });
+            if (this.form.role2 != null) {
+              this.listService.createRole({ role2 });
+            }
+          }
           this.isSuccessful = true;
           this.isSignUpFailed = false;
           if (this.isManager) this._router.navigate(['/list/users']);
@@ -117,5 +130,9 @@ export class RegisterComponent implements OnInit {
           console.error(error);
         },
       });
+  }
+
+  resetOtherDropdowns() {
+    this.form.role2 = '';
   }
 }
