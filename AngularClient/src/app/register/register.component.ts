@@ -80,23 +80,38 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(): void {
     const { firstName, lastName, username, email, password } = this.form;
-    const { role1 } = this.form.role1;
-    // if (this.form.role1 != null) {
-    //   this.role1 = this.form.role1;
-    // }
-    const { role2 } = this.form.role2;
 
     this.authService
       .register({ firstName, lastName, username, email, password })
       .subscribe({
-        next: (data) => {
+        next: (data: any) => {
           // console.log(data);
-          if (this.form.role1 != null) {
-            this.listService.createRole({ role1 });
-            if (this.form.role2 != null) {
-              this.listService.createRole({ role2 });
-            }
+
+          if (this.form.role1) {
+            console.log('role1 exists');
+            let roleObj = {
+              roleId: +this.form.role1,
+              userId: data.id,
+            };
+
+            this.listService.createRole(roleObj).subscribe({
+              next: () => console.log('Role 1 created successfully'),
+              error: (err) => console.error('Error creating Role 1:', err),
+            });
           }
+          if (this.form.role2) {
+            console.log('role2 exists');
+            let roleObj = {
+              roleId: +this.form.role2,
+              userId: data.id,
+            };
+
+            this.listService.createRole(roleObj).subscribe({
+              next: () => console.log('Role 2 created successfully'),
+              error: (err) => console.error('Error creating Role 1:', err),
+            });
+          }
+
           this.isSuccessful = true;
           this.isSignUpFailed = false;
           if (this.isManager) this._router.navigate(['/list/users']);

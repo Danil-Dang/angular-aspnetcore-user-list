@@ -18,6 +18,7 @@ namespace Users.Contracts
 		public Task<IEnumerable<GetRoleResponse>> GetUserRoles(int id);
 		public Task<Role> GetUserRole(int id);
 		public Task<UserRoleForCreationDto> CreateUserRole(UserRoleForCreationDto user);
+		// public Task CreateUserRole(UserRoleForCreationDto user);
 		public Task UpdateUserRole(int id, UserRoleForUpdateDto user);
 		public Task DeleteUserRole(int id);
 

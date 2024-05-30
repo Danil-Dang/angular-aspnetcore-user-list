@@ -143,8 +143,10 @@ namespace Users.Repository
 		}
 
 		public async Task<UserRoleForCreationDto> CreateUserRole(UserRoleForCreationDto user)
+		// public async Task CreateUserRole(UserRoleForCreationDto user)
 		{
-			var query = "INSERT INTO UserRoles (UserId, RoleId, CreatedDate) VALUES (@UserId, @RoleId, @CreatedDate)";
+			var query = "INSERT INTO UserRoles (UserId, RoleId, CreatedDate) VALUES (@UserId, @RoleId, @CreatedDate)" +
+						"SELECT CAST(SCOPE_IDENTITY() as int)";
 
 			var parameters = new DynamicParameters();
 			parameters.Add("UserId", user.UserId, DbType.Int32);
