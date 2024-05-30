@@ -94,7 +94,6 @@ export class ManagerUserComponent implements OnInit {
 
   deleteList(id: number): void {
     this.roles$ = this.listsService.getUserRoles(id);
-    console.log(this.roles$);
     this.roles$.subscribe((roles) => {
       if (roles?.length > 0) {
         const deleteRoleObservables = [];

@@ -172,11 +172,12 @@ namespace Users.Repository
 
 		public async Task UpdateUserRole(int id, UserRoleForUpdateDto user)
 		{
-			var query = "UPDATE UserRoles SET UserId = @UserId, RoleId = @RoleId WHERE Id = @Id";
+			// var query = "UPDATE UserRoles SET UserId = @UserId, RoleId = @RoleId WHERE Id = @Id";
+			var query = "UPDATE UserRoles SET RoleId = @RoleId WHERE Id = @Id";
 
 			var parameters = new DynamicParameters();
 			parameters.Add("Id", id, DbType.Int32);
-			parameters.Add("UserId", user.UserId, DbType.Int32);
+			// parameters.Add("UserId", user.UserId, DbType.Int32);
 			parameters.Add("RoleId", user.RoleId, DbType.Int32);
 
 			using (var connection = _context.CreateConnection())

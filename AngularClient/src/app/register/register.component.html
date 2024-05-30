@@ -3,7 +3,6 @@
     <div class="col-12 formRegister">
       <div class="card card-container border rounded p-3 my-3">
         @if (!isSuccessful) {
-        <!-- (ngSubmit)="f.form.valid && onSubmit()" -->
         <form name="form" (ngSubmit)="(f.form.valid)" #f="ngForm" novalidate>
           @if (isManager) {
           <h1>Add User</h1>
@@ -102,7 +101,7 @@
             </div>
             }
           </div>
-          } @if (isManager) {
+          } @if (isManager || editUser) {
           <div class="form-group row justify-content-center">
             <div class="col-6">
               <label for="role1">Select Role:</label>
@@ -116,18 +115,11 @@
                 <option value="1">Admin</option>
                 <option value="2">Manager</option>
               </select>
-              <!-- <input
-                  type="text"
-                  class="form-control"
-                  name="role1"
-                  [(ngModel)]="form.role1"
-                /> -->
             </div>
             @if (form.role1 == 1) {
             <div class="col-6">
               <label for="role2">Select Role 2:</label>
               <select class="form-select" name="role2" [(ngModel)]="form.role2">
-                <!-- <option value="1">Admin</option> -->
                 <option></option>
                 <option value="2">Manager</option>
               </select>
@@ -138,11 +130,11 @@
               <select class="form-select" name="role2" [(ngModel)]="form.role2">
                 <option></option>
                 <option value="1">Admin</option>
-                <!-- <option value="2">Manager</option> -->
               </select>
             </div>
             }
           </div>
+          } @if (isManager) {
           <div class="form-group mt-3" align="center">
             <button
               type="button"
