@@ -11,16 +11,9 @@ import {
   tap,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RouterModule, Router } from '@angular/router';
-import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { ListUser } from './list-user';
-import { ListHotel } from './list-hotel';
 import { ListService } from '../_services/list.service';
 import { DataService } from '../_services/data.service';
 import { StorageService } from '../_services/storage.service';
@@ -36,9 +29,6 @@ export class ManagerUserComponent implements OnInit {
   list$: Observable<ListUser> = new Observable();
   userId?: number;
   listLists: number;
-
-  hoteLists$: Observable<ListHotel[]> = new Observable();
-  hotelId?: number;
 
   roles$: Observable<UserRole[]> = new Observable();
   // roles: string[] = [];
@@ -98,7 +88,6 @@ export class ManagerUserComponent implements OnInit {
 
   private fetchLists(): void {
     this.lists$ = this.listsService.getLists();
-    this.hoteLists$ = this.listsService.getHotelLists();
   }
 
   onAddUser() {
@@ -107,20 +96,10 @@ export class ManagerUserComponent implements OnInit {
     this.dataService.changeVariableNumber(0);
   }
 
-  addHotel() {
-    this._router.navigate(['/list/hotels/edit']);
-    this.dataService.changeVariableNumber(0.5);
-  }
-
   editList(id: number): void {
     this._router.navigate(['/register']);
     this.dataService.changeVariableNumber(id);
     this.dataService.changeVariableBoolean(false);
-  }
-
-  editHotel(id: number) {
-    this._router.navigate(['/list/hotels/edit']);
-    this.dataService.changeVariableNumber(id);
   }
 
   deleteList(id: number): void {
@@ -147,12 +126,6 @@ export class ManagerUserComponent implements OnInit {
           next: () => this.fetchLists(),
         });
       }
-    });
-  }
-
-  deleteHotel(id: number) {
-    this.listsService.deleteHotelList(id).subscribe({
-      next: () => this.fetchLists(),
     });
   }
 

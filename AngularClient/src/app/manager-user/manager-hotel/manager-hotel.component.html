@@ -1,0 +1,68 @@
+@if (isLoggedIn) {
+<div>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div class="table-responsive border rounded p-3 my-3">
+          <h2 class="text-center m-5">Hotel List</h2>
+
+          <table class="table table-bordered">
+            <thead>
+              <tr class="table-primary">
+                <th>#</th>
+                <th class="d-flex flex-nowrap">
+                  <span>Id</span>
+                </th>
+                <th>HotelName</th>
+                <th>HotelStar</th>
+                <th>RoomTotal</th>
+                <th>Location</th>
+                <th>IsActive</th>
+                <th>CreatedDate</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody class="table-group-divider">
+              <tr *ngFor="let hoteList of hoteLists$ | async; let i = index">
+                <td class="table-primary">{{ i + 1 }}</td>
+                <td>{{ hoteList.id }}</td>
+                <td>{{ hoteList.hotelName }}</td>
+                <td>{{ hoteList.hotelStar }}</td>
+                <td>{{ hoteList.roomTotal }}</td>
+                <td>{{ hoteList.location }}</td>
+                <td>{{ hoteList.isActive }}</td>
+                <td>{{ hoteList.createdDate }}</td>
+                <td align="center">
+                  <div class="d-flex flex-nowrap">
+                    <button
+                      class="btn btn-primary me-1"
+                      (click)="editHotel(hoteList.id)"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      class="btn btn-danger mx-1"
+                      (click)="deleteHotel(hoteList.id)"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="" align="center">
+            <button class="btn btn-primary mt-3 center" (click)="addHotel()">
+              Add a New Hotel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+} @else {
+<p class="mt-3">Please login.</p>
+}

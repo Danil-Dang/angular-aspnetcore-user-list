@@ -98,7 +98,7 @@ export class EditComponent implements OnInit {
       .createHotelList({ hotelName, hotelStar, roomTotal, location })
       .subscribe({
         next: () => {
-          this._router.navigate(['/list/users']);
+          this._router.navigate(['/list/hotels']);
         },
         error: (err) => {
           this.errorMessage = err.error.message;
@@ -108,7 +108,7 @@ export class EditComponent implements OnInit {
 
   onCancel(): void {
     this.hotelId = 0;
-    this._router.navigate(['/list/users']);
+    this._router.navigate(['/list/hotels']);
   }
 
   onEditList() {
@@ -123,7 +123,7 @@ export class EditComponent implements OnInit {
       })
       .subscribe({
         next: () => {
-          this._router.navigate(['/list/users']);
+          this._router.navigate(['/list/hotels']);
         },
         error: (error) => {
           alert('Failed to update user');

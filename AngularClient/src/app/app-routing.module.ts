@@ -8,6 +8,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ManagerUserComponent } from './manager-user/manager-user.component';
+import { ManagerHotelComponent } from './manager-user/manager-hotel/manager-hotel.component';
 import { HotelsComponent } from './hotels/hotels.component';
 import { EditComponent } from './manager-user/edit/edit.component';
 import { RoomComponent } from './hotels/room/room.component';
@@ -31,6 +32,11 @@ const routes: Routes = [
   {
     path: 'list/users',
     component: ManagerUserComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'list/hotels',
+    component: ManagerHotelComponent,
     canActivate: [AuthGuard],
   },
   {

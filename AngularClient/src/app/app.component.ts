@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { Router } from '@angular/router';
 // import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { StorageService } from './_services/storage.service';
 import { AuthService } from './_services/auth.service';
-import { Router } from '@angular/router';
-
+import { DataService } from './_services/data.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
   showModeratorBoard = false;
   username?: string;
   reloadOnce = false;
+  isShowBoard = false;
 
   // visible = false;
   // data: any;
@@ -26,6 +27,7 @@ export class AppComponent implements OnInit {
   constructor(
     private storageService: StorageService,
     private authService: AuthService,
+    private dataService: DataService,
     private jwtHelper: JwtHelperService,
     private router: Router // private http: HttpClient
   ) {}
@@ -66,6 +68,10 @@ export class AppComponent implements OnInit {
     }
     return false;
   };
+
+  showBoard() {
+    this.isShowBoard = !this.isShowBoard;
+  }
 
   // getToken() {
   //   return localStorage.getItem('jwt');

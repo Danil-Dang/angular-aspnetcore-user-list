@@ -5,6 +5,10 @@
 
 /* ? Nav ------------------------------------------ */
 /* * General */
+nav {
+    /* position: fixed; */
+    z-index: 100;
+}
 .nav-link {
     white-space: nowrap;
 }
@@ -31,3 +35,26 @@ nav .d-flex a:hover {
     top: 40px;
     background-color: rgb(79, 79, 79);
 }
+
+.board {
+    position: fixed;
+    top: 50px;
+    left: -20vw;
+    width: 20vw;
+    height: 100vh;
+    background-color: #f8e3ce;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: left 0.5s ease-in-out;
+    z-index: 10;
+  }
+  
+  .board.show {
+    left: 0;
+  }
+
+  .board a {
+    transition: transform 0.3s ease;
+  }
+  .board a:hover {
+    transform: translateX(10px);
+  }
