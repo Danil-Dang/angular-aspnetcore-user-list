@@ -18,6 +18,7 @@ import { BoardUserComponent } from './board-user/board-user.component';
 import { ManagerUserComponent } from './manager-user/manager-user.component';
 import { EditComponent } from './manager-user/edit/edit.component';
 import { HotelsComponent } from './hotels/hotels.component';
+import { RoomComponent } from './hotels/room/room.component';
 // import { StorageService } from './_services/storage.service';
 
 export function tokenGetter() {
@@ -37,6 +38,7 @@ export function tokenGetter() {
     ManagerUserComponent,
     EditComponent,
     HotelsComponent,
+    RoomComponent,
   ],
   imports: [
     BrowserModule,

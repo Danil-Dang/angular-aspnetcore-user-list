@@ -81,6 +81,7 @@ export class LoginComponent implements OnInit {
     this.list$.subscribe((data) => {
       this.userId = data.id!;
       this.roles$ = this.listService.getUserRoles(this.userId);
+      console.log(this.roles$);
 
       this.roles$.subscribe((roles) => {
         if (roles) {

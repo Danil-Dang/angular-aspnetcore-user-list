@@ -10,6 +10,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { ManagerUserComponent } from './manager-user/manager-user.component';
 import { HotelsComponent } from './hotels/hotels.component';
 import { EditComponent } from './manager-user/edit/edit.component';
+import { RoomComponent } from './hotels/room/room.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
 
   { path: 'hotels', component: HotelsComponent },
+  { path: 'hotels/rooms', component: RoomComponent },
   // { path: 'hotels/edit', component: EditComponent },
 
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },

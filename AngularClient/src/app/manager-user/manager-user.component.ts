@@ -2,11 +2,13 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {
   Observable,
   forkJoin,
+  mergeMap,
   BehaviorSubject,
   combineLatest,
   of,
   startWith,
   switchMap,
+  tap,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RouterModule, Router } from '@angular/router';
@@ -39,7 +41,10 @@ export class ManagerUserComponent implements OnInit {
   hotelId?: number;
 
   roles$: Observable<UserRole[]> = new Observable();
+  // roles: string[] = [];
   roles: any;
+  role1 = '';
+  role2 = '';
 
   loggedIn: boolean;
   currentUser: any;
@@ -63,6 +68,32 @@ export class ManagerUserComponent implements OnInit {
 
     this.fetchLists();
     this.currentUser = this.storageService.getUser();
+
+    // this.lists$.subscribe((lists) => {
+    //   lists.forEach((list) => {
+    //     this.roles$ = this.listsService.getUserRoles(list.id);
+    //     this.roles$.subscribe((roles) => {
+    //       console.log(roles);
+    //     });
+    //   });
+    // });
+
+    // this.lists$.subscribe((lists) => {
+    //   lists.forEach(async (list) => {
+    //     try {
+    //       const roles =
+    //         (await this.listsService.getUserRoles(list.id).toPromise()) || [];
+    //       console.log('Roles emitted 1:', roles);
+    //       this.roles$ = of(roles);
+    //       console.log('Roles emitted 2:', this.roles$);
+    //       this.roles$.subscribe((roles) =>
+    //         console.log('Roles emitted:', roles)
+    //       );
+    //     } catch (error) {
+    //       console.error(`Error fetching roles for list ${list.id}:`, error);
+    //     }
+    //   });
+    // });
   }
 
   private fetchLists(): void {

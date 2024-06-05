@@ -100,5 +100,85 @@ namespace Users.Repository.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("rooms-by-hotel/{id}")]
+        public async Task<IActionResult> GetRooms(int id)
+        {
+            try
+            {
+                var rooms = await _hotelRepo.GetRooms(id);
+                return Ok(rooms);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("rooms/{id}", Name = "RoomById")]
+        public async Task<IActionResult> GetRoom(int id)
+        {
+            try
+            {
+                var room = await _hotelRepo.GetRoom(id);
+                if (room == null) return NotFound();
+
+                return Ok(room);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("rooms/register")]
+        public async Task<IActionResult> CreateRoom(RoomForCreationDto room)
+        {
+            try
+            {
+                var createdRoom = await _hotelRepo.CreateRoom(room);
+                return CreatedAtRoute("RoomById", new { id = createdRoom.Id }, createdRoom);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("rooms/{id}")]
+        public async Task<IActionResult> UpdateRoom(int id, RoomForUpdateDto room)
+        {
+            try
+            {
+                var dbRoom = await _hotelRepo.GetRoom(id);
+                if (dbRoom == null)
+                    return NotFound();
+
+                await _hotelRepo.UpdateRoom(id, room);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("rooms/{id}")]
+        public async Task<IActionResult> DeleteRoom(int id)
+        {
+            try
+            {
+                var dbRoom = await _hotelRepo.GetRoom(id);
+                if (dbRoom == null)
+                    return NotFound();
+
+                await _hotelRepo.DeleteRoom(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

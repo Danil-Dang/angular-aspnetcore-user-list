@@ -31,6 +31,9 @@ export class HotelsComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
+    // if (!this.isLoggedIn) {
+    //   this._router.navigate(['/home']);
+    // }
 
     this.currentUser = this.storageService.getUser();
     this.fetchLists();
@@ -46,5 +49,10 @@ export class HotelsComponent implements OnInit {
       stars.push({});
     }
     return stars;
+  }
+
+  showRooms(id: number) {
+    // this._router.navigate(['/hotels/rooms']);
+    this.dataService.changeVariableNumber(id);
   }
 }

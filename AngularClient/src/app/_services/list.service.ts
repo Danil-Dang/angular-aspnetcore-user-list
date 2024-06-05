@@ -6,6 +6,7 @@ import { ListUser } from '../manager-user/list-user';
 import { ListHotel } from '../manager-user/list-hotel';
 import { UpdateUser } from '../manager-user/list-user-update';
 import { UserRole } from '../manager-user/user-role';
+import { ListRoom } from '../manager-user/list-room';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +15,9 @@ export class ListService {
   private urlUser = 'http://localhost:4201/api/users';
   private urlHotel = 'http://localhost:4201/api/hotels';
   private lists$: Subject<ListUser[]> = new Subject();
-  private hotels$: Subject<ListHotel[]> = new Subject();
   private roles$: Subject<UserRole[]> = new Subject();
+  private hotels$: Subject<ListHotel[]> = new Subject();
+  private rooms$: Subject<ListRoom[]> = new Subject();
 
   constructor(private httpClient: HttpClient) {}
 
@@ -59,6 +61,42 @@ export class ListService {
     });
   }
 
+  private refreshUserRole(id: number) {
+    this.httpClient
+      .get<UserRole[]>(`${this.urlUser}/role-by-id/${id}`)
+      .subscribe((roles) => {
+        this.roles$.next(roles);
+      });
+  }
+
+  getUserRoles(id: number): Subject<UserRole[]> {
+    this.refreshUserRole(id);
+    return this.roles$;
+  }
+
+  // getUserRole(id: number): Observable<UserRole> {
+  //   return this.httpClient.get<UserRole>(`${this.urlUser}/role/${id}`);
+  // }
+
+  createRole(list: object) {
+    return this.httpClient.post(`${this.urlUser}/role/register`, list, {
+      responseType: 'text',
+    });
+  }
+
+  // updateList(id: number, list: UpdateUser): Observable<string> {
+  updateRole(id: number, list: object) {
+    return this.httpClient.put(`${this.urlUser}/role/${id}`, list, {
+      responseType: 'text',
+    });
+  }
+
+  deleteRole(id: number): Observable<string> {
+    return this.httpClient.delete(`${this.urlUser}/role/${id}`, {
+      responseType: 'text',
+    });
+  }
+
   private refreshHotelLists() {
     this.httpClient.get<ListHotel[]>(`${this.urlHotel}`).subscribe((hotels) => {
       this.hotels$.next(hotels);
@@ -94,38 +132,39 @@ export class ListService {
     });
   }
 
-  private refreshUserRole(id: number) {
+  private refreshRoomLists(id: number) {
     this.httpClient
-      .get<UserRole[]>(`${this.urlUser}/role-by-id/${id}`)
-      .subscribe((roles) => {
-        this.roles$.next(roles);
+      .get<ListRoom[]>(`${this.urlHotel}/rooms-by-hotel/${id}`)
+      .subscribe((rooms) => {
+        this.rooms$.next(rooms);
       });
   }
 
-  getUserRoles(id: number): Subject<UserRole[]> {
-    this.refreshUserRole(id);
-    return this.roles$;
+  getRooms(id: number): Subject<ListRoom[]> {
+    this.refreshRoomLists(id);
+    return this.rooms$;
   }
 
-  // getUserRole(id: number): Observable<UserRole> {
-  //   return this.httpClient.get<UserRole>(`${this.urlUser}/role/${id}`);
-  // }
+  getRoom(id: number): Observable<ListRoom> {
+    return this.httpClient.get<ListRoom>(`${this.urlHotel}/rooms/${id}`);
+  }
 
-  createRole(list: object) {
-    return this.httpClient.post(`${this.urlUser}/role/register`, list, {
+  // createHotelList(list: ListHotel): Observable<string> {
+  createRoom(list: object) {
+    return this.httpClient.post(`${this.urlHotel}/rooms/register`, list, {
       responseType: 'text',
     });
   }
 
   // updateList(id: number, list: UpdateUser): Observable<string> {
-  updateRole(id: number, list: object) {
-    return this.httpClient.put(`${this.urlUser}/role/${id}`, list, {
+  updateRoom(id: number, list: object) {
+    return this.httpClient.put(`${this.urlHotel}/rooms/${id}`, list, {
       responseType: 'text',
     });
   }
 
-  deleteRole(id: number): Observable<string> {
-    return this.httpClient.delete(`${this.urlUser}/role/${id}`, {
+  deleteRoom(id: number): Observable<string> {
+    return this.httpClient.delete(`${this.urlHotel}/rooms/${id}`, {
       responseType: 'text',
     });
   }

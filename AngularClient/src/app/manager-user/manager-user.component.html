@@ -26,6 +26,7 @@
                 <th>FirstName</th>
                 <th>LastName</th>
                 <th>Username</th>
+                <!-- <th>Roles</th> -->
                 <th>Email</th>
                 <th>IsActive</th>
                 <th>CreatedDate</th>
@@ -36,12 +37,16 @@
             <tbody class="table-group-divider">
               <!-- <tr *ngFor="let list of lists$ | async; let i = index"> -->
               @if (listLists == 0) {
+              <div>{{ roles }}</div>
               <tr *ngFor="let list of lists$ | async; let i = index">
                 <td class="table-primary">{{ i + 1 }}</td>
                 <td>{{ list.id }}</td>
                 <td>{{ list.firstName }}</td>
                 <td>{{ list.lastName }}</td>
                 <td>{{ list.username }}</td>
+                <!-- <td>{{ fetchRoles(list.id) }}</td> -->
+                <!-- <td>{{ roles[list.id] | async }}</td> -->
+                <!-- <td>{{ roles[list.id] }}</td> -->
                 <td>{{ list.email }}</td>
                 <td>{{ list.isActive }}</td>
                 <td>{{ list.createdDate }}</td>

@@ -1,0 +1,157 @@
+<div>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        @if (roomForm) {
+        <form name="form" (ngSubmit)="(f.form.valid)" #f="ngForm" novalidate>
+          <!-- @if (isManager) {
+          <h1>Add User</h1>
+          } @else if (editUser) {
+          <h1>Edit User</h1>
+          } @else {
+          <h1>Sign Up</h1>
+          } -->
+          <div class="form-group row pb-3">
+            <div class="col-6">
+              <label for="roomType">Room Type</label>
+              <input
+                type="text"
+                class="form-control"
+                name="roomType"
+                [(ngModel)]="form.roomType"
+                required
+                #roomType="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted && roomType.errors }"
+              />
+              @if (roomType.errors && f.submitted) {
+              <div class="invalid-feedback">
+                @if (roomType.errors['required']) {
+                <div>Room Type is required</div>
+                }
+              </div>
+              }
+            </div>
+            <div class="col-6">
+              <label for="price">Price</label>
+              <input
+                type="text"
+                class="form-control"
+                name="price"
+                [(ngModel)]="form.price"
+                required
+                #price="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted && price.errors }"
+              />
+              @if (price.errors && f.submitted) {
+              <div class="invalid-feedback">
+                @if (price.errors['required']) {
+                <div>Price is required</div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+          @if (editUser) {
+          <div class="form-group mt-3" align="center">
+            <button
+              type="button"
+              (click)="onCancel()"
+              class="btn btn-danger btn-block me-3"
+            >
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-block" (click)="onEditRoom()">
+              Edit
+            </button>
+          </div>
+          } @else {
+          <div class="form-group mt-3" align="center">
+            <button
+              type="button"
+              (click)="onCancel()"
+              class="btn btn-danger btn-block me-3"
+            >
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-block" (click)="onSubmit()">
+              Add
+            </button>
+          </div>
+          }
+        </form>
+        } @else {
+        <div class="border rounded p-3 my-3">
+          <div *ngIf="hoteList$ | async as hotels; else loading">
+            <!-- <p>Hotel ID: {{ hotels.id }}</p> -->
+            <p class="mb-0">Hotel name: {{ hotels.hotelName }}</p>
+            <!-- <p>Hotel star:</p> -->
+            <div class="star-rating mb-3">
+              <img
+                class="star empty"
+                *ngFor="let star of generateStars(hotels.hotelStar!)"
+                src="../../../assets/rooms/star.png"
+              />
+            </div>
+            <p>Room total: {{ hotels.roomTotal }}</p>
+            <p>Location: {{ hotels.location }}</p>
+          </div>
+
+          <ng-template #loading>
+            <p>Loading hotel data...</p>
+          </ng-template>
+        </div>
+        <div class="border rounded p-3 my-3">
+          <!-- <div *ngIf="roomLists$ | async as hotels; else loading">
+            <p>Hotel ID: {{ hotels.id }}</p>
+            <p>Hotel name: {{ hotels.hotelName }}</p>
+            <p>Hotel star: {{ hotels.hotelStar }}</p>
+            <p>Room total: {{ hotels.roomTotal }}</p>
+            <p>Location: {{ hotels.location }}</p>
+          </div> -->
+
+          <div *ngIf="roomLists$ | async as rooms; else loading">
+            <div *ngFor="let room of rooms" class="row mb-3">
+              <div class="col-6 align-items-center roomie">
+                <p class="m-0">Room type: {{ room.roomType }}</p>
+              </div>
+              <div class="col-6 row">
+                <p class="col-6 roomie">Price: {{ room.price }}</p>
+                @if (isModerator) {
+                <div class="col-6" align="center">
+                  <div class="d-flex flex-nowrap">
+                    <button
+                      class="btn btn-primary me-1"
+                      (click)="editRoom(room.id)"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      class="btn btn-danger mx-1"
+                      (click)="deleteRoom(room.id)"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                }
+              </div>
+              <!-- <p>Room ID: {{ room.id }}</p> -->
+              <!-- <p>Hotel ID: {{ room.hotelId }}</p> -->
+              <!-- <p>Is Active: {{ room.isActive }}</p> -->
+              <!-- <p>Created Date: {{ room.createdDate }}</p> -->
+            </div>
+          </div>
+
+          <ng-template #loading>
+            <p>Loading hotel data...</p>
+          </ng-template>
+        </div>
+        @if (isModerator) {
+        <div *ngIf="hoteList$ | async" align="center">
+          <button class="btn btn-primary" (click)="addRoom()">Add Room</button>
+        </div>
+        } }
+      </div>
+    </div>
+  </div>
+</div>

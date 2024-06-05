@@ -11,5 +11,11 @@ namespace Users.Contracts
         public Task<Hotel> CreateHotel(HotelForCreationDto hotel);
         public Task UpdateHotel(int id, HotelForUpdateDto hotel);
         public Task DeleteHotel(int id);
+
+        public Task<IEnumerable<Room>> GetRooms(int id);
+        public Task<Room> GetRoom(int id);
+        public Task<Room> CreateRoom(RoomForCreationDto hotel);
+        public Task UpdateRoom(int id, RoomForUpdateDto hotel);
+        public Task DeleteRoom(int id);
     }
 }

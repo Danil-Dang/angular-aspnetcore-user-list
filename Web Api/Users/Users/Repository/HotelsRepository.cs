@@ -96,5 +96,84 @@ namespace Users.Repository
                 await connection.ExecuteAsync(query, new { id });
             }
         }
+
+        public async Task<IEnumerable<Room>> GetRooms(int id)
+        {
+            // var query = "SELECT * FROM Rooms";
+            var query = "SELECT * FROM Rooms WHERE HotelId = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var rooms = await connection.QueryAsync<Room>(query, new { id });
+                return rooms.ToList();
+            }
+        }
+
+        public async Task<Room> GetRoom(int id)
+        {
+            var query = "SELECT * FROM Rooms WHERE Id = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var room = await connection.QuerySingleOrDefaultAsync<Room>(query, new { id });
+                return room;
+            }
+        }
+
+        public async Task<Room> CreateRoom(RoomForCreationDto room)
+        {
+            var query = "INSERT INTO Rooms (HotelId, RoomType, Price, IsActive, CreatedDate) VALUES (@HotelId, @RoomType, @Price, @IsActive, @CreatedDate)" +
+                "SELECT CAST(SCOPE_IDENTITY() as int)";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("HotelId", room.HotelId, DbType.Int32);
+            parameters.Add("RoomType", room.RoomType, DbType.String);
+            parameters.Add("Price", room.Price, DbType.Decimal);
+            parameters.Add("IsActive", room.IsActive, DbType.Boolean);
+            parameters.Add("CreatedDate", room.CreatedDate, DbType.DateTime2);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var id = await connection.QuerySingleAsync<int>(query, parameters);
+
+                var createdRoom = new Room
+                {
+                    Id = id,
+                    HotelId = room.HotelId,
+                    RoomType = room.RoomType,
+                    Price = room.Price,
+                    IsActive = room.IsActive,
+                    CreatedDate = room.CreatedDate
+                };
+
+                return createdRoom;
+            }
+        }
+
+        public async Task UpdateRoom(int id, RoomForUpdateDto room)
+        {
+            var query = "UPDATE Rooms SET RoomType = @RoomType, Price = @Price WHERE Id = @Id";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", id, DbType.Int32);
+            parameters.Add("HotelId", room.HotelId, DbType.Int32);
+            parameters.Add("RoomType", room.RoomType, DbType.String);
+            parameters.Add("Price", room.Price, DbType.Decimal);
+
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, parameters);
+            }
+        }
+
+        public async Task DeleteRoom(int id)
+        {
+            var query = "DELETE FROM Rooms WHERE Id = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, new { id });
+            }
+        }
     }
 }
