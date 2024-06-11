@@ -82,7 +82,7 @@
         } @else {
         <div class="border rounded p-3 my-3">
           <div *ngIf="hoteList$ | async as hotels; else loading">
-            <!-- <p>Hotel ID: {{ hotels.id }}</p> -->
+            <p>Hotel ID: {{ hotels.id }}</p>
             <p class="mb-0">Hotel name: {{ hotels.hotelName }}</p>
             <!-- <p>Hotel star:</p> -->
             <div class="star-rating mb-3">

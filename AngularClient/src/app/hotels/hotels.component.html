@@ -24,6 +24,8 @@
             </div>
             <div class="loc-flex py-1">Rating</div>
             <div class="loc-flex py-1">Price</div>
+            <!-- <div class="loc-flex py-1">{{ cheapestRooms }}</div> -->
+            <!-- <div class="loc-flex py-1">{{ cheapestRooms$ }}</div> -->
           </div>
         </div>
 
@@ -79,6 +81,24 @@
                         <div class="row rounded hotel-price p-2">
                           <div class="col-md-6 col-sm-12">
                             <p class="m-0" align="left">From 100$</p>
+                            <!-- <p
+                              *ngIf="cheapestRooms$ | async as hotels"
+                              class="m-0"
+                              align="left"
+                            >
+                              From {{ hotels.price }}$
+                            </p> -->
+                            <!-- <div
+                              *ngFor="
+                                let cheapestRoom of cheapestRooms$ | async
+                              "
+                            >
+                              <h2>Hotel {{ cheapestRoom.hotelId }}:</h2>
+                              <p>
+                                Cheapest Price:
+                                {{ cheapestRoom.price | currency }}
+                              </p>
+                            </div> -->
                           </div>
                           <div
                             class="col-md-6 col-sm-12 hotel-price-button p-0"
