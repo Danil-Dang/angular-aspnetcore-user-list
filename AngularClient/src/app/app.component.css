@@ -39,17 +39,21 @@ nav .d-flex a:hover {
 .board {
     position: fixed;
     top: 50px;
-    left: -20vw;
+    left: -30vw;
     width: 20vw;
     height: 100vh;
     background-color: #f8e3ce;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: left 0.5s ease-in-out;
+    opacity: 0;
+    transition: left 0.5s ease-in-out, opacity 0.5s ease-in-out 0.5s;
+    /* transform: translateX(-100%); */
     z-index: 10;
   }
   
   .board.show {
     left: 0;
+    /* transforam: translateX(0);  */
+    opacity: 1;
   }
 
   .board a {

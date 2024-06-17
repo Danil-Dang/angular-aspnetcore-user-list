@@ -8,13 +8,25 @@
 
 <div id="app">
   <nav class="navbar navbar-expand navbar-dark bg-dark px-2">
-    <a href="#" class="navbar-brand">NgNet</a>
+    <a href="#" class="navbar-brand" (click)="isShowBoard = false">NgNet</a>
     <ul class="navbar-nav mr-auto" routerLinkActive="active">
       <li class="nav-item">
-        <a href="/home" class="nav-link" routerLink="home">Home</a>
+        <a
+          href="/home"
+          class="nav-link"
+          routerLink="home"
+          (click)="isShowBoard = false"
+          >Home</a
+        >
       </li>
       <li class="nav-item">
-        <a href="/hotels" class="nav-link" routerLink="hotels">Hotels</a>
+        <a
+          href="/hotels"
+          class="nav-link"
+          routerLink="hotels"
+          (click)="isShowBoard = false"
+          >Hotels</a
+        >
       </li>
       @if (showAdminBoard) {
       <li class="nav-item">
@@ -25,7 +37,13 @@
       </li>
       } @if (showModeratorBoard) {
       <li class="nav-item">
-        <a href="/mod" class="nav-link" routerLink="mod">Moderator Board</a>
+        <a
+          href="/mod"
+          class="nav-link"
+          routerLink="mod"
+          (click)="isShowBoard = false"
+          >Moderator Board</a
+        >
       </li>
       } @if (isLoggedIn && !showModeratorBoard && !showAdminBoard) {
       <li class="nav-item">
@@ -50,9 +68,13 @@
     <div class="container-fluid">
       <ul class="navbar-nav ml-auto"></ul>
       <div class="d-flex align-items-center">
-        <a href="/profile" class="nav-link" routerLink="profile">{{
-          username
-        }}</a>
+        <a
+          href="/profile"
+          class="nav-link"
+          routerLink="profile"
+          (click)="isShowBoard = false"
+          >{{ username }}</a
+        >
 
         <div class="dropdown px-2">
           <a
@@ -83,7 +105,7 @@
     </div>
     }
   </nav>
-  @if (showAdminBoard) {
+  @if (showAdminBoard && isShowBoard) {
   <div class="board" [class.show]="isShowBoard">
     <ul class="navbar-nav mr-auto p-4" routerLinkActive="active">
       <li class="nav-item border-bottom border-black">

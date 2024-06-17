@@ -97,6 +97,7 @@ namespace Users.Repository
             }
         }
 
+        // ! Rooms ---------------------------------------------
         public async Task<IEnumerable<Room>> GetRooms(int id)
         {
             // var query = "SELECT * FROM Rooms";
@@ -169,6 +170,95 @@ namespace Users.Repository
         public async Task DeleteRoom(int id)
         {
             var query = "DELETE FROM Rooms WHERE Id = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, new { id });
+            }
+        }
+
+        // ! Reviews ---------------------------------------------
+        public async Task<IEnumerable<Review>> GetHotelReviews(int id)
+        {
+            var query = "SELECT Id, HotelId, UserId, ReviewStar, Description FROM Reviews WHERE HotelId = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var rooms = await connection.QueryAsync<Review>(query, new { id });
+                return rooms.ToList();
+            }
+        }
+
+        public async Task<IEnumerable<Review>> GetUserReviews(int id)
+        {
+            var query = "SELECT Id, HotelId, UserId, ReviewStar, Description FROM Reviews WHERE UserId = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var rooms = await connection.QueryAsync<Review>(query, new { id });
+                return rooms.ToList();
+            }
+        }
+
+        public async Task<Review> GetReview(int id)
+        {
+            var query = "SELECT * FROM Reviews WHERE Id = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var review = await connection.QuerySingleOrDefaultAsync<Review>(query, new { id });
+                return review;
+            }
+        }
+
+        public async Task<Review> CreateReview(ReviewForCreationDto review)
+        {
+            var query = "INSERT INTO Reviews (UserId, HotelId, ReviewStar, Description, CreatedDate) VALUES (@UserId, @HotelId, @ReviewStar, @Description, @CreatedDate)" +
+                "SELECT CAST(SCOPE_IDENTITY() as int)";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("UserId", review.UserId, DbType.Int32);
+            parameters.Add("HotelId", review.HotelId, DbType.Int32);
+            parameters.Add("ReviewStar", review.ReviewStar, DbType.Byte);
+            parameters.Add("Description", review.Description, DbType.String);
+            parameters.Add("CreatedDate", review.CreatedDate, DbType.DateTime2);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var id = await connection.QuerySingleAsync<int>(query, parameters);
+
+                var createdReview = new Review
+                {
+                    Id = id,
+                    UserId = review.UserId,
+                    HotelId = review.HotelId,
+                    ReviewStar = review.ReviewStar,
+                    Description = review.Description,
+                    CreatedDate = review.CreatedDate
+                };
+
+                return createdReview;
+            }
+        }
+
+        public async Task UpdateReview(int id, ReviewForUpdateDto review)
+        {
+            var query = "UPDATE Reviews SET ReviewStar = @ReviewStar, Description = @Description WHERE Id = @Id";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", id, DbType.Int32);
+            parameters.Add("ReviewStar", review.ReviewStar, DbType.Byte);
+            parameters.Add("Description", review.Description, DbType.String);
+
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, parameters);
+            }
+        }
+
+        public async Task DeleteReview(int id)
+        {
+            var query = "DELETE FROM Reviews WHERE Id = @Id";
 
             using (var connection = _context.CreateConnection())
             {

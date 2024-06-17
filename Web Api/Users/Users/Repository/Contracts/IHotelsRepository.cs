@@ -17,5 +17,12 @@ namespace Users.Contracts
         public Task<Room> CreateRoom(RoomForCreationDto hotel);
         public Task UpdateRoom(int id, RoomForUpdateDto hotel);
         public Task DeleteRoom(int id);
+
+        public Task<IEnumerable<Review>> GetHotelReviews(int id);
+        public Task<IEnumerable<Review>> GetUserReviews(int id);
+        public Task<Review> GetReview(int id);
+        public Task<Review> CreateReview(ReviewForCreationDto review);
+        public Task UpdateReview(int id, ReviewForUpdateDto review);
+        public Task DeleteReview(int id);
     }
 }

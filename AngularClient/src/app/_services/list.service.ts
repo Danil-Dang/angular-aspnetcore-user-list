@@ -7,6 +7,7 @@ import { ListHotel } from '../manager-user/list-hotel';
 import { UpdateUser } from '../manager-user/list-user-update';
 import { UserRole } from '../manager-user/user-role';
 import { ListRoom } from '../manager-user/list-room';
+import { ListReview } from '../manager-user/list-review';
 
 @Injectable({
   providedIn: 'root',
@@ -18,9 +19,12 @@ export class ListService {
   private roles$: Subject<UserRole[]> = new Subject();
   private hotels$: Subject<ListHotel[]> = new Subject();
   private rooms$: Subject<ListRoom[]> = new Subject();
+  private reviewsUser$: Subject<ListReview[]> = new Subject();
+  private reviewsHotel$: Subject<ListReview[]> = new Subject();
 
   constructor(private httpClient: HttpClient) {}
 
+  // ! Users ------------------------------------------------------
   private refreshLists() {
     this.httpClient.get<ListUser[]>(`${this.urlUser}`).subscribe((lists) => {
       this.lists$.next(lists);
@@ -61,6 +65,7 @@ export class ListService {
     });
   }
 
+  // ! Roles ------------------------------------------------------
   private refreshUserRole(id: number) {
     this.httpClient
       .get<UserRole[]>(`${this.urlUser}/role-by-id/${id}`)
@@ -97,6 +102,7 @@ export class ListService {
     });
   }
 
+  // ! Hotels ------------------------------------------------------
   private refreshHotelLists() {
     this.httpClient.get<ListHotel[]>(`${this.urlHotel}`).subscribe((hotels) => {
       this.hotels$.next(hotels);
@@ -132,6 +138,7 @@ export class ListService {
     });
   }
 
+  // ! Rooms ------------------------------------------------------
   private refreshRoomLists(id: number) {
     this.httpClient
       .get<ListRoom[]>(`${this.urlHotel}/rooms-by-hotel/${id}`)
@@ -165,6 +172,55 @@ export class ListService {
 
   deleteRoom(id: number): Observable<string> {
     return this.httpClient.delete(`${this.urlHotel}/rooms/${id}`, {
+      responseType: 'text',
+    });
+  }
+
+  // ! Reviews ------------------------------------------------------
+  private refreshReviewUser(id: number) {
+    this.httpClient
+      .get<ListReview[]>(`${this.urlHotel}/reviews-by-user/${id}`)
+      .subscribe((reviews) => {
+        this.reviewsUser$.next(reviews);
+      });
+  }
+  private refreshReviewHotel(id: number) {
+    this.httpClient
+      .get<ListReview[]>(`${this.urlHotel}/reviews-by-hotel/${id}`)
+      .subscribe((reviews) => {
+        this.reviewsHotel$.next(reviews);
+      });
+  }
+
+  getReviewsUser(id: number): Subject<ListReview[]> {
+    this.refreshReviewUser(id);
+    return this.reviewsUser$;
+  }
+  getReviewsHotel(id: number): Subject<ListReview[]> {
+    this.refreshReviewHotel(id);
+    return this.reviewsHotel$;
+  }
+
+  getReview(id: number): Observable<ListReview> {
+    return this.httpClient.get<ListReview>(`${this.urlHotel}/reviews/${id}`);
+  }
+
+  // createHotelList(list: ListHotel): Observable<string> {
+  createReview(list: object) {
+    return this.httpClient.post(`${this.urlHotel}/reviews/register`, list, {
+      responseType: 'text',
+    });
+  }
+
+  // updateList(id: number, list: UpdateUser): Observable<string> {
+  updateReview(id: number, list: object) {
+    return this.httpClient.put(`${this.urlHotel}/reviews/${id}`, list, {
+      responseType: 'text',
+    });
+  }
+
+  deleteReview(id: number): Observable<string> {
+    return this.httpClient.delete(`${this.urlHotel}/reviews/${id}`, {
       responseType: 'text',
     });
   }

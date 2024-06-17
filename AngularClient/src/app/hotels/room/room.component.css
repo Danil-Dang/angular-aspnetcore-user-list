@@ -2,3 +2,44 @@
     margin-top: auto;
     margin-bottom: auto;
 }
+
+.engraved-input {
+    width: fit-content;
+    border: 2px solid #ccc;
+    padding: 5px; /* Add some padding for visual effect */
+    border-radius: 5px; /* Optional rounded corners */
+  }
+  
+  .engraved-input p {
+    border: none; /* Remove the input's default border */
+    background-color: transparent; /* Make input background transparent */
+    padding: 5px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3); /* Create the inset shadow for the engraved effect */
+    width: calc(100% - 10px); /* Account for padding in width */
+  }
+
+  .star-rating {
+    display: flex; /* Arrange stars in a row */
+    cursor: pointer; /* Indicate that stars are clickable */
+  }
+  
+  .star-rating img {
+    width: 20px; /* Adjust size as needed */
+    height: 20px;
+    margin-right: 5px; /* Add spacing between stars */
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  .reviewOpen {
+    width: fit-content;
+    background-color: bisque;
+  }
+
+  .reviewOpen:hover {
+    width: fit-content;
+    background-color: rgb(233, 195, 149);
+    cursor: pointer;
+  }

@@ -80,8 +80,9 @@ export class LoginComponent implements OnInit {
     this.list$ = this.listService.getUserByUsername(username);
     this.list$.subscribe((data) => {
       this.userId = data.id!;
+      localStorage.setItem('user-id', JSON.stringify(this.userId));
       this.roles$ = this.listService.getUserRoles(this.userId);
-      console.log(this.roles$);
+      // console.log(this.roles$);
 
       this.roles$.subscribe((roles) => {
         if (roles) {

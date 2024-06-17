@@ -21,6 +21,7 @@ namespace Users.Repository.Controllers
             _hotelRepo = hotelRepo;
         }
 
+        // ! Hotels ----------------------------------------
         [HttpGet]
         public async Task<IActionResult> GetHotels()
         {
@@ -66,7 +67,7 @@ namespace Users.Repository.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, HotelForUpdateDto hotel)
+        public async Task<IActionResult> UpdateHotel(int id, HotelForUpdateDto hotel)
         {
             try
             {
@@ -100,6 +101,8 @@ namespace Users.Repository.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        // ! Rooms ----------------------------------------
 
         [HttpGet("rooms-by-hotel/{id}")]
         public async Task<IActionResult> GetRooms(int id)
@@ -173,6 +176,101 @@ namespace Users.Repository.Controllers
                     return NotFound();
 
                 await _hotelRepo.DeleteRoom(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // ! Reviews ----------------------------------------
+        [HttpGet("reviews-by-hotel/{id}")]
+        public async Task<IActionResult> GetHotelReviews(int id)
+        {
+            try
+            {
+                var rooms = await _hotelRepo.GetHotelReviews(id);
+                return Ok(rooms);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("reviews-by-user/{id}")]
+        public async Task<IActionResult> GetUserReviews(int id)
+        {
+            try
+            {
+                var rooms = await _hotelRepo.GetUserReviews(id);
+                return Ok(rooms);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("reviews/{id}", Name = "ReviewById")]
+        public async Task<IActionResult> GetReview(int id)
+        {
+            try
+            {
+                var review = await _hotelRepo.GetReview(id);
+                if (review == null) return NotFound();
+
+                return Ok(review);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("reviews/register")]
+        public async Task<IActionResult> CreateReview(ReviewForCreationDto review)
+        {
+            try
+            {
+                var createdReview = await _hotelRepo.CreateReview(review);
+                return CreatedAtRoute("ReviewById", new { id = createdReview.Id }, createdReview);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("reviews/{id}")]
+        public async Task<IActionResult> UpdateReview(int id, ReviewForUpdateDto review)
+        {
+            try
+            {
+                var dbReview = await _hotelRepo.GetReview(id);
+                if (dbReview == null)
+                    return NotFound();
+
+                await _hotelRepo.UpdateReview(id, review);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("reviews/{id}")]
+        public async Task<IActionResult> DeleteReview(int id)
+        {
+            try
+            {
+                var dbReview = await _hotelRepo.GetReview(id);
+                if (dbReview == null)
+                    return NotFound();
+
+                await _hotelRepo.DeleteReview(id);
                 return NoContent();
             }
             catch (Exception ex)
