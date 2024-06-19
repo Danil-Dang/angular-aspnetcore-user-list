@@ -56,6 +56,14 @@
     <div class="container-fluid">
       <div></div>
       <ul class="navbar-nav ml-auto">
+        <li>
+          <div class="cart mx-3" (click)="onCart()">
+            <div class="cart-img">
+              <img src="../assets/cart.png" alt="cart" />
+            </div>
+            <p *ngIf="cart > 0">{{ cart }}</p>
+          </div>
+        </li>
         <li class="nav-item">
           <a href="/register" class="nav-link" routerLink="register">Sign Up</a>
         </li>
@@ -68,6 +76,14 @@
     <div class="container-fluid">
       <ul class="navbar-nav ml-auto"></ul>
       <div class="d-flex align-items-center">
+        <div class="cart mx-3" (click)="onCart()">
+          <div class="cart-img">
+            <img src="../assets/cart.png" alt="cart" />
+          </div>
+
+          <p *ngIf="cart > 0">{{ cart }}</p>
+        </div>
+
         <a
           href="/profile"
           class="nav-link"

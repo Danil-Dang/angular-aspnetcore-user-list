@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { Observable, switchMap, forkJoin, map, catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
+import { BsDaterangepickerDirective } from 'ngx-bootstrap/datepicker';
+// import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 import { StorageService } from '../../_services/storage.service';
 import { DataService } from '../../_services/data.service';
@@ -49,12 +51,36 @@ export class RoomComponent implements OnInit {
   isSignUpFailed = false;
   isFirstReview = true;
 
+  bsValue = new Date();
+  bsRangeValue: Date[] = [];
+  maxDate = new Date();
+  minDate = new Date();
+  // disabledDates: Date[] = [new Date('2024-06-20'), new Date('2024-06-25')];
+  disabledDates: Date[] = [];
+  enabledDates: Date[] = [];
+  datePickerOpen: boolean = false;
+  @ViewChild('dateRangePicker') dateRangePicker!: BsDaterangepickerDirective;
+  dateRoomId: number = 0;
+
   constructor(
     private storageService: StorageService,
     private dataService: DataService,
     private listService: ListService,
     private _router: Router
-  ) {}
+  ) {
+    // this.bsConfig = Object.assign(
+    //   {},
+    //   {
+    //     containerClass: 'theme-default',
+    //     rangeInputFormat: 'YYYY-MM-DD',
+    //     minDate: new Date(),
+    //     maxDate: new Date(2025, 0, 1),
+    //   }
+    // );
+    this.minDate.setDate(this.minDate.getDate() - 1);
+    this.maxDate.setDate(this.maxDate.getDate() + 7);
+    this.bsRangeValue = [this.bsValue, this.maxDate];
+  }
 
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
@@ -75,9 +101,9 @@ export class RoomComponent implements OnInit {
         switchMap((reviews) => {
           // Create an array of observables to fetch users
           const userObservables = reviews.map((review) =>
-            this.listService.getList(review.userId).pipe(
-              catchError(() => of(null)) // Handle errors if user not found
-            )
+            this.listService
+              .getList(review.userId)
+              .pipe(catchError(() => of(null)))
           );
 
           // Fetch all users in parallel
@@ -235,5 +261,60 @@ export class RoomComponent implements OnInit {
       next: () => this.fetchReviews(this.hotelId),
       error: (err) => console.error('Error deleting Review:', err),
     });
+  }
+
+  openDatePicker(roomId: number) {
+    this.datePickerOpen = !this.datePickerOpen;
+    this.dateRoomId = roomId;
+    setTimeout(() => {
+      this.dateRangePicker.toggle();
+    }, 0);
+  }
+
+  confirmDates() {
+    if (this.bsRangeValue) {
+      const startDate = this.bsRangeValue[0].toISOString().split('T')[0];
+      const endDate = this.bsRangeValue[1].toISOString().split('T')[0];
+
+      let i = localStorage.getItem('booking-total');
+      if (i !== null) {
+        localStorage.setItem('booking-total', JSON.stringify(Number(i) + 1));
+        let objOld = JSON.parse(localStorage.getItem('booking')!);
+        let arr = Object.keys(objOld!).map(Number);
+        let x = 1;
+        const max = Math.max(...arr) + 1;
+
+        while (x <= max) {
+          if (!arr.includes(x)) {
+            objOld[x] = {
+              bookingStartDate: startDate,
+              bookingEndDate: endDate,
+              bookingRoomId: this.dateRoomId,
+              bookingHotelId: this.hotelId,
+            };
+            break;
+          }
+          x++;
+        }
+        localStorage.setItem('booking', JSON.stringify(objOld));
+      } else {
+        localStorage.setItem('booking-total', '1');
+        let objNew = {
+          1: {
+            bookingStartDate: startDate,
+            bookingEndDate: endDate,
+            bookingRoomId: this.dateRoomId,
+            bookingHotelId: this.hotelId,
+          },
+        };
+        localStorage.setItem('booking', JSON.stringify(objNew));
+      }
+
+      this.datePickerOpen = false;
+      window.location.reload();
+    }
+  }
+  clearDate() {
+    window.localStorage.clear();
   }
 }

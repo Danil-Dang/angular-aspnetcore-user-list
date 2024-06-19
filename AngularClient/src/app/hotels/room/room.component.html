@@ -107,24 +107,77 @@
               </div>
               <div class="col-6 row">
                 <p class="col-6 roomie">Price: {{ room.price }}</p>
-                @if (isModerator) {
+
                 <div class="col-6" align="center">
                   <div class="d-flex flex-nowrap">
+                    <!-- ! -->
+                    <div>
+                      <button
+                        class="btn btn-primary"
+                        (click)="openDatePicker(room.id)"
+                      >
+                        Book
+                      </button>
+                      <button class="btn btn-danger" (click)="clearDate()">
+                        Clear
+                      </button>
+
+                      <div *ngIf="datePickerOpen" class="modal-overlay">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Choose dates</h5>
+                            <!-- <button
+                              type="button"
+                              class="btn-close"
+                              (click)="showModal = false"
+                            ></button> -->
+                          </div>
+                          <div class="modal-body my-3">
+                            <input
+                              type="text"
+                              placeholder="Daterangepicker"
+                              class="form-control"
+                              #dateRangePicker="bsDaterangepicker"
+                              bsDaterangepicker
+                              [(ngModel)]="bsRangeValue"
+                              [datesEnabled]="enabledDates"
+                              [bsConfig]="{ isAnimated: true }"
+                              [isOpen]="datePickerOpen"
+                            />
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              class="btn btn-secondary me-3"
+                              (click)="datePickerOpen = false"
+                            >
+                              Close
+                            </button>
+                            <button
+                              class="btn btn-primary"
+                              (click)="confirmDates()"
+                            >
+                              Confirm
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    @if (isModerator) {
                     <button
-                      class="btn btn-primary me-1"
+                      class="btn btn-primary mx-2"
                       (click)="editRoom(room.id)"
                     >
                       Edit
                     </button>
                     <button
-                      class="btn btn-danger mx-1"
+                      class="btn btn-danger"
                       (click)="deleteRoom(room.id)"
                     >
                       Delete
                     </button>
+                    }
                   </div>
                 </div>
-                }
               </div>
               <!-- <p>Room ID: {{ room.id }}</p> -->
               <!-- <p>Hotel ID: {{ room.hotelId }}</p> -->

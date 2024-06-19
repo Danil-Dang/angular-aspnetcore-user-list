@@ -5,6 +5,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { JwtModule } from '@auth0/angular-jwt';
+import {
+  BsDatepickerModule,
+  BsDatepickerConfig,
+} from 'ngx-bootstrap/datepicker';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -20,6 +25,7 @@ import { EditComponent } from './manager-user/edit/edit.component';
 import { HotelsComponent } from './hotels/hotels.component';
 import { RoomComponent } from './hotels/room/room.component';
 import { ManagerHotelComponent } from './manager-user/manager-hotel/manager-hotel.component';
+import { CartComponent } from './cart/cart.component';
 // import { StorageService } from './_services/storage.service';
 
 export function tokenGetter() {
@@ -41,6 +47,7 @@ export function tokenGetter() {
     HotelsComponent,
     RoomComponent,
     ManagerHotelComponent,
+    CartComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,8 +63,10 @@ export function tokenGetter() {
         disallowedRoutes: [],
       },
     }),
+    BsDatepickerModule.forRoot(),
+    BrowserAnimationsModule,
   ],
-  providers: [],
+  providers: [BsDatepickerConfig],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

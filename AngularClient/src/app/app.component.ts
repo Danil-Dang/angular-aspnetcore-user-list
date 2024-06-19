@@ -12,7 +12,6 @@ import { DataService } from './_services/data.service';
   styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit {
-  // roles: string[] = [];
   roles: { [key: number]: string } = {};
   isLoggedIn = false;
   showAdminBoard = false;
@@ -20,9 +19,7 @@ export class AppComponent implements OnInit {
   username?: string;
   reloadOnce = false;
   isShowBoard = false;
-
-  // visible = false;
-  // data: any;
+  cart = 0;
 
   constructor(
     private storageService: StorageService,
@@ -41,6 +38,7 @@ export class AppComponent implements OnInit {
       localStorage.removeItem('reloadOnce');
     }
 
+    this.cart = Number(localStorage.getItem('booking-total'));
     this.isLoggedIn = this.storageService.isLoggedIn();
 
     if (this.isLoggedIn) {
@@ -71,6 +69,10 @@ export class AppComponent implements OnInit {
 
   showBoard() {
     this.isShowBoard = !this.isShowBoard;
+  }
+
+  onCart() {
+    this.router.navigate(['/cart']);
   }
 
   // getToken() {

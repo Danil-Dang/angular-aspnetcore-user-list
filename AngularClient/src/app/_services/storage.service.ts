@@ -5,14 +5,17 @@ const TOKEN_KEY = 'auth-token';
 const ADMIN_ADD_USER = 'admin-add-user';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StorageService {
-
-  constructor() { }
+  constructor() {}
 
   clean(): void {
-    window.localStorage.clear();
+    // window.localStorage.clear();
+    window.localStorage.removeItem(USER_KEY);
+    window.localStorage.removeItem('user-id');
+    window.localStorage.removeItem('user-role');
+    window.localStorage.removeItem('jwt');
   }
 
   public saveUser(user: any): void {

@@ -12,6 +12,7 @@ import { ManagerHotelComponent } from './manager-user/manager-hotel/manager-hote
 import { HotelsComponent } from './hotels/hotels.component';
 import { EditComponent } from './manager-user/edit/edit.component';
 import { RoomComponent } from './hotels/room/room.component';
+import { CartComponent } from './cart/cart.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -22,6 +23,7 @@ const routes: Routes = [
 
   { path: 'hotels', component: HotelsComponent },
   { path: 'hotels/rooms', component: RoomComponent },
+  { path: 'cart', component: CartComponent },
   // { path: 'hotels/edit', component: EditComponent },
 
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
