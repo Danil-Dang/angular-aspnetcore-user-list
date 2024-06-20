@@ -29,13 +29,13 @@ namespace Users.Contracts
         public Task DeleteReview(int id);
 
         // ! Bookings ------------------------------------------
-        // public Task<IEnumerable<Booking>> GetBookings();
-        // public Task<IEnumerable<Booking>> GetHotelBookings(int id);
-        // public Task<IEnumerable<Booking>> GetRoomBookings(int id);
-        // public Task<IEnumerable<Booking>> GetUserBookings(int id);
-        // public Task<Booking> GetBooking(int id);
-        // public Task<Booking> CreateBooking(BookingForCreationDto booking);
-        // public Task UpdateBooking(int id, BookingForUpdateDto booking);
-        // public Task DeleteBooking(int id);
+        public Task<IEnumerable<Booking>> GetBookings();
+        public Task<IEnumerable<Booking>> GetHotelBookings(int id);
+        public Task<IEnumerable<Booking>> GetRoomBookings(int id);
+        public Task<IEnumerable<Booking>> GetUserBookings(int id);
+        public Task<Booking> GetBooking(int id);
+        public Task<Booking> CreateBooking(BookingForCreationDto booking);
+        public Task UpdateBooking(int id, BookingForUpdateDto booking);
+        public Task DeleteBooking(int id);
     }
 }

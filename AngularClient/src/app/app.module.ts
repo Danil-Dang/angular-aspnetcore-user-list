@@ -26,6 +26,8 @@ import { HotelsComponent } from './hotels/hotels.component';
 import { RoomComponent } from './hotels/room/room.component';
 import { ManagerHotelComponent } from './manager-user/manager-hotel/manager-hotel.component';
 import { CartComponent } from './cart/cart.component';
+import { ManagerBookingsComponent } from './manager-user/manager-bookings/manager-bookings.component';
+import { BookingsEditComponent } from './manager-user/manager-bookings/bookings-edit/bookings-edit.component';
 // import { StorageService } from './_services/storage.service';
 
 export function tokenGetter() {
@@ -48,6 +50,8 @@ export function tokenGetter() {
     RoomComponent,
     ManagerHotelComponent,
     CartComponent,
+    ManagerBookingsComponent,
+    BookingsEditComponent,
   ],
   imports: [
     BrowserModule,

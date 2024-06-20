@@ -1,0 +1,123 @@
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-12 formRegister">
+      <div class="card card-container border rounded p-3 my-3">
+        <form name="form" (ngSubmit)="(f.form.valid)" #f="ngForm" novalidate>
+          @if (bookingId === 0.5) {
+          <h1>Add Booking</h1>
+          } @else {
+          <h1>Edit Booking</h1>
+          }
+          <div class="form-group row pb-3">
+            <div class="col-4">
+              <label for="userId">User Id</label>
+              <input
+                type="text"
+                class="form-control"
+                name="userId"
+                [(ngModel)]="form.userId"
+                required
+                #userId="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted && userId.errors }"
+              />
+              @if (userId.errors && f.submitted) {
+              <div class="invalid-feedback">
+                @if (userId.errors['required']) {
+                <div>User Id is required</div>
+                }
+              </div>
+              }
+            </div>
+            <div class="col-4">
+              <label for="hotelId">Hotel Id</label>
+              <input
+                type="text"
+                class="form-control"
+                name="hotelId"
+                [(ngModel)]="form.hotelId"
+                #hotelId="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted && hotelId.errors }"
+              />
+              @if (hotelId.errors && f.submitted) {
+              <div class="invalid-feedback">
+                @if (hotelId.errors['required']) {
+                <div>Hotel Id is required</div>
+                }
+              </div>
+              }
+            </div>
+            <div class="col-4">
+              <label for="roomId">Room Id</label>
+              <input
+                type="text"
+                class="form-control"
+                name="roomId"
+                [(ngModel)]="form.roomId"
+                required
+                #roomId="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted && roomId.errors }"
+              />
+              @if (roomId.errors && f.submitted) {
+              <div class="invalid-feedback">
+                @if (roomId.errors['required']) {
+                <div>Room Id is required</div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+          <div class="form-group pb-3">
+            <label for="date">Choose dates</label>
+            <input
+              type="text"
+              placeholder="Daterangepicker"
+              class="form-control"
+              name="date"
+              required
+              #dateRangePicker="bsDaterangepicker"
+              bsDaterangepicker
+              [(ngModel)]="bsRangeValue"
+              [datesEnabled]="enabledDates"
+              [bsConfig]="{ isAnimated: true }"
+            />
+            <!-- [isOpen]="datePickerOpen" -->
+            <!-- @if (location.errors && f.submitted) {
+            <div class="invalid-feedback">
+              @if (location.errors['required']) {
+              <div>Location is required</div>
+              }
+            </div>
+            } -->
+          </div>
+          @if (bookingId === 0.5) {
+          <div class="form-group mt-3" align="center">
+            <button
+              type="button"
+              (click)="onCancel()"
+              class="btn btn-danger btn-block me-3"
+            >
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-block" (click)="onSubmit()">
+              Add
+            </button>
+          </div>
+          } @else {
+          <div class="form-group mt-3" align="center">
+            <button
+              type="button"
+              (click)="onCancel()"
+              class="btn btn-danger btn-block me-3"
+            >
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-block" (click)="onEditList()">
+              Edit
+            </button>
+          </div>
+          }
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

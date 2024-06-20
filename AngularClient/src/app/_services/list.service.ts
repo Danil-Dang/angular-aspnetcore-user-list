@@ -8,6 +8,7 @@ import { UpdateUser } from '../manager-user/list-user-update';
 import { UserRole } from '../manager-user/user-role';
 import { ListRoom } from '../manager-user/list-room';
 import { ListReview } from '../manager-user/list-review';
+import { ListBooking } from '../manager-user/list-bookings';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +22,10 @@ export class ListService {
   private rooms$: Subject<ListRoom[]> = new Subject();
   private reviewsUser$: Subject<ListReview[]> = new Subject();
   private reviewsHotel$: Subject<ListReview[]> = new Subject();
+  private bookingsUser$: Subject<ListBooking[]> = new Subject();
+  private bookingsHotel$: Subject<ListBooking[]> = new Subject();
+  private bookingsRoom$: Subject<ListBooking[]> = new Subject();
+  private bookings$: Subject<ListBooking[]> = new Subject();
 
   constructor(private httpClient: HttpClient) {}
 
@@ -221,6 +226,75 @@ export class ListService {
 
   deleteReview(id: number): Observable<string> {
     return this.httpClient.delete(`${this.urlHotel}/reviews/${id}`, {
+      responseType: 'text',
+    });
+  }
+
+  // ! Bookings ------------------------------------------------------
+  private refreshBookingsUser(id: number) {
+    this.httpClient
+      .get<ListBooking[]>(`${this.urlHotel}/bookings-by-user/${id}`)
+      .subscribe((bookings) => {
+        this.bookingsUser$.next(bookings);
+      });
+  }
+  private refreshBookingsHotel(id: number) {
+    this.httpClient
+      .get<ListBooking[]>(`${this.urlHotel}/bookings-by-hotel/${id}`)
+      .subscribe((bookings) => {
+        this.bookingsHotel$.next(bookings);
+      });
+  }
+  private refreshBookingsRoom(id: number) {
+    this.httpClient
+      .get<ListBooking[]>(`${this.urlHotel}/bookings-by-room/${id}`)
+      .subscribe((bookings) => {
+        this.bookingsRoom$.next(bookings);
+      });
+  }
+  private refreshBookings() {
+    this.httpClient
+      .get<ListBooking[]>(`${this.urlHotel}/bookings`)
+      .subscribe((bookings) => {
+        this.bookings$.next(bookings);
+      });
+  }
+
+  getBookingsUser(id: number): Subject<ListBooking[]> {
+    this.refreshBookingsUser(id);
+    return this.bookingsUser$;
+  }
+  getBookingsHotel(id: number): Subject<ListBooking[]> {
+    this.refreshBookingsHotel(id);
+    return this.bookingsHotel$;
+  }
+  getBookingsRoom(id: number): Subject<ListBooking[]> {
+    this.refreshBookingsRoom(id);
+    return this.bookingsRoom$;
+  }
+  getBookings(): Subject<ListBooking[]> {
+    this.refreshBookings();
+    return this.bookings$;
+  }
+
+  getBooking(id: number): Observable<ListBooking> {
+    return this.httpClient.get<ListBooking>(`${this.urlHotel}/bookings/${id}`);
+  }
+
+  createBooking(list: object) {
+    return this.httpClient.post(`${this.urlHotel}/bookings/register`, list, {
+      responseType: 'text',
+    });
+  }
+
+  updateBooking(id: number, list: object) {
+    return this.httpClient.put(`${this.urlHotel}/bookings/${id}`, list, {
+      responseType: 'text',
+    });
+  }
+
+  deleteBooking(id: number): Observable<string> {
+    return this.httpClient.delete(`${this.urlHotel}/bookings/${id}`, {
       responseType: 'text',
     });
   }

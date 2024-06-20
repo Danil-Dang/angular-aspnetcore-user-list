@@ -9,10 +9,12 @@ import { RegisterComponent } from './register/register.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ManagerUserComponent } from './manager-user/manager-user.component';
 import { ManagerHotelComponent } from './manager-user/manager-hotel/manager-hotel.component';
+import { ManagerBookingsComponent } from './manager-user/manager-bookings/manager-bookings.component';
 import { HotelsComponent } from './hotels/hotels.component';
 import { EditComponent } from './manager-user/edit/edit.component';
 import { RoomComponent } from './hotels/room/room.component';
 import { CartComponent } from './cart/cart.component';
+import { BookingsEditComponent } from './manager-user/manager-bookings/bookings-edit/bookings-edit.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -44,6 +46,16 @@ const routes: Routes = [
   {
     path: 'list/hotels/edit',
     component: EditComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'list/bookings',
+    component: ManagerBookingsComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'list/bookings/edit',
+    component: BookingsEditComponent,
     canActivate: [AuthGuard],
   },
   // { path: 'list', component: TodosListComponent },

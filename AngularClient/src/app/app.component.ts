@@ -70,6 +70,9 @@ export class AppComponent implements OnInit {
   showBoard() {
     this.isShowBoard = !this.isShowBoard;
   }
+  closeBoard() {
+    this.isShowBoard = false;
+  }
 
   onCart() {
     this.router.navigate(['/cart']);

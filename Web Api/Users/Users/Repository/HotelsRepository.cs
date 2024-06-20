@@ -184,8 +184,8 @@ namespace Users.Repository
 
             using (var connection = _context.CreateConnection())
             {
-                var rooms = await connection.QueryAsync<Review>(query, new { id });
-                return rooms.ToList();
+                var reviews = await connection.QueryAsync<Review>(query, new { id });
+                return reviews.ToList();
             }
         }
 
@@ -195,8 +195,8 @@ namespace Users.Repository
 
             using (var connection = _context.CreateConnection())
             {
-                var rooms = await connection.QueryAsync<Review>(query, new { id });
-                return rooms.ToList();
+                var reviews = await connection.QueryAsync<Review>(query, new { id });
+                return reviews.ToList();
             }
         }
 
@@ -267,114 +267,121 @@ namespace Users.Repository
         }
 
         // ! Bookings ---------------------------------------------
-        // public async Task<IEnumerable<Review>> GetBookings()
-        // {
-        //     var query = "SELECT Id, HotelId, UserId, ReviewStar, Description FROM Reviews WHERE HotelId = @Id";
+        public async Task<IEnumerable<Booking>> GetBookings()
+        {
+            var query = "SELECT * FROM Bookings";
 
-        //     using (var connection = _context.CreateConnection())
-        //     {
-        //         var rooms = await connection.QueryAsync<Review>(query, new { id });
-        //         return rooms.ToList();
-        //     }
-        // }
+            using (var connection = _context.CreateConnection())
+            {
+                var bookings = await connection.QueryAsync<Booking>(query);
+                return bookings.ToList();
+            }
+        }
 
-        // public async Task<IEnumerable<Review>> GetHotelBookings(int id)
-        // {
-        //     var query = "SELECT Id, HotelId, UserId, ReviewStar, Description FROM Reviews WHERE HotelId = @Id";
+        public async Task<IEnumerable<Booking>> GetHotelBookings(int id)
+        {
+            var query = "SELECT Id, HotelId, RoomId, UserId, CheckIn, CheckOut, IsActive, CreatedDate FROM Bookings WHERE HotelId = @Id";
 
-        //     using (var connection = _context.CreateConnection())
-        //     {
-        //         var rooms = await connection.QueryAsync<Review>(query, new { id });
-        //         return rooms.ToList();
-        //     }
-        // }
+            using (var connection = _context.CreateConnection())
+            {
+                var bookings = await connection.QueryAsync<Booking>(query, new { id });
+                return bookings.ToList();
+            }
+        }
 
-        // public async Task<IEnumerable<Review>> GetRoomBookings(int id)
-        // {
-        //     var query = "SELECT Id, HotelId, UserId, ReviewStar, Description FROM Reviews WHERE HotelId = @Id";
+        public async Task<IEnumerable<Booking>> GetRoomBookings(int id)
+        {
+            var query = "SELECT Id, HotelId, RoomId, UserId, CheckIn, CheckOut, IsActive, CreatedDate FROM Bookings WHERE RoomId = @Id";
 
-        //     using (var connection = _context.CreateConnection())
-        //     {
-        //         var rooms = await connection.QueryAsync<Review>(query, new { id });
-        //         return rooms.ToList();
-        //     }
-        // }
+            using (var connection = _context.CreateConnection())
+            {
+                var bookings = await connection.QueryAsync<Booking>(query, new { id });
+                return bookings.ToList();
+            }
+        }
 
-        // public async Task<IEnumerable<Review>> GetUserRBookings(int id)
-        // {
-        //     var query = "SELECT Id, HotelId, UserId, ReviewStar, Description FROM Reviews WHERE UserId = @Id";
+        public async Task<IEnumerable<Booking>> GetUserBookings(int id)
+        {
+            var query = "SELECT Id, HotelId, RoomId, UserId, CheckIn, CheckOut, IsActive, CreatedDate FROM Bookings WHERE UserId = @Id";
 
-        //     using (var connection = _context.CreateConnection())
-        //     {
-        //         var rooms = await connection.QueryAsync<Review>(query, new { id });
-        //         return rooms.ToList();
-        //     }
-        // }
+            using (var connection = _context.CreateConnection())
+            {
+                var bookings = await connection.QueryAsync<Booking>(query, new { id });
+                return bookings.ToList();
+            }
+        }
 
-        // public async Task<Review> GetBooking(int id)
-        // {
-        //     var query = "SELECT * FROM Reviews WHERE Id = @Id";
+        public async Task<Booking> GetBooking(int id)
+        {
+            var query = "SELECT * FROM Bookings WHERE Id = @Id";
 
-        //     using (var connection = _context.CreateConnection())
-        //     {
-        //         var review = await connection.QuerySingleOrDefaultAsync<Review>(query, new { id });
-        //         return review;
-        //     }
-        // }
+            using (var connection = _context.CreateConnection())
+            {
+                var booking = await connection.QuerySingleOrDefaultAsync<Booking>(query, new { id });
+                return booking;
+            }
+        }
 
-        // public async Task<Review> CreateBooking(ReviewForCreationDto review)
-        // {
-        //     var query = "INSERT INTO Reviews (UserId, HotelId, ReviewStar, Description, CreatedDate) VALUES (@UserId, @HotelId, @ReviewStar, @Description, @CreatedDate)" +
-        //         "SELECT CAST(SCOPE_IDENTITY() as int)";
+        public async Task<Booking> CreateBooking(BookingForCreationDto booking)
+        {
+            var query = "INSERT INTO Bookings (HotelId, RoomId, UserId, CheckIn, CheckOut, IsActive, CreatedDate) VALUES (@HotelId, @RoomId, @UserId, @CheckIn, @CheckOut, @IsActive, @CreatedDate)" +
+                "SELECT CAST(SCOPE_IDENTITY() as int)";
 
-        //     var parameters = new DynamicParameters();
-        //     parameters.Add("UserId", review.UserId, DbType.Int32);
-        //     parameters.Add("HotelId", review.HotelId, DbType.Int32);
-        //     parameters.Add("ReviewStar", review.ReviewStar, DbType.Byte);
-        //     parameters.Add("Description", review.Description, DbType.String);
-        //     parameters.Add("CreatedDate", review.CreatedDate, DbType.DateTime2);
+            var parameters = new DynamicParameters();
+            parameters.Add("UserId", booking.UserId, DbType.Int32);
+            parameters.Add("HotelId", booking.HotelId, DbType.Int32);
+            parameters.Add("RoomId", booking.RoomId, DbType.Int32);
+            parameters.Add("CheckIn", booking.CheckIn, DbType.DateTime2);
+            parameters.Add("CheckOut", booking.CheckOut, DbType.DateTime2);
+            parameters.Add("IsActive", booking.IsActive, DbType.Boolean);
+            parameters.Add("CreatedDate", booking.CreatedDate, DbType.DateTime2);
 
-        //     using (var connection = _context.CreateConnection())
-        //     {
-        //         var id = await connection.QuerySingleAsync<int>(query, parameters);
+            using (var connection = _context.CreateConnection())
+            {
+                var id = await connection.QuerySingleAsync<int>(query, parameters);
 
-        //         var createdReview = new Review
-        //         {
-        //             Id = id,
-        //             UserId = review.UserId,
-        //             HotelId = review.HotelId,
-        //             ReviewStar = review.ReviewStar,
-        //             Description = review.Description,
-        //             CreatedDate = review.CreatedDate
-        //         };
+                var createdBooking = new Booking
+                {
+                    Id = id,
+                    UserId = booking.UserId,
+                    HotelId = booking.HotelId,
+                    RoomId = booking.RoomId,
+                    CheckIn = booking.CheckIn,
+                    CheckOut = booking.CheckOut,
+                    IsActive = booking.IsActive,
+                    CreatedDate = booking.CreatedDate
+                };
 
-        //         return createdReview;
-        //     }
-        // }
+                return createdBooking;
+            }
+        }
 
-        // public async Task UpdateBooking(int id, ReviewForUpdateDto review)
-        // {
-        //     var query = "UPDATE Reviews SET ReviewStar = @ReviewStar, Description = @Description WHERE Id = @Id";
+        public async Task UpdateBooking(int id, BookingForUpdateDto booking)
+        {
+            var query = "UPDATE Bookings SET UserId = @UserId, HotelId = @HotelId, RoomId = @RoomId, CheckIn = @CheckIn, CheckOut = @CheckOut WHERE Id = @Id";
 
-        //     var parameters = new DynamicParameters();
-        //     parameters.Add("Id", id, DbType.Int32);
-        //     parameters.Add("ReviewStar", review.ReviewStar, DbType.Byte);
-        //     parameters.Add("Description", review.Description, DbType.String);
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", id, DbType.Int32);
+            parameters.Add("UserId", booking.UserId, DbType.Int32);
+            parameters.Add("HotelId", booking.HotelId, DbType.Int32);
+            parameters.Add("RoomId", booking.RoomId, DbType.Int32);
+            parameters.Add("CheckIn", booking.CheckIn, DbType.DateTime2);
+            parameters.Add("CheckOut", booking.CheckOut, DbType.DateTime2);
 
-        //     using (var connection = _context.CreateConnection())
-        //     {
-        //         await connection.ExecuteAsync(query, parameters);
-        //     }
-        // }
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, parameters);
+            }
+        }
 
-        // public async Task DeleteBooking(int id)
-        // {
-        //     var query = "DELETE FROM Reviews WHERE Id = @Id";
+        public async Task DeleteBooking(int id)
+        {
+            var query = "DELETE FROM Bookings WHERE Id = @Id";
 
-        //     using (var connection = _context.CreateConnection())
-        //     {
-        //         await connection.ExecuteAsync(query, new { id });
-        //     }
-        // }
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, new { id });
+            }
+        }
     }
 }
