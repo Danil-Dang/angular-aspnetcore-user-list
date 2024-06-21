@@ -5,5 +5,5 @@ export interface ReviewWithUser {
   userId: number;
   description: string;
   reviewStar: number;
-  user: ListUser | null; // User object (or null if not found)
+  user: ListUser | null;
 }

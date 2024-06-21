@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { Observable, switchMap, forkJoin, map, catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { BsDaterangepickerDirective } from 'ngx-bootstrap/datepicker';
+import { getTime } from 'ngx-bootstrap/chronos/utils/date-getters';
 // import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 import { StorageService } from '../../_services/storage.service';
@@ -77,8 +78,8 @@ export class RoomComponent implements OnInit {
     //     maxDate: new Date(2025, 0, 1),
     //   }
     // );
-    this.minDate.setDate(this.minDate.getDate() - 1);
-    this.maxDate.setDate(this.maxDate.getDate() + 7);
+    // this.minDate.setDate(this.minDate.getDate() - 1);
+    // this.maxDate.setDate(this.maxDate.getDate() + 7);
     this.bsRangeValue = [this.bsValue, this.maxDate];
   }
 
@@ -266,6 +267,7 @@ export class RoomComponent implements OnInit {
   openDatePicker(roomId: number) {
     this.datePickerOpen = !this.datePickerOpen;
     this.dateRoomId = roomId;
+
     setTimeout(() => {
       this.dateRangePicker.toggle();
     }, 0);
@@ -275,6 +277,12 @@ export class RoomComponent implements OnInit {
     if (this.bsRangeValue) {
       const startDate = this.bsRangeValue[0].toISOString().split('T')[0];
       const endDate = this.bsRangeValue[1].toISOString().split('T')[0];
+
+      const startDatee = new Date(this.bsRangeValue[0]);
+      const endDatee = new Date(this.bsRangeValue[1]);
+
+      const timeDifference = endDatee.getTime() - startDatee.getTime();
+      const numberOfDays = Math.ceil(timeDifference / (1000 * 3600 * 24));
 
       let i = localStorage.getItem('booking-total');
       if (i !== null) {
@@ -291,6 +299,7 @@ export class RoomComponent implements OnInit {
               bookingEndDate: endDate,
               bookingRoomId: this.dateRoomId,
               bookingHotelId: this.hotelId,
+              numberOfDays: numberOfDays,
             };
             break;
           }
@@ -305,6 +314,7 @@ export class RoomComponent implements OnInit {
             bookingEndDate: endDate,
             bookingRoomId: this.dateRoomId,
             bookingHotelId: this.hotelId,
+            numberOfDays: numberOfDays,
           },
         };
         localStorage.setItem('booking', JSON.stringify(objNew));

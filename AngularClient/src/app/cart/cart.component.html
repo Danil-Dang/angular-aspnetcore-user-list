@@ -2,21 +2,123 @@
   <div class="container-fluid">
     <div class="row justify-content-center">
       <div class="col-12 row">
-        <div class="col-8 p-3">
+        <div class="col-8">
           <!-- <h1>Your cart ({{}})</h1> -->
           <div>
-            <div></div>
+            @if (cart === 0) {
             <div>
               <p>You have no items here</p>
             </div>
+            } @else {
+            <!-- <div class="border rounded p-3 m-0"> -->
+            <div *ngIf="bookingsWith$ | async as bookings">
+              <div *ngFor="let book of bookings; let i = index" class="pb-3">
+                <div class="border rounded p-3 m-0">
+                  <div class="row custom-row">
+                    <p class="col-4 mb-1">
+                      {{ book?.hotel?.hotelName || "Null" }} -
+                      {{ book?.room?.roomType || "Null" }}
+                    </p>
+                    <p class="col-5 mb-1">
+                      /{{ book?.bookingStartDate || "Null" }}/ - /{{
+                        book?.bookingEndDate || "Null"
+                      }}/
+                    </p>
+                    <p
+                      *ngIf="book?.room && book?.numberOfDays"
+                      class="col-2 mb-1"
+                    >
+                      {{ book.room!.price * book.numberOfDays }}
+                    </p>
+                    <div
+                      class="col-1 mb-1 delete-container p-0"
+                      (click)="deleteBooking(i)"
+                    >
+                      <img
+                        [src]="getImage(i)"
+                        (mouseover)="hoveredDelete[i] = true"
+                        (mouseleave)="hoveredDelete[i] = false"
+                        alt="delete"
+                        class="delete-img"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-4">
+                      <input
+                        type="checkbox"
+                        [(ngModel)]="selectedItems[i]"
+                        (click)="toggleSelection(i)"
+                      />
+                    </div>
+                    <div class="col-5">
+                      <!-- <div class="d-flex flex-nowrap"> -->
+                      <div>
+                        <button
+                          class="btn btn-secondary"
+                          (click)="
+                            openDatePicker(
+                              book?.bookingStartDate,
+                              book?.bookingEndDate,
+                              i
+                            )
+                          "
+                        >
+                          Change dates
+                        </button>
+                      </div>
+                    </div>
+                    <div class="col-3"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- </div> -->
+            <div *ngIf="datePickerOpen" class="modal-overlay">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Choose dates</h5>
+                </div>
+                <div class="modal-body my-3">
+                  <!-- placeholder="Daterangepicker" -->
+                  <input
+                    type="text"
+                    class="form-control"
+                    #dateRangePicker="bsDaterangepicker"
+                    bsDaterangepicker
+                    [(ngModel)]="bsRangeValue"
+                    [datesEnabled]="enabledDates"
+                    [bsConfig]="{ isAnimated: true }"
+                    [isOpen]="datePickerOpen"
+                  />
+                </div>
+                <div class="modal-footer">
+                  <button
+                    class="btn btn-secondary me-3"
+                    (click)="datePickerOpen = false"
+                  >
+                    Close
+                  </button>
+                  <button class="btn btn-primary" (click)="confirmDates()">
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+            }
           </div>
         </div>
         <div class="col-4">
           <div class="border rounded p-3">
             <h2>Total price</h2>
             <div>
-              <div></div>
+              @if (totalPrice == 0) {
+
               <div>No items selected yet</div>
+              } @else {
+
+              <div>{{ calculateTotalPrice() }}</div>
+              }
             </div>
             <div>
               <button class="btn btn-primary mt-3">Next</button>

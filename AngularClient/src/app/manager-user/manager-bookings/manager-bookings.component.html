@@ -11,15 +11,6 @@
               <tr class="table-primary">
                 <th>#</th>
                 <th>Id</th>
-                <!-- <th class="d-flex flex-nowrap">
-                  <span>Id</span>
-                  <input
-                    type="text"
-                    [(ngModel)]="userId"
-                    (ngModelChange)="onIdFilterChange($event)"
-                  />
-                </th> -->
-                <!-- <th>UserId</th> -->
                 <th>
                   <div class="d-flex flex-nowrap">
                     <span>UserId</span>
@@ -50,8 +41,6 @@
                     />
                   </div>
                 </th>
-                <!-- <th>HotelId</th>
-                            <th>RoomId</th> -->
                 <th>CheckIn</th>
                 <th>CheckOut</th>
                 <th>IsActive</th>
@@ -88,33 +77,96 @@
                   </div>
                 </td>
               </tr>
-              } @else {
-              <!-- <tr>
-                <td class="table-primary">1</td>
-                <td>{{ (list$ | async)?.id }}</td>
-                <td>{{ (list$ | async)?.firstName }}</td>
-                <td>{{ (list$ | async)?.lastName }}</td>
-                <td>{{ (list$ | async)?.username }}</td>
-                <td>{{ (list$ | async)?.email }}</td>
-                <td>{{ (list$ | async)?.isActive }}</td>
-                <td>{{ (list$ | async)?.createdDate }}</td>
+              } @else if (isByUser) {
+              <tr
+                *ngFor="let booking of bookingsByUser$ | async; let i = index"
+              >
+                <td class="table-primary">{{ i + 1 }}</td>
+                <td>{{ booking.id }}</td>
+                <td>{{ booking.userId }}</td>
+                <td>{{ booking.hotelId }}</td>
+                <td>{{ booking.roomId }}</td>
+                <td>{{ booking.checkIn }}</td>
+                <td>{{ booking.checkOut }}</td>
+                <td>{{ booking.isActive }}</td>
+                <td>{{ booking.createdDate }}</td>
                 <td align="center">
                   <div class="d-flex flex-nowrap">
                     <button
                       class="btn btn-primary me-1"
-                      (click)="editList(userId!)"
+                      (click)="editList(booking.id)"
                     >
                       Edit
                     </button>
                     <button
                       class="btn btn-danger mx-1"
-                      (click)="deleteList(userId!)"
+                      (click)="deleteList(booking.id)"
                     >
                       Delete
                     </button>
                   </div>
                 </td>
-              </tr> -->
+              </tr>
+              } @else if (isByHotel) {
+              <tr
+                *ngFor="let booking of bookingsByHotel$ | async; let i = index"
+              >
+                <td class="table-primary">{{ i + 1 }}</td>
+                <td>{{ booking.id }}</td>
+                <td>{{ booking.userId }}</td>
+                <td>{{ booking.hotelId }}</td>
+                <td>{{ booking.roomId }}</td>
+                <td>{{ booking.checkIn }}</td>
+                <td>{{ booking.checkOut }}</td>
+                <td>{{ booking.isActive }}</td>
+                <td>{{ booking.createdDate }}</td>
+                <td align="center">
+                  <div class="d-flex flex-nowrap">
+                    <button
+                      class="btn btn-primary me-1"
+                      (click)="editList(booking.id)"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      class="btn btn-danger mx-1"
+                      (click)="deleteList(booking.id)"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              } @else if (isByRoom) {
+              <tr
+                *ngFor="let booking of bookingsByRoom$ | async; let i = index"
+              >
+                <td class="table-primary">{{ i + 1 }}</td>
+                <td>{{ booking.id }}</td>
+                <td>{{ booking.userId }}</td>
+                <td>{{ booking.hotelId }}</td>
+                <td>{{ booking.roomId }}</td>
+                <td>{{ booking.checkIn }}</td>
+                <td>{{ booking.checkOut }}</td>
+                <td>{{ booking.isActive }}</td>
+                <td>{{ booking.createdDate }}</td>
+                <td align="center">
+                  <div class="d-flex flex-nowrap">
+                    <button
+                      class="btn btn-primary me-1"
+                      (click)="editList(booking.id)"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      class="btn btn-danger mx-1"
+                      (click)="deleteList(booking.id)"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
               }
             </tbody>
           </table>

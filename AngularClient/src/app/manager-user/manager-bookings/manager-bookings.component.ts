@@ -16,28 +16,22 @@ import { ListBooking } from '../list-bookings';
   styleUrl: './manager-bookings.component.css',
 })
 export class ManagerBookingsComponent implements OnInit {
-  lists$: Observable<ListUser[]> = new Observable();
-  list$: Observable<ListUser> = new Observable();
-  userId?: number;
-  hotelId?: number;
-  roomId?: number;
-  listLists: number;
-
-  roles$: Observable<UserRole[]> = new Observable();
-  // roles: string[] = [];
-  roles: any;
-  role1 = '';
-  role2 = '';
-
   loggedIn: boolean;
   currentUser: any;
   isLoggedIn = false;
 
   bookingsByUser$: Observable<ListBooking[]> = new Observable();
+  userId?: number;
+  isByUser = false;
   bookingsByHotel$: Observable<ListBooking[]> = new Observable();
+  hotelId?: number;
+  isByHotel = false;
   bookingsByRoom$: Observable<ListBooking[]> = new Observable();
+  roomId?: number;
+  isByRoom = false;
   bookings$: Observable<ListBooking[]> = new Observable();
   booking$: Observable<ListBooking> = new Observable();
+  listLists: number;
 
   constructor(
     private listsService: ListService,
@@ -87,31 +81,37 @@ export class ManagerBookingsComponent implements OnInit {
     if (id != '') {
       this.userId = idConverted;
       this.listLists = 1;
-      this.list$ = this.listsService.getList(idConverted);
+      this.isByUser = true;
+      this.bookingsByUser$ = this.listsService.getBookingsUser(idConverted);
     } else {
       this.listLists = 0;
+      this.isByUser = false;
       this.fetchLists();
     }
   }
   onHotelIdFilterChange(id: string) {
     let idConverted = Number(id);
     if (id != '') {
-      this.userId = idConverted;
+      this.hotelId = idConverted;
       this.listLists = 1;
-      this.list$ = this.listsService.getList(idConverted);
+      this.isByHotel = true;
+      this.bookingsByHotel$ = this.listsService.getBookingsHotel(idConverted);
     } else {
       this.listLists = 0;
+      this.isByHotel = false;
       this.fetchLists();
     }
   }
   onRoomIdFilterChange(id: string) {
     let idConverted = Number(id);
     if (id != '') {
-      this.userId = idConverted;
+      this.roomId = idConverted;
       this.listLists = 1;
-      this.list$ = this.listsService.getList(idConverted);
+      this.isByRoom = true;
+      this.bookingsByRoom$ = this.listsService.getBookingsRoom(idConverted);
     } else {
       this.listLists = 0;
+      this.isByRoom = false;
       this.fetchLists();
     }
   }
