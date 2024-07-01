@@ -1,0 +1,12 @@
+{
+    "/elements": {
+      "target": "https://js.stripe.com",
+      "secure": false,
+      "changeOrigin": true
+    },
+    "/v1": {
+      "target": "https://api.stripe.com",
+      "secure": false,
+      "changeOrigin": true
+    }
+  }

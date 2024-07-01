@@ -1,0 +1,6 @@
+.main-row {
+    justify-content: center;
+}
+.main-row * {
+    width: fit-content;
+}

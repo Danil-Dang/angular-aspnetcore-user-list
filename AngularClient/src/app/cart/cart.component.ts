@@ -34,7 +34,7 @@ export class CartComponent implements OnInit {
 
   hotelId: number = 0;
   roomId: number = 0;
-  userId = null;
+  userId = 0;
 
   bookings$: Observable<ListBooking[]> = new Observable();
   bookingsWith$!: Observable<ListBookingWith[]>;
@@ -60,6 +60,12 @@ export class CartComponent implements OnInit {
   selectedItems: { [index: number]: boolean } = {};
   totalPrice = 0;
 
+  currentPage: number = 1;
+  itemsPerPage: number = 3;
+  // totalPages!: number;
+  totalPages: number = 0;
+  isLoggedInPayment = false;
+
   constructor(
     private storageService: StorageService,
     private dataService: DataService,
@@ -83,6 +89,10 @@ export class CartComponent implements OnInit {
     for (let i = 1; i <= this.cart; i++) {
       this.hoveredDelete.push(false);
     }
+
+    this.userId = Number(localStorage.getItem('user-id'));
+
+    this.calculateTotalPages();
   }
 
   fetchBooking() {
@@ -91,41 +101,49 @@ export class CartComponent implements OnInit {
   fetchBookingWith() {
     this.bookingsWith$ = new Observable<ListBookingWith[]>((observer) => {
       this.bookedObj = JSON.parse(localStorage.getItem('booking')!);
-      const bookings = Object.values(this.bookedObj);
-      // console.log(bookings);
+      if (this.bookedObj) {
+        const bookings = Object.values(this.bookedObj);
 
-      const bookingObservables = bookings.map((booking) =>
-        forkJoin({
-          hotel: this.listService.getHotelList(booking.bookingHotelId!),
-          room: this.listService.getRoom(booking.bookingRoomId!),
-        }).pipe(
-          tap(({ hotel, room }) => {
-            booking.hotel = hotel;
-            booking.room = room;
-          })
-        )
-      );
+        const bookingObservables = bookings.map((booking) =>
+          forkJoin({
+            hotel: this.listService.getHotelList(booking.bookingHotelId!),
+            room: this.listService.getRoom(booking.bookingRoomId!),
+          }).pipe(
+            tap(({ hotel, room }) => {
+              booking.hotel = hotel;
+              booking.room = room;
+            })
+          )
+        );
 
-      forkJoin(bookingObservables).subscribe(
-        () => {
-          observer.next(bookings);
-          observer.complete();
-        },
-        (error) => observer.error(error)
-      );
+        forkJoin(bookingObservables).subscribe(
+          () => {
+            observer.next(bookings);
+            observer.complete();
+          },
+          (error) => observer.error(error)
+        );
+      }
     });
 
     this.bookingsWith$.subscribe((bookingsWith) => {
       this.bookedArray = bookingsWith;
+      this.calculateTotalPages();
     });
   }
 
-  openDatePicker(startDate: any, endDate: any, index: number) {
+  openDatePicker(
+    startDate: any,
+    endDate: any,
+    index: number,
+    currentPage: number
+  ) {
     this.datePickerOpen = !this.datePickerOpen;
     this.bsValue = new Date(startDate);
     this.maxDate = new Date(endDate);
     this.bsRangeValue = [this.bsValue, this.maxDate];
     this.currentIndex = index;
+    this.currentPage = currentPage;
     setTimeout(() => {
       this.dateRangePicker.toggle();
     }, 0);
@@ -141,9 +159,11 @@ export class CartComponent implements OnInit {
       const timeDifference = endDatee.getTime() - startDatee.getTime();
       const numberOfDays = Math.ceil(timeDifference / (1000 * 3600 * 24));
 
-      this.bookedArray[this.currentIndex].bookingStartDate = startDate;
-      this.bookedArray[this.currentIndex].bookingEndDate = endDate;
-      this.bookedArray[this.currentIndex].numberOfDays = numberOfDays;
+      const indexx = this.currentIndex + (this.currentPage - 1) * 3;
+
+      this.bookedArray[indexx].bookingStartDate = startDate;
+      this.bookedArray[indexx].bookingEndDate = endDate;
+      this.bookedArray[indexx].numberOfDays = numberOfDays;
 
       this.updateLocalStorage();
 
@@ -153,8 +173,9 @@ export class CartComponent implements OnInit {
   }
 
   deleteBooking(index: number) {
-    if (index >= 0 && index < this.bookedArray.length) {
-      this.bookedArray.splice(index, 1);
+    const indexx = index + (this.currentPage - 1) * 3;
+    if (indexx >= 0 && indexx < this.bookedArray.length) {
+      this.bookedArray.splice(indexx, 1);
 
       this.updateLocalStorage();
       const updatedBookingTotal =
@@ -187,7 +208,6 @@ export class CartComponent implements OnInit {
     this.selectedItems[index] = !this.selectedItems[index];
     this.calculateTotalPrice();
   }
-
   calculateTotalPrice(): number {
     this.totalPrice = 0;
     this.bookedArray.forEach((booking, index) => {
@@ -196,6 +216,58 @@ export class CartComponent implements OnInit {
       }
     });
     return this.totalPrice;
+  }
+
+  calculateTotalPages() {
+    this.totalPages = Math.ceil(
+      this.bookedArray?.length / this.itemsPerPage || 0
+    );
+  }
+  goToPage(pageNumber: number) {
+    if (pageNumber >= 1 && pageNumber <= this.totalPages) {
+      this.currentPage = pageNumber;
+    }
+  }
+  getPaginatedBookings(bookings: ListBookingWith[]): ListBookingWith[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return bookings.slice(startIndex, endIndex);
+  }
+
+  goToPayment() {
+    // const selectedBookings: ListBookingWith[] = [];
+    if (!this.isLoggedIn) {
+      this.isLoggedInPayment = true;
+    } else {
+      const selectedBookings: any[] = [];
+
+      this.bookedArray.forEach((booking, index) => {
+        if (this.selectedItems[index]) {
+          this.totalPrice += booking.room!.price * (booking.numberOfDays ?? 0);
+          const roomPrice = booking.room!.price * (booking.numberOfDays ?? 0);
+          const obj = {
+            roomPrice: roomPrice,
+            hotelName: booking.hotel?.hotelName,
+            roomType: booking.room?.roomType,
+
+            userId: this.userId,
+            hotelId: booking.bookingHotelId,
+            roomId: booking.bookingRoomId,
+            checkIn: booking.bookingStartDate,
+            checkOut: booking.bookingEndDate,
+
+            selectedIndex: index,
+          };
+          selectedBookings.push(obj);
+        }
+      });
+      localStorage.setItem('booking-payment', JSON.stringify(selectedBookings));
+      localStorage.setItem(
+        'booking-payment-price',
+        JSON.stringify(this.totalPrice)
+      );
+      this._router.navigate(['/payment']);
+    }
   }
 }
 

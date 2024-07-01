@@ -30,6 +30,8 @@ export class EditComponent implements OnInit {
   };
 
   isLoggedIn = false;
+  roles: { [key: number]: string } = {};
+  showAdminBoard = false;
 
   hoteList$: Observable<ListHotel> = new Observable();
   // editUser: boolean = false;
@@ -53,6 +55,16 @@ export class EditComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
+    if (!this.isLoggedIn) {
+      this._router.navigate(['/home']);
+    } else {
+      this.roles = JSON.parse(localStorage.getItem('user-role')!);
+      this.showAdminBoard = Object.values(this.roles).includes('Admin');
+    }
+
+    if (!this.showAdminBoard) {
+      this._router.navigate(['/home']);
+    }
 
     this.dataService.variableChangedNumber$.subscribe((newValue: number) => {
       this.hotelId = newValue;

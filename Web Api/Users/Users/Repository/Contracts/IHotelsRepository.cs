@@ -37,5 +37,16 @@ namespace Users.Contracts
         public Task<Booking> CreateBooking(BookingForCreationDto booking);
         public Task UpdateBooking(int id, BookingForUpdateDto booking);
         public Task DeleteBooking(int id);
+
+        // ! Bookings ------------------------------------------
+        public Task<IEnumerable<Payment>> GetPayments();
+        public Task<IEnumerable<Payment>> GetUserPayments(int id);
+        public Task<IEnumerable<Payment>> GetHotelPayments(int id);
+        public Task<IEnumerable<Payment>> GetRoomPayments(int id);
+        public Task<Payment> GetBookingPayment(int id);
+        public Task<Payment> GetPayment(int id);
+        public Task<Payment> CreatePayment(PaymentForCreationDto payment);
+        public Task UpdatePayment(int id, PaymentForUpdateDto payment);
+        public Task DeletePayment(int id);
     }
 }

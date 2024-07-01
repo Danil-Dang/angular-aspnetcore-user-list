@@ -1,0 +1,47 @@
+<div>
+  <div class="container-fluid">
+    <div class="row justify-content-center" align="center">
+      <h1 class="fs-4">Choose Payment Method:</h1>
+      <div class="col-12 row main-row my-3">
+        <div class="border rounded p-3" align="center">
+          <div *ngFor="let book of selectedBookings" class="row">
+            <p class="col-4 mb-1">
+              {{ book.hotelName || "Null" }} -
+              {{ book.roomType || "Null" }}
+            </p>
+            <p>-</p>
+            <p class="col-4 mb-1">
+              /{{ book.checkIn || "Null" }}/ - /{{ book.checkOut || "Null" }}/
+            </p>
+            <p>-</p>
+            <p class="col-2 mb-1">{{ book.roomPrice }} dng</p>
+          </div>
+          <div class="mt-4">Total: {{ totalPrice }} dng</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <div class="border rounded">1</div>
+        <div class="border rounded my-3">2</div>
+        <!-- <form (ngSubmit)="submitPayment()"> -->
+        <!-- <div class="col-6 border rounded p-3">
+          <form>
+            <div id="card-element"></div>
+            @if (isVisa) {
+            <button
+              class="btn btn-success mt-5"
+              type="submit"
+              (click)="onPay()"
+            >
+              Pay
+            </button>
+            }
+          </form>
+        </div> -->
+      </div>
+      <div>
+        <button class="btn btn-danger" (click)="onCancel()">Cancel</button>
+        <button class="btn btn-primary" (click)="onPay()">Pay</button>
+      </div>
+    </div>
+  </div>
+</div>

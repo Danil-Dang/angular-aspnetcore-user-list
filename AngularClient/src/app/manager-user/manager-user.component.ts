@@ -39,6 +39,8 @@ export class ManagerUserComponent implements OnInit {
   loggedIn: boolean;
   currentUser: any;
   isLoggedIn = false;
+  roless: { [key: number]: string } = {};
+  showAdminBoard = false;
 
   constructor(
     private listsService: ListService,
@@ -54,10 +56,17 @@ export class ManagerUserComponent implements OnInit {
     this.isLoggedIn = this.storageService.isLoggedIn();
     if (!this.isLoggedIn) {
       this._router.navigate(['/home']);
+    } else {
+      this.roless = JSON.parse(localStorage.getItem('user-role')!);
+      this.showAdminBoard = Object.values(this.roless).includes('Admin');
     }
 
-    this.fetchLists();
-    this.currentUser = this.storageService.getUser();
+    if (this.showAdminBoard) {
+      this.fetchLists();
+      this.currentUser = this.storageService.getUser();
+    } else {
+      this._router.navigate(['/home']);
+    }
 
     // this.lists$.subscribe((lists) => {
     //   lists.forEach((list) => {

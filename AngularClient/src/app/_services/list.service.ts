@@ -9,6 +9,7 @@ import { UserRole } from '../manager-user/user-role';
 import { ListRoom } from '../manager-user/list-room';
 import { ListReview } from '../manager-user/list-review';
 import { ListBooking } from '../manager-user/list-bookings';
+import { ListPayment } from '../manager-user/list-payment';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,10 @@ export class ListService {
   private bookingsHotel$: Subject<ListBooking[]> = new Subject();
   private bookingsRoom$: Subject<ListBooking[]> = new Subject();
   private bookings$: Subject<ListBooking[]> = new Subject();
+  private paymentsUser$: Subject<ListPayment[]> = new Subject();
+  private paymentsHotel$: Subject<ListPayment[]> = new Subject();
+  private paymentsRoom$: Subject<ListPayment[]> = new Subject();
+  private payments$: Subject<ListPayment[]> = new Subject();
 
   constructor(private httpClient: HttpClient) {}
 
@@ -295,6 +300,80 @@ export class ListService {
 
   deleteBooking(id: number): Observable<string> {
     return this.httpClient.delete(`${this.urlHotel}/bookings/${id}`, {
+      responseType: 'text',
+    });
+  }
+
+  // ! Payments ------------------------------------------------------
+  private refreshPaymentsUser(id: number) {
+    this.httpClient
+      .get<ListPayment[]>(`${this.urlHotel}/payments-by-user/${id}`)
+      .subscribe((payments) => {
+        this.paymentsUser$.next(payments);
+      });
+  }
+  private refreshPaymentsHotel(id: number) {
+    this.httpClient
+      .get<ListPayment[]>(`${this.urlHotel}/payments-by-hotel/${id}`)
+      .subscribe((payments) => {
+        this.paymentsHotel$.next(payments);
+      });
+  }
+  private refreshPaymentsRoom(id: number) {
+    this.httpClient
+      .get<ListPayment[]>(`${this.urlHotel}/payments-by-room/${id}`)
+      .subscribe((payments) => {
+        this.paymentsRoom$.next(payments);
+      });
+  }
+  private refreshPayments() {
+    this.httpClient
+      .get<ListPayment[]>(`${this.urlHotel}/payments`)
+      .subscribe((payments) => {
+        this.payments$.next(payments);
+      });
+  }
+
+  getPaymentsUser(id: number): Subject<ListPayment[]> {
+    this.refreshPaymentsUser(id);
+    return this.paymentsUser$;
+  }
+  getPaymentsHotel(id: number): Subject<ListPayment[]> {
+    this.refreshPaymentsHotel(id);
+    return this.paymentsHotel$;
+  }
+  getPaymentsRoom(id: number): Subject<ListPayment[]> {
+    this.refreshPaymentsRoom(id);
+    return this.paymentsRoom$;
+  }
+  getPayments(): Subject<ListPayment[]> {
+    this.refreshPayments();
+    return this.payments$;
+  }
+
+  getPayment(id: number): Observable<ListPayment> {
+    return this.httpClient.get<ListPayment>(`${this.urlHotel}/payments/${id}`);
+  }
+  getPaymentBooking(id: number): Observable<ListPayment> {
+    return this.httpClient.get<ListPayment>(
+      `${this.urlHotel}/payments-by-booking/${id}`
+    );
+  }
+
+  createPayment(list: object) {
+    return this.httpClient.post(`${this.urlHotel}/payments/register`, list, {
+      responseType: 'text',
+    });
+  }
+
+  updatePayment(id: number, list: object) {
+    return this.httpClient.put(`${this.urlHotel}/payments/${id}`, list, {
+      responseType: 'text',
+    });
+  }
+
+  deletePayment(id: number): Observable<string> {
+    return this.httpClient.delete(`${this.urlHotel}/payments/${id}`, {
       responseType: 'text',
     });
   }

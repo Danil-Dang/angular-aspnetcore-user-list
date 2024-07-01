@@ -92,7 +92,6 @@ export class RoomComponent implements OnInit {
       this.hotelId = newValue;
     });
     if (this.hotelId === 0) {
-      console.log('No id provided');
       this._router.navigate(['/hotels']);
     } else {
       this.fetchHotel(this.hotelId);
@@ -122,7 +121,9 @@ export class RoomComponent implements OnInit {
 
       this.userId = JSON.parse(localStorage.getItem('user-id')!);
       this.roles = JSON.parse(localStorage.getItem('user-role')!);
-      this.isModerator = Object.values(this.roles).includes('Manager');
+      if (this.roles) {
+        this.isModerator = Object.values(this.roles).includes('Manager');
+      }
     }
   }
 
@@ -167,6 +168,9 @@ export class RoomComponent implements OnInit {
         this.errorMessage = err.error.message;
       },
     });
+
+    this.form.roomType = '';
+    this.form.price = undefined;
   }
 
   editRoom(id: number) {

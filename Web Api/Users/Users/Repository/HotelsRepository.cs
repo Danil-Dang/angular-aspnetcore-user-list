@@ -383,5 +383,133 @@ namespace Users.Repository
                 await connection.ExecuteAsync(query, new { id });
             }
         }
+
+        // ! Payments ---------------------------------------------
+        public async Task<IEnumerable<Payment>> GetPayments()
+        {
+            var query = "SELECT * FROM Payments";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var payments = await connection.QueryAsync<Payment>(query);
+                return payments.ToList();
+            }
+        }
+        public async Task<IEnumerable<Payment>> GetUserPayments(int id)
+        {
+            var query = "SELECT * FROM Payments WHERE UserId = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var payments = await connection.QueryAsync<Payment>(query, new { id });
+                return payments.ToList();
+            }
+        }
+
+        public async Task<IEnumerable<Payment>> GetHotelPayments(int id)
+        {
+            var query = "SELECT * FROM Payments WHERE BookingId IN (SELECT Id FROM Bookings WHERE HotelId = @Id)";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var payments = await connection.QueryAsync<Payment>(query, new { id });
+                return payments.ToList();
+            }
+        }
+        public async Task<IEnumerable<Payment>> GetRoomPayments(int id)
+        {
+            var query = "SELECT * FROM Payments WHERE BookingId IN (SELECT Id FROM Bookings WHERE RoomId = @Id)";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var payments = await connection.QueryAsync<Payment>(query, new { id });
+                return payments.ToList();
+            }
+        }
+
+
+        public async Task<Payment> GetPayment(int id)
+        {
+            var query = "SELECT * FROM Payments WHERE Id = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var payments = await connection.QuerySingleOrDefaultAsync<Payment>(query, new { id });
+                return payments;
+            }
+        }
+        public async Task<Payment> GetBookingPayment(int id)
+        {
+            var query = "SELECT * FROM Payments WHERE BookingId = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var payments = await connection.QuerySingleOrDefaultAsync<Payment>(query, new { id });
+                return payments;
+            }
+        }
+
+        public async Task<Payment> CreatePayment(PaymentForCreationDto payment)
+        {
+            var query = "INSERT INTO Payments (UserId, BookingId, Price, PaymentMethod, VisaCard, IsActive, Date) VALUES (@UserId, @BookingId, @Price, @PaymentMethod, @VisaCard, @IsActive, @Date)" +
+                "SELECT CAST(SCOPE_IDENTITY() as int)";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("UserId", payment.UserId, DbType.Int32);
+            parameters.Add("BookingId", payment.BookingId, DbType.Int32);
+            parameters.Add("Price", payment.Price, DbType.Decimal);
+            parameters.Add("PaymentMethod", payment.PaymentMethod, DbType.String);
+            parameters.Add("VisaCard", payment.VisaCard, DbType.Int32);
+            parameters.Add("IsActive", payment.IsActive, DbType.Boolean);
+            parameters.Add("Date", payment.Date, DbType.DateTime2);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var id = await connection.QuerySingleAsync<int>(query, parameters);
+
+                var createdPayment = new Payment
+                {
+                    Id = id,
+                    UserId = payment.UserId,
+                    BookingId = payment.BookingId,
+                    Price = payment.Price,
+                    PaymentMethod = payment.PaymentMethod,
+                    VisaCard = payment.VisaCard,
+                    IsActive = payment.IsActive,
+                    Date = payment.Date
+                };
+
+                return createdPayment;
+            }
+        }
+
+        public async Task UpdatePayment(int id, PaymentForUpdateDto payment)
+        {
+            var query = "UPDATE Payments SET UserId = @UserId, BookingId = @BookingId, Price = @Price, PaymentMethod = @PaymentMethod, VisaCard = @VisaCard, IsActive = @IsActive WHERE Id = @Id";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", id, DbType.Int32);
+            parameters.Add("UserId", payment.UserId, DbType.Int32);
+            parameters.Add("BookingId", payment.BookingId, DbType.Int32);
+            parameters.Add("Price", payment.Price, DbType.Decimal);
+            parameters.Add("PaymentMethod", payment.PaymentMethod, DbType.String);
+            parameters.Add("VisaCard", payment.VisaCard, DbType.Int32);
+            parameters.Add("IsActive", payment.IsActive, DbType.Boolean);
+
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, parameters);
+            }
+        }
+
+        public async Task DeletePayment(int id)
+        {
+            var query = "DELETE FROM Payments WHERE Id = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, new { id });
+            }
+        }
     }
 }

@@ -28,6 +28,8 @@ import { ManagerHotelComponent } from './manager-user/manager-hotel/manager-hote
 import { CartComponent } from './cart/cart.component';
 import { ManagerBookingsComponent } from './manager-user/manager-bookings/manager-bookings.component';
 import { BookingsEditComponent } from './manager-user/manager-bookings/bookings-edit/bookings-edit.component';
+import { PaymentComponent } from './cart/payment/payment.component';
+import { ManagerPaymentsComponent } from './manager-user/manager-payments/manager-payments.component';
 // import { StorageService } from './_services/storage.service';
 
 export function tokenGetter() {
@@ -52,6 +54,8 @@ export function tokenGetter() {
     CartComponent,
     ManagerBookingsComponent,
     BookingsEditComponent,
+    PaymentComponent,
+    ManagerPaymentsComponent,
   ],
   imports: [
     BrowserModule,

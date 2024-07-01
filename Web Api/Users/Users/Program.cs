@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Stripe;
+using Microsoft.AspNetCore.Mvc;
 
 using Users.Repository;
 using Users.Contracts;
@@ -85,5 +87,38 @@ app.UseStaticFiles(new StaticFileOptions()
     RequestPath = new PathString("/Resources")
 });
 
+StripeConfiguration.ApiKey = "YOUR_STRIPE_SECRET_KEY";
+
+app.MapPost("/api/payments", async ([FromBody] PaymentRequest request) =>
+{
+    try
+    {
+        var options = new PaymentIntentCreateOptions
+        {
+            Amount = request.Amount,
+            Currency = request.Currency,
+            PaymentMethod = request.PaymentMethodId,
+            Confirm = true,
+            ErrorOnRequiresAction = true
+        };
+
+        var service = new PaymentIntentService();
+        var paymentIntent = await service.CreateAsync(options);
+
+        return Results.Ok(new { success = true });
+    }
+    catch (StripeException e)
+    {
+        return Results.BadRequest(new { error = e.Message });
+    }
+});
+
 
 app.Run();
+
+public class PaymentRequest
+{
+    public string PaymentMethodId { get; set; }
+    public int Amount { get; set; }
+    public string Currency { get; set; }
+}

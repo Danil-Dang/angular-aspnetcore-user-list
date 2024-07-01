@@ -50,6 +50,9 @@ export class AppComponent implements OnInit {
       this.showAdminBoard = Object.values(this.roles).includes('Admin');
       this.showModeratorBoard = Object.values(this.roles).includes('Manager');
     }
+
+    localStorage.removeItem('booking-payment');
+    localStorage.removeItem('booking-payment-price');
   }
 
   logout(): void {

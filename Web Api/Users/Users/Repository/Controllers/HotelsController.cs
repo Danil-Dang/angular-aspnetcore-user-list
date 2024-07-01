@@ -409,5 +409,151 @@ namespace Users.Repository.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        // ! Payments ----------------------------------------
+        [HttpGet("payments-by-hotel/{id}")]
+        public async Task<IActionResult> GetHotelPayments(int id)
+        {
+            try
+            {
+                var payments = await _hotelRepo.GetHotelPayments(id);
+                if (payments == null) return NotFound();
+
+                return Ok(payments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("payments-by-room/{id}")]
+        public async Task<IActionResult> GetRoomPayments(int id)
+        {
+            try
+            {
+                var payments = await _hotelRepo.GetRoomPayments(id);
+                if (payments == null) return NotFound();
+
+                return Ok(payments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("payments-by-user/{id}")]
+        public async Task<IActionResult> GetUserPayments(int id)
+        {
+            try
+            {
+                var payments = await _hotelRepo.GetUserPayments(id);
+                if (payments == null) return NotFound();
+
+                return Ok(payments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpGet("payments-by-booking/{id}")]
+        public async Task<IActionResult> GetBookingPayment(int id)
+        {
+            try
+            {
+                var payments = await _hotelRepo.GetBookingPayment(id);
+                if (payments == null) return NotFound();
+
+                return Ok(payments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("payments")]
+        public async Task<IActionResult> GetPayments()
+        {
+            try
+            {
+                var payments = await _hotelRepo.GetPayments();
+                if (payments == null) return NotFound();
+
+                return Ok(payments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("payments/{id}", Name = "PaymentById")]
+        public async Task<IActionResult> GetPayment(int id)
+        {
+            try
+            {
+                var payment = await _hotelRepo.GetPayment(id);
+                if (payment == null) return NotFound();
+
+                return Ok(payment);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("payments/register")]
+        public async Task<IActionResult> CreatePayment(PaymentForCreationDto payment)
+        {
+            try
+            {
+                var createdPayment = await _hotelRepo.CreatePayment(payment);
+                return CreatedAtRoute("PaymentById", new { id = createdPayment.Id }, createdPayment);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("payments/{id}")]
+        public async Task<IActionResult> UpdatePayment(int id, PaymentForUpdateDto payment)
+        {
+            try
+            {
+                var dbPayment = await _hotelRepo.GetPayment(id);
+                if (dbPayment == null)
+                    return NotFound();
+
+                await _hotelRepo.UpdatePayment(id, payment);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("payments/{id}")]
+        public async Task<IActionResult> DeletePayment(int id)
+        {
+            try
+            {
+                var dbPayment = await _hotelRepo.GetPayment(id);
+                if (dbPayment == null)
+                    return NotFound();
+
+                await _hotelRepo.DeletePayment(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

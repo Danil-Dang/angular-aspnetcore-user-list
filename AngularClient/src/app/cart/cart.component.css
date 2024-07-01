@@ -51,3 +51,10 @@ button {
     align-items: center;
     /* justify-content: center; */
   }
+
+  .pagination {
+    justify-content: center;
+  }
+  .pagination button {
+    width: 12rem;
+  }

@@ -14,7 +14,9 @@ import { HotelsComponent } from './hotels/hotels.component';
 import { EditComponent } from './manager-user/edit/edit.component';
 import { RoomComponent } from './hotels/room/room.component';
 import { CartComponent } from './cart/cart.component';
+import { PaymentComponent } from './cart/payment/payment.component';
 import { BookingsEditComponent } from './manager-user/manager-bookings/bookings-edit/bookings-edit.component';
+import { ManagerPaymentsComponent } from './manager-user/manager-payments/manager-payments.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -26,6 +28,7 @@ const routes: Routes = [
   { path: 'hotels', component: HotelsComponent },
   { path: 'hotels/rooms', component: RoomComponent },
   { path: 'cart', component: CartComponent },
+  { path: 'payment', component: PaymentComponent },
   // { path: 'hotels/edit', component: EditComponent },
 
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
@@ -56,6 +59,11 @@ const routes: Routes = [
   {
     path: 'list/bookings/edit',
     component: BookingsEditComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'list/payments',
+    component: ManagerPaymentsComponent,
     canActivate: [AuthGuard],
   },
   // { path: 'list', component: TodosListComponent },

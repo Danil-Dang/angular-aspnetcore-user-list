@@ -19,6 +19,8 @@ export class ManagerBookingsComponent implements OnInit {
   loggedIn: boolean;
   currentUser: any;
   isLoggedIn = false;
+  roles: { [key: number]: string } = {};
+  showAdminBoard = false;
 
   bookingsByUser$: Observable<ListBooking[]> = new Observable();
   userId?: number;
@@ -46,6 +48,13 @@ export class ManagerBookingsComponent implements OnInit {
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
     if (!this.isLoggedIn) {
+      this._router.navigate(['/home']);
+    } else {
+      this.roles = JSON.parse(localStorage.getItem('user-role')!);
+      this.showAdminBoard = Object.values(this.roles).includes('Admin');
+    }
+
+    if (!this.showAdminBoard) {
       this._router.navigate(['/home']);
     }
 

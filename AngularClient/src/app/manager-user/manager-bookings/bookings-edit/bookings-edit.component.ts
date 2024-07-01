@@ -19,6 +19,8 @@ import { ListBooking } from '../../list-bookings';
 export class BookingsEditComponent {
   isLoggedIn = false;
   errorMessage = '';
+  roles: { [key: number]: string } = {};
+  showAdminBoard = false;
 
   booking$: Observable<ListBooking> = new Observable();
   // editUser: boolean = false;
@@ -59,6 +61,16 @@ export class BookingsEditComponent {
 
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
+    if (!this.isLoggedIn) {
+      this._router.navigate(['/home']);
+    } else {
+      this.roles = JSON.parse(localStorage.getItem('user-role')!);
+      this.showAdminBoard = Object.values(this.roles).includes('Admin');
+    }
+
+    if (!this.showAdminBoard) {
+      this._router.navigate(['/home']);
+    }
 
     this.dataService.variableChangedNumber$.subscribe((newValue: number) => {
       this.bookingId = newValue;
