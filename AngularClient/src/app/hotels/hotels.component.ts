@@ -8,6 +8,12 @@ import {
   map,
   catchError,
   EMPTY,
+  toArray,
+  concatMap,
+  tap,
+  from,
+  concat,
+  filter,
 } from 'rxjs';
 
 import { ListHotel } from '../manager-user/list-hotel';
@@ -30,13 +36,23 @@ export class HotelsComponent implements OnInit {
   hotelId?: number;
 
   roomLists$: Observable<ListRoom[]> = new Observable();
-  roomPrices: number[] = [];
-  cheapestRooms: any = [];
-  cheapestRoom$: any;
-  cheapestRooms$: any;
-  // hotelIds: any;
-  hotelIds: number[] = [1, 2, 3, 5];
-  roomMap: any = {};
+
+  isFilterByReviews = false;
+  isFilterByCity = false;
+  isFilterByPriceHigh = false;
+  isFilterByPriceLow = false;
+  cities: City[] = [
+    { name: 'Dalat', value: 'Dalat' },
+    { name: 'Da Nang', value: 'Da Nang' },
+    { name: 'Hanoi', value: 'Hanoi' },
+    { name: 'Ho Chi Minh City', value: 'Ho Chi Minh City' },
+  ];
+  selectedCity: string = '';
+  prices: Price[] = [
+    { name: 'Highest price', value: true },
+    { name: 'Lowest price', value: true },
+  ];
+  selectedPrice: string = '';
 
   constructor(
     private listsService: ListService,
@@ -47,37 +63,51 @@ export class HotelsComponent implements OnInit {
     this.loggedIn = false;
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.isLoggedIn = this.storageService.isLoggedIn();
     // if (!this.isLoggedIn) {
     //   this._router.navigate(['/home']);
     // }
 
     this.currentUser = this.storageService.getUser();
+
     this.fetchLists();
-
-    // this.hotelIds
-    //   .reduce((acc: any, hotelId: any) => {
-    //     // Use reduce to process IDs sequentially
-    //     return acc.pipe(
-    //       switchMap(() => this.fetchAndFindCheapestRooms(hotelId))
-    //     );
-    //   }, EMPTY) // Start with an empty observable
-    //   .subscribe(); // Initiate the sequence
-
-    // this.hoteLists$
-    //   .pipe(
-    //     switchMap((hotels) =>
-    //       forkJoin(
-    //         hotels.map((hotel) => this.fetchAndFindCheapestRooms(hotel.id))
-    //       )
-    //     )
-    //   )
-    //   .subscribe();
   }
 
   private fetchLists(): void {
-    this.hoteLists$ = this.listsService.getHotelLists();
+    this.hoteLists$ = this.listsService.getHotelLists().pipe(
+      switchMap((hotels) => {
+        if (hotels.length === 0) {
+          return of([]);
+        } else {
+          const observables = hotels.map((hotel) => {
+            const lowestPrice$ = this.listsService
+              .getCheapestRoom(hotel.id)
+              .pipe(map((room) => room.lowestPrice));
+            const averageReview$ = this.listsService
+              .getAverageReview(hotel.id)
+              .pipe(map((room) => room.averageReview));
+            const totalReview$ = this.listsService
+              .getTotalReview(hotel.id)
+              .pipe(map((room) => room.totalReviews));
+
+            return forkJoin([lowestPrice$, averageReview$, totalReview$]).pipe(
+              map(([lowestPrice, averageReview, totalReviews]) => ({
+                // return hotels.map((hotel, index) => ({
+                ...hotel,
+                // lowestPrice: prices[index].lowestPrice,
+                lowestPrice,
+                averageReview,
+                totalReviews,
+              }))
+              // })
+            );
+          });
+
+          return forkJoin(observables);
+        }
+      })
+    );
   }
 
   fetchRooms(id: number) {
@@ -97,43 +127,113 @@ export class HotelsComponent implements OnInit {
     this.dataService.changeVariableNumber(id);
   }
 
-  private fetchAndFindCheapestRooms(hotelId: number) {
-    return this.listsService.getRooms(hotelId).pipe(
-      catchError(() => of([])),
-      map((rooms) => {
-        if (rooms.length === 0) return null;
-        return rooms.reduce((cheapest, current) =>
-          cheapest && cheapest.price < current.price ? cheapest : current
-        );
-      }),
-      switchMap((cheapestRoom) => {
-        if (cheapestRoom) {
-          this.cheapestRooms$.next(cheapestRoom); // Emit the cheapest room
-        }
-        return of(null); // Complete the observable after emitting (or not)
-      })
-    );
+  setSelectedCity(cityValue: string) {
+    this.selectedCity = cityValue;
+    this.isFilterByCity = !!cityValue;
+  }
+  setSelectedPrice(priceName: string) {
+    if (priceName === 'Highest price') {
+      this.isFilterByPriceHigh = true;
+      this.isFilterByPriceLow = false;
+      this.selectedPrice = priceName;
+    } else if (priceName === 'Lowest price') {
+      this.isFilterByPriceLow = true;
+      this.isFilterByPriceHigh = false;
+      this.selectedPrice = priceName;
+    } else {
+      this.isFilterByPriceLow = false;
+      this.isFilterByPriceHigh = false;
+      this.selectedPrice = '';
+    }
+  }
+  onReviewSelect() {
+    this.isFilterByReviews = !this.isFilterByReviews;
   }
 
-  private fetchAndFindCheapestRoom(hotelId: number) {
-    this.fetchRooms(1);
-    this.cheapestRoom$ = this.roomLists$.pipe(
-      map((rooms) => {
-        if (rooms.length === 0) {
-          return null;
-        }
-
-        return rooms.reduce((cheapest, current) =>
-          cheapest && cheapest.price < current.price ? cheapest : current
-        );
-      })
-    );
-    this.cheapestRoom$.subscribe((cheapestRoom: any) => {
-      if (cheapestRoom) {
-        console.log('Cheapest room:', cheapestRoom);
-      } else {
-        console.log('No rooms found for this hotel.');
-      }
-    });
+  filterByReviews() {
+    if (
+      this.isFilterByCity &&
+      this.isFilterByReviews &&
+      this.isFilterByPriceHigh
+    ) {
+      const obj = {
+        city: this.selectedCity,
+        isByReview: true,
+        isByPriceHigh: true,
+      };
+      this.hoteLists$ = this.listsService.filterHotels(obj);
+    } else if (
+      this.isFilterByCity &&
+      this.isFilterByReviews &&
+      this.isFilterByPriceLow
+    ) {
+      const obj = {
+        city: this.selectedCity,
+        isByReview: true,
+        isByPriceLow: true,
+      };
+      this.hoteLists$ = this.listsService.filterHotels(obj);
+    } else if (this.isFilterByCity && this.isFilterByReviews) {
+      const obj = {
+        city: this.selectedCity,
+        isByReview: true,
+      };
+      this.hoteLists$ = this.listsService.filterHotels(obj);
+    } else if (this.isFilterByCity && this.isFilterByPriceHigh) {
+      const obj = {
+        city: this.selectedCity,
+        isByPriceHigh: true,
+      };
+      this.hoteLists$ = this.listsService.filterHotels(obj);
+    } else if (this.isFilterByCity && this.isFilterByPriceLow) {
+      const obj = {
+        city: this.selectedCity,
+        isByPriceLow: true,
+      };
+      this.hoteLists$ = this.listsService.filterHotels(obj);
+    } else if (this.isFilterByReviews && this.isFilterByPriceHigh) {
+      const obj = {
+        isByReview: true,
+        isByPriceHigh: true,
+      };
+      this.hoteLists$ = this.listsService.filterHotels(obj);
+    } else if (this.isFilterByReviews && this.isFilterByPriceLow) {
+      const obj = {
+        isByReview: true,
+        isByPriceLow: true,
+      };
+      this.hoteLists$ = this.listsService.filterHotels(obj);
+    } else if (this.isFilterByReviews) {
+      const obj = {
+        isByReview: true,
+      };
+      this.hoteLists$ = this.listsService.filterHotels(obj);
+    } else if (this.isFilterByCity) {
+      const obj = {
+        city: this.selectedCity,
+      };
+      this.hoteLists$ = this.listsService.filterHotels(obj);
+    } else if (this.isFilterByPriceLow) {
+      const obj = {
+        isByPriceLow: true,
+      };
+      this.hoteLists$ = this.listsService.filterHotels(obj);
+    } else if (this.isFilterByPriceHigh) {
+      const obj = {
+        isByPriceHigh: true,
+      };
+      this.hoteLists$ = this.listsService.filterHotels(obj);
+    } else {
+      this.fetchLists();
+    }
   }
+}
+
+interface City {
+  name: string;
+  value: string;
+}
+interface Price {
+  name: string;
+  value: boolean;
 }

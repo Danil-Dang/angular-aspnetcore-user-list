@@ -10,5 +10,9 @@ namespace Users.Entities.Models
         public string? Location { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
+
+        public decimal AverageReview { get; set; }
+        public decimal LowestPrice { get; set; }
+        public int TotalReviews { get; set; }
     }
 }

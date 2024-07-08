@@ -194,7 +194,7 @@
           <button class="btn btn-primary" (click)="addRoom()">Add Room</button>
         </div>
         }
-        <button class="btn btn-danger mx-3" (click)="clearDate()">Clear</button>
+        <!-- <button class="btn btn-danger mx-3" (click)="clearDate()">Clear</button> -->
 
         <div class="border rounded p-3 my-3">
           <div class="mb-4" align="center">
@@ -285,10 +285,7 @@
             </div>
             }
           </div>
-          <div
-            *ngIf="reviewsWithUsers$ | async as reviews; else loading"
-            class="mt-3"
-          >
+          <div *ngIf="reviewsWithUsers$ | async as reviews" class="mt-3">
             <div *ngFor="let review of reviews" class="row mb-5">
               <div>
                 <!-- <h2>{{ review.userId }}</h2> -->

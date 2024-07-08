@@ -36,6 +36,62 @@ namespace Users.Repository.Controllers
             }
         }
 
+        [HttpGet("filtered")]
+        public async Task<IActionResult> GetHotelsFiltered(string? city, bool? isByReview, bool? isByPriceHigh, bool? isByPriceLow)
+        {
+            try
+            {
+                var hotels = await _hotelRepo.GetHotelsFiltered(city, isByReview, isByPriceHigh, isByPriceLow);
+                return Ok(hotels);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("by-reviews")]
+        public async Task<IActionResult> GetHotelsByReviews()
+        {
+            try
+            {
+                var hotels = await _hotelRepo.GetHotelsByReviews();
+                return Ok(hotels);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("by-price-high")]
+        public async Task<IActionResult> GetHotelsByHighestPrice()
+        {
+            try
+            {
+                var hotels = await _hotelRepo.GetHotelsByHighestPrice();
+                return Ok(hotels);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("by-price-low")]
+        public async Task<IActionResult> GetHotelsByLowestPrice()
+        {
+            try
+            {
+                var hotels = await _hotelRepo.GetHotelsByLowestPrice();
+                return Ok(hotels);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("{id}", Name = "HotelById")]
         public async Task<IActionResult> GetHotel(int id)
         {
@@ -134,6 +190,22 @@ namespace Users.Repository.Controllers
             }
         }
 
+        [HttpGet("rooms-by-price/{id}")]
+        public async Task<IActionResult> GetCheapestRoom(int id)
+        {
+            try
+            {
+                var room = await _hotelRepo.GetCheapestRoom(id);
+                if (room == null) return NotFound();
+
+                return Ok(room);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpPost("rooms/register")]
         public async Task<IActionResult> CreateRoom(RoomForCreationDto room)
         {
@@ -219,6 +291,38 @@ namespace Users.Repository.Controllers
             try
             {
                 var review = await _hotelRepo.GetReview(id);
+                if (review == null) return NotFound();
+
+                return Ok(review);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("reviews-average/{id}")]
+        public async Task<IActionResult> GetAverageReview(int id)
+        {
+            try
+            {
+                var review = await _hotelRepo.GetAverageReview(id);
+                if (review == null) return NotFound();
+
+                return Ok(review);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("reviews-total/{id}")]
+        public async Task<IActionResult> GetTotalReview(int id)
+        {
+            try
+            {
+                var review = await _hotelRepo.GetTotalReview(id);
                 if (review == null) return NotFound();
 
                 return Ok(review);

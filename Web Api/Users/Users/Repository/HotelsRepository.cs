@@ -11,6 +11,49 @@ namespace Users.Repository
     {
         private readonly DapperContext _context;
 
+        private const string reviewFilterQuery = @"SELECT 
+                h.Id,
+                h.HotelName,
+                h.HotelStar,
+                h.RoomTotal,
+                h.Location,
+                h.ImgPath,
+                r.LowestPrice,
+                CAST(AVG(rev.ReviewStar) AS DECIMAL(2, 1)) AS AverageReview,
+                COUNT(rev.ReviewStar) AS TotalReviews
+            FROM Hotels h
+            LEFT JOIN (
+                SELECT HotelId, MIN(Price) AS LowestPrice
+                FROM Rooms
+                GROUP BY HotelId
+            ) r ON h.Id = r.HotelId
+            LEFT JOIN Reviews rev ON h.Id = rev.HotelId 
+            WHERE 
+                (@city IS NULL OR h.Location = @city)
+            GROUP BY h.Id, h.HotelName, h.HotelStar, h.RoomTotal, h.Location, h.ImgPath, r.LowestPrice 
+            ORDER BY
+                CASE WHEN @isByReview = 1 AND @isByPriceHigh = 1
+                    THEN CAST(AVG(rev.ReviewStar) AS DECIMAL(2, 1))
+                    WHEN @isByPriceHigh = 1 THEN r.LowestPrice 
+                    END DESC, 
+                CASE WHEN @isByReview = 1 AND @isByPriceLow = 1 
+                    THEN CAST(AVG(rev.ReviewStar) AS DECIMAL(2, 1)) 
+                    END DESC, 
+                CASE WHEN @isByReview = 1 AND @isByPriceLow = 1 
+                    THEN r.LowestPrice 
+                    END ASC,
+                CASE WHEN @isByReview = 1 
+                    THEN CAST(AVG(rev.ReviewStar) AS DECIMAL(2, 1)) 
+                    END DESC,
+                CASE WHEN @isByPriceHigh = 1
+                    THEN r.LowestPrice 
+                    END DESC,
+                CASE WHEN @isByPriceLow = 1
+                    THEN r.LowestPrice 
+                    END ASC";
+
+        private const string reviewFilterQueryGroupBy = "GROUP BY h.Id, h.HotelName, h.HotelStar, h.RoomTotal, h.Location, h.ImgPath, r.LowestPrice ";
+
         public HotelsRepository(DapperContext context)
         {
             _context = context;
@@ -19,6 +62,60 @@ namespace Users.Repository
         public async Task<IEnumerable<Hotel>> GetHotels()
         {
             var query = "SELECT * FROM Hotels";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var hotels = await connection.QueryAsync<Hotel>(query);
+                return hotels.ToList();
+            }
+        }
+
+        public async Task<IEnumerable<Hotel>> GetHotelsFiltered(string? city, bool? isByReview, bool? isByPriceHigh, bool? isByPriceLow)
+        {
+            var query = reviewFilterQuery;
+
+            using (var connection = _context.CreateConnection())
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@city", city);
+                parameters.Add("@isByReview", isByReview);
+                parameters.Add("@isByPriceHigh", isByPriceHigh);
+                parameters.Add("@isByPriceLow", isByPriceLow);
+
+                var hotels = await connection.QueryAsync<Hotel>(query, parameters);
+                // var hotels = await connection.QueryAsync<Hotel>(query);
+                return hotels.ToList();
+            }
+        }
+
+        public async Task<IEnumerable<Hotel>> GetHotelsByReviews()
+        {
+            // var query = reviewFilterQuery + "WHERE h.Location = 'Hanoi' " + reviewFilterQueryGroupBy + "ORDER BY AverageReview DESC";
+            // var query = reviewFilterQuery + reviewFilterQueryGroupBy + "ORDER BY AverageReview DESC";
+            var query = reviewFilterQuery;
+
+            using (var connection = _context.CreateConnection())
+            {
+                var hotels = await connection.QueryAsync<Hotel>(query);
+                return hotels.ToList();
+            }
+        }
+
+        public async Task<IEnumerable<Hotel>> GetHotelsByHighestPrice()
+        {
+            // var query = reviewFilterQuery + "WHERE h.Location = 'Hanoi' " + reviewFilterQueryGroupBy + "ORDER BY r.LowestPrice DESC";
+            var query = reviewFilterQuery + reviewFilterQueryGroupBy + "ORDER BY r.LowestPrice DESC";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var hotels = await connection.QueryAsync<Hotel>(query);
+                return hotels.ToList();
+            }
+        }
+        public async Task<IEnumerable<Hotel>> GetHotelsByLowestPrice()
+        {
+            // var query = reviewFilterQuery + "WHERE h.Location = 'Hanoi' " + reviewFilterQueryGroupBy + "ORDER BY r.LowestPrice";
+            var query = reviewFilterQuery + reviewFilterQueryGroupBy + "ORDER BY r.LowestPrice";
 
             using (var connection = _context.CreateConnection())
             {
@@ -121,6 +218,18 @@ namespace Users.Repository
             }
         }
 
+        // public async Task<Room> GetCheapestRoom(int id)
+        public async Task<RoomCheapestResponse> GetCheapestRoom(int id)
+        {
+            var query = "SELECT MIN(Price) AS LowestPrice FROM Rooms WHERE HotelId = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var room = await connection.QuerySingleOrDefaultAsync<RoomCheapestResponse>(query, new { id });
+                return room;
+            }
+        }
+
         public async Task<Room> CreateRoom(RoomForCreationDto room)
         {
             var query = "INSERT INTO Rooms (HotelId, RoomType, Price, IsActive, CreatedDate) VALUES (@HotelId, @RoomType, @Price, @IsActive, @CreatedDate)" +
@@ -200,6 +309,17 @@ namespace Users.Repository
             }
         }
 
+        public async Task<ReviewAverageResponse> GetAverageReview(int id)
+        {
+            var query = "SELECT CAST(AVG(ReviewStar) AS DECIMAL(2, 1)) AS AverageReview FROM Reviews WHERE HotelId = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var review = await connection.QuerySingleOrDefaultAsync<ReviewAverageResponse>(query, new { id });
+                return review;
+            }
+        }
+
         public async Task<Review> GetReview(int id)
         {
             var query = "SELECT * FROM Reviews WHERE Id = @Id";
@@ -207,6 +327,17 @@ namespace Users.Repository
             using (var connection = _context.CreateConnection())
             {
                 var review = await connection.QuerySingleOrDefaultAsync<Review>(query, new { id });
+                return review;
+            }
+        }
+
+        public async Task<ReviewTotalResponse> GetTotalReview(int id)
+        {
+            var query = "SELECT COUNT(*) as TotalReviews FROM Reviews WHERE HotelId = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var review = await connection.QuerySingleOrDefaultAsync<ReviewTotalResponse>(query, new { id });
                 return review;
             }
         }
@@ -219,7 +350,7 @@ namespace Users.Repository
             var parameters = new DynamicParameters();
             parameters.Add("UserId", review.UserId, DbType.Int32);
             parameters.Add("HotelId", review.HotelId, DbType.Int32);
-            parameters.Add("ReviewStar", review.ReviewStar, DbType.Byte);
+            parameters.Add("ReviewStar", review.ReviewStar, DbType.Decimal);
             parameters.Add("Description", review.Description, DbType.String);
             parameters.Add("CreatedDate", review.CreatedDate, DbType.DateTime2);
 
@@ -247,7 +378,7 @@ namespace Users.Repository
 
             var parameters = new DynamicParameters();
             parameters.Add("Id", id, DbType.Int32);
-            parameters.Add("ReviewStar", review.ReviewStar, DbType.Byte);
+            parameters.Add("ReviewStar", review.ReviewStar, DbType.Decimal);
             parameters.Add("Description", review.Description, DbType.String);
 
             using (var connection = _context.CreateConnection())
@@ -511,5 +642,10 @@ namespace Users.Repository
                 await connection.ExecuteAsync(query, new { id });
             }
         }
+    }
+
+    public class ReviewTotalResponse
+    {
+        public int TotalReviews { get; set; }
     }
 }

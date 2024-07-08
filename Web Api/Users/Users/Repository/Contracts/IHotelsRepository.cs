@@ -1,6 +1,7 @@
 using System;
 using Users.Entities.Dto.Hotels;
 using Users.Entities.Models;
+using Users.Repository;
 
 namespace Users.Contracts
 {
@@ -8,6 +9,10 @@ namespace Users.Contracts
     {
         // ! Hotels ------------------------------------------
         public Task<IEnumerable<Hotel>> GetHotels();
+        public Task<IEnumerable<Hotel>> GetHotelsFiltered(string? city, bool? isByReview, bool? isByPriceHigh, bool? isByPriceLow);
+        public Task<IEnumerable<Hotel>> GetHotelsByReviews();
+        public Task<IEnumerable<Hotel>> GetHotelsByLowestPrice();
+        public Task<IEnumerable<Hotel>> GetHotelsByHighestPrice();
         public Task<Hotel> GetHotel(int id);
         public Task<Hotel> CreateHotel(HotelForCreationDto hotel);
         public Task UpdateHotel(int id, HotelForUpdateDto hotel);
@@ -16,6 +21,7 @@ namespace Users.Contracts
         // ! Rooms ------------------------------------------
         public Task<IEnumerable<Room>> GetRooms(int id);
         public Task<Room> GetRoom(int id);
+        public Task<RoomCheapestResponse> GetCheapestRoom(int id);
         public Task<Room> CreateRoom(RoomForCreationDto hotel);
         public Task UpdateRoom(int id, RoomForUpdateDto hotel);
         public Task DeleteRoom(int id);
@@ -24,6 +30,8 @@ namespace Users.Contracts
         public Task<IEnumerable<Review>> GetHotelReviews(int id);
         public Task<IEnumerable<Review>> GetUserReviews(int id);
         public Task<Review> GetReview(int id);
+        public Task<ReviewAverageResponse> GetAverageReview(int id);
+        public Task<ReviewTotalResponse> GetTotalReview(int id);
         public Task<Review> CreateReview(ReviewForCreationDto review);
         public Task UpdateReview(int id, ReviewForUpdateDto review);
         public Task DeleteReview(int id);

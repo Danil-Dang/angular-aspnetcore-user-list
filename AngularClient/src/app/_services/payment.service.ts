@@ -12,21 +12,18 @@ interface PaymentRequest {
   providedIn: 'root',
 })
 export class PaymentService {
-  private apiUrl = 'http://localhost:4201/api/payments';
-
-  constructor(private http: HttpClient) {}
-
-  processPayment(
-    paymentMethodId: string,
-    amount: number,
-    currency: string
-  ): Observable<any> {
-    const paymentData: PaymentRequest = {
-      PaymentMethodId: paymentMethodId,
-      Amount: amount,
-      Currency: currency,
-    };
-
-    return this.http.post<any>(this.apiUrl, paymentData);
-  }
+  // private apiUrl = 'http://localhost:4201/api/payments';
+  // constructor(private http: HttpClient) {}
+  // processPayment(
+  //   paymentMethodId: string,
+  //   amount: number,
+  //   currency: string
+  // ): Observable<any> {
+  //   const paymentData: PaymentRequest = {
+  //     PaymentMethodId: paymentMethodId,
+  //     Amount: amount,
+  //     Currency: currency,
+  //   };
+  //   return this.http.post<any>(this.apiUrl, paymentData);
+  // }
 }

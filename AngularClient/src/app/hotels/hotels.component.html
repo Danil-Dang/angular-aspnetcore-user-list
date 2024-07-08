@@ -12,18 +12,58 @@
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                Location
+                {{ selectedCity || "Location" }}
               </button>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="">Dalat</a></li>
-                <li><a class="dropdown-item" href="">Da Nang</a></li>
-                <li><a class="dropdown-item" href="">Hanoi</a></li>
-                <li><a class="dropdown-item" href="">Ho Chi Minh City</a></li>
-                <li><a class="dropdown-item" href=""></a></li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    (click)="setSelectedCity(''); filterByReviews()"
+                    >Choose</a
+                  >
+                </li>
+                <li *ngFor="let city of cities">
+                  <a
+                    class="dropdown-item"
+                    (click)="setSelectedCity(city.value); filterByReviews()"
+                    >{{ city.name }}</a
+                  >
+                </li>
               </ul>
             </div>
-            <div class="loc-flex py-1">Rating</div>
-            <div class="loc-flex py-1">Price</div>
+            <div
+              class="loc-flex py-1"
+              (click)="onReviewSelect(); filterByReviews()"
+            >
+              Rating
+            </div>
+            <!-- <div class="loc-flex py-1">Price</div> -->
+            <div class="dropdown inline-block loc-flex">
+              <button
+                class="btn dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {{ selectedPrice || "Price" }}
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a
+                    class="dropdown-item"
+                    (click)="setSelectedPrice(''); filterByReviews()"
+                    >Choose</a
+                  >
+                </li>
+                <li *ngFor="let price of prices">
+                  <a
+                    class="dropdown-item"
+                    (click)="setSelectedPrice(price.name); filterByReviews()"
+                    >{{ price.name }}</a
+                  >
+                </li>
+              </ul>
+            </div>
             <!-- <div class="loc-flex py-1">{{ cheapestRooms }}</div> -->
             <!-- <div class="loc-flex py-1">{{ cheapestRooms$ }}</div> -->
           </div>
@@ -51,7 +91,7 @@
                   </div>
                   <div class="col-sm-7 col-md-12">
                     <div class="row">
-                      <div class="col-sm-7 col-md-12">
+                      <div class="col-sm-7 col-md-12 py-2">
                         <div class="row row-roomm">
                           <div class="col-7">
                             <h1 class="fs-3 m-0">
@@ -68,10 +108,54 @@
                             </div>
                             <h2 class="fs-6">{{ hoteList.location }}</h2>
                           </div>
-                          <div class="col-5" align="right">
+                          <div class="col-5 ps-0" align="right">
                             <div>
-                              <h2 class="fs-6 mt-1">Reviews</h2>
-                              <p class="fs-6">100 reviews</p>
+                              <div class="reviews-header mt-1">
+                                <h2
+                                  *ngIf="hoteList.averageReview * 2 >= 9"
+                                  class="fs-6 m-0"
+                                >
+                                  Exceptional
+                                </h2>
+                                <h2
+                                  *ngIf="
+                                    hoteList.averageReview * 2 >= 8 &&
+                                    hoteList.averageReview * 2 < 9
+                                  "
+                                  class="fs-6 m-0"
+                                >
+                                  Excellent
+                                </h2>
+                                <h2
+                                  *ngIf="
+                                    hoteList.averageReview * 2 >= 7 &&
+                                    hoteList.averageReview * 2 < 8
+                                  "
+                                  class="fs-6 m-0"
+                                >
+                                  Very good
+                                </h2>
+                                <h2
+                                  *ngIf="
+                                    hoteList.averageReview * 2 >= 6 &&
+                                    hoteList.averageReview * 2 < 7
+                                  "
+                                  class="fs-6 m-0"
+                                >
+                                  Good
+                                </h2>
+                                <div
+                                  *ngIf="hoteList.averageReview > 0"
+                                  class="average-review"
+                                >
+                                  <h2 class="fs-6 m-0">
+                                    {{ hoteList.averageReview * 2 }}
+                                  </h2>
+                                </div>
+                              </div>
+                              <p class="fs-6">
+                                {{ hoteList.totalReviews }} reviews
+                              </p>
                             </div>
                             <div></div>
                           </div>
@@ -79,26 +163,14 @@
                       </div>
                       <div class="col-sm-5 col-md-12">
                         <div class="row rounded hotel-price p-2">
-                          <div class="col-md-6 col-sm-12">
-                            <p class="m-0" align="left">From 100$</p>
-                            <!-- <p
-                              *ngIf="cheapestRooms$ | async as hotels"
-                              class="m-0"
-                              align="left"
-                            >
-                              From {{ hotels.price }}$
-                            </p> -->
-                            <!-- <div
-                              *ngFor="
-                                let cheapestRoom of cheapestRooms$ | async
-                              "
-                            >
-                              <h2>Hotel {{ cheapestRoom.hotelId }}:</h2>
-                              <p>
-                                Cheapest Price:
-                                {{ cheapestRoom.price | currency }}
-                              </p>
-                            </div> -->
+                          <div
+                            *ngIf="hoteList.lowestPrice"
+                            class="col-md-6 col-sm-12"
+                          >
+                            <!-- <p class="m-0" align="left">From 100$</p> -->
+                            <p class="m-0" align="left">
+                              From {{ hoteList.lowestPrice }}$
+                            </p>
                           </div>
                           <div
                             class="col-md-6 col-sm-12 hotel-price-button p-0"

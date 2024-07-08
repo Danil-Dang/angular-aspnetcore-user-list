@@ -146,24 +146,6 @@ export class PaymentComponent implements OnInit {
     // window.location.reload();
   }
 
-  async submitPayment() {
-    const stripe = await this.stripePromise;
-    const { error, paymentMethod } = await stripe!.createPaymentMethod({
-      type: 'card',
-      card: this.cardElement,
-    });
-
-    if (error) {
-    } else {
-      // Send paymentMethod.id to backend
-      const response = await this.paymentService.processPayment(
-        paymentMethod.id,
-        1099,
-        'usd'
-      );
-    }
-  }
-
   deleteBooking(index: number) {
     if (this.bookings && index >= 0 && index < this.bookings.length) {
       this.bookings.splice(index, 1);

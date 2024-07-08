@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, tap, map } from 'rxjs';
+import { HttpParams } from '@angular/common/http';
 
 import { ListUser } from '../manager-user/list-user';
 import { ListHotel } from '../manager-user/list-hotel';
@@ -10,6 +11,10 @@ import { ListRoom } from '../manager-user/list-room';
 import { ListReview } from '../manager-user/list-review';
 import { ListBooking } from '../manager-user/list-bookings';
 import { ListPayment } from '../manager-user/list-payment';
+import { ListCheapestRoom } from './models/list-cheapest-room';
+import { AverageReview } from './models/average-review';
+import { TotalReview } from './models/total-review';
+import { FilterParams } from './models/filter-params';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +25,10 @@ export class ListService {
   private lists$: Subject<ListUser[]> = new Subject();
   private roles$: Subject<UserRole[]> = new Subject();
   private hotels$: Subject<ListHotel[]> = new Subject();
+  private hotelsFiltered$: Subject<ListHotel[]> = new Subject();
+  private hotelsFilteredByReviews$: Subject<ListHotel[]> = new Subject();
+  private hotelsFilteredByPriceHigh$: Subject<ListHotel[]> = new Subject();
+  private hotelsFilteredByPriceLow$: Subject<ListHotel[]> = new Subject();
   private rooms$: Subject<ListRoom[]> = new Subject();
   private reviewsUser$: Subject<ListReview[]> = new Subject();
   private reviewsHotel$: Subject<ListReview[]> = new Subject();
@@ -148,6 +157,67 @@ export class ListService {
     });
   }
 
+  private refreshHotelsFiltered(filterParams: FilterParams): void {
+    let params = new HttpParams();
+    if (filterParams.city) {
+      params = params.set('city', filterParams.city);
+    }
+    if (filterParams.isByReview) {
+      params = params.set('isByReview', filterParams.isByReview.toString());
+    }
+    if (filterParams.isByPriceHigh) {
+      params = params.set(
+        'isByPriceHigh',
+        filterParams.isByPriceHigh.toString()
+      );
+    }
+    if (filterParams.isByPriceLow) {
+      params = params.set('isByPriceLow', filterParams.isByPriceLow.toString());
+    }
+    this.httpClient
+      .get<ListHotel[]>(`${this.urlHotel}/filtered`, { params })
+      .subscribe((hotels) => {
+        this.hotelsFiltered$.next(hotels);
+      });
+  }
+  filterHotels(filterParams: FilterParams): Subject<ListHotel[]> {
+    this.refreshHotelsFiltered(filterParams);
+    return this.hotelsFiltered$;
+  }
+  private refreshHotelsByReviews() {
+    this.httpClient
+      .get<ListHotel[]>(`${this.urlHotel}/by-reviews`)
+      .subscribe((hotels) => {
+        this.hotelsFilteredByReviews$.next(hotels);
+      });
+  }
+  filterHotelsByReviews(): Subject<ListHotel[]> {
+    this.refreshHotelsByReviews();
+    return this.hotelsFilteredByReviews$;
+  }
+  private refreshHotelsByPriceHigh() {
+    this.httpClient
+      .get<ListHotel[]>(`${this.urlHotel}/by-price-high`)
+      .subscribe((hotels) => {
+        this.hotelsFilteredByPriceHigh$.next(hotels);
+      });
+  }
+  filterHotelsByPriceHigh(): Subject<ListHotel[]> {
+    this.refreshHotelsByPriceHigh();
+    return this.hotelsFilteredByPriceHigh$;
+  }
+  private refreshHotelsByPriceLow() {
+    this.httpClient
+      .get<ListHotel[]>(`${this.urlHotel}/by-price-low`)
+      .subscribe((hotels) => {
+        this.hotelsFilteredByPriceLow$.next(hotels);
+      });
+  }
+  filterHotelsByPriceLow(): Subject<ListHotel[]> {
+    this.refreshHotelsByPriceLow();
+    return this.hotelsFilteredByPriceLow$;
+  }
+
   // ! Rooms ------------------------------------------------------
   private refreshRoomLists(id: number) {
     this.httpClient
@@ -164,6 +234,12 @@ export class ListService {
 
   getRoom(id: number): Observable<ListRoom> {
     return this.httpClient.get<ListRoom>(`${this.urlHotel}/rooms/${id}`);
+  }
+
+  getCheapestRoom(id: number): Observable<ListCheapestRoom> {
+    return this.httpClient.get<ListCheapestRoom>(
+      `${this.urlHotel}/rooms-by-price/${id}`
+    );
   }
 
   // createHotelList(list: ListHotel): Observable<string> {
@@ -213,6 +289,18 @@ export class ListService {
 
   getReview(id: number): Observable<ListReview> {
     return this.httpClient.get<ListReview>(`${this.urlHotel}/reviews/${id}`);
+  }
+
+  getAverageReview(id: number): Observable<AverageReview> {
+    return this.httpClient.get<AverageReview>(
+      `${this.urlHotel}/reviews-average/${id}`
+    );
+  }
+
+  getTotalReview(id: number): Observable<TotalReview> {
+    return this.httpClient.get<TotalReview>(
+      `${this.urlHotel}/reviews-total/${id}`
+    );
   }
 
   // createHotelList(list: ListHotel): Observable<string> {

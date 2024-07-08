@@ -4,7 +4,11 @@ export interface ListHotel {
   hotelStar?: number;
   roomTotal?: number;
   location?: string;
-  imgPath: string;
-  isActive: boolean;
-  createdDate: Date;
+  imgPath?: string;
+  isActive?: boolean;
+  createdDate?: Date;
+
+  lowestPrice?: number;
+  averageReview: number;
+  totalReviews: number;
 }

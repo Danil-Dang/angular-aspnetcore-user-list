@@ -97,27 +97,7 @@ export class RoomComponent implements OnInit {
       this.fetchHotel(this.hotelId);
       this.fetchRooms(this.hotelId);
       this.fetchReviews(this.hotelId);
-      this.reviewsWithUsers$ = this.reviewLists$.pipe(
-        switchMap((reviews) => {
-          // Create an array of observables to fetch users
-          const userObservables = reviews.map((review) =>
-            this.listService
-              .getList(review.userId)
-              .pipe(catchError(() => of(null)))
-          );
-
-          // Fetch all users in parallel
-          return forkJoin(userObservables).pipe(
-            map((users) => {
-              // Combine reviews with their corresponding user data
-              return reviews.map((review, index) => ({
-                ...review, // Spread the review properties
-                user: users[index], // Add the fetched user object
-              }));
-            })
-          );
-        })
-      );
+      this.fetchUserReview();
 
       this.userId = JSON.parse(localStorage.getItem('user-id')!);
       this.roles = JSON.parse(localStorage.getItem('user-role')!);
@@ -139,12 +119,27 @@ export class RoomComponent implements OnInit {
     this.reviewLists$ = this.listService.getReviewsHotel(id);
   }
 
-  fetchUserReview(id: number) {
-    this.reviewLists$ = this.listService.getReviewsUser(id);
+  fetchUserReview() {
+    // this.reviewLists$ = this.listService.getReviewsUser(id);
+    this.reviewsWithUsers$ = this.reviewLists$.pipe(
+      switchMap((reviews) => {
+        const userObservables = reviews.map((review) =>
+          this.listService
+            .getList(review.userId)
+            .pipe(catchError(() => of(null)))
+        );
+
+        return forkJoin(userObservables).pipe(
+          map((users) => {
+            return reviews.map((review, index) => ({
+              ...review,
+              user: users[index],
+            }));
+          })
+        );
+      })
+    );
   }
-  // fetchUser(id: number) {
-  //   this.user$ = this.listService.getList(id);
-  // }
 
   addRoom() {
     this.roomForm = true;
