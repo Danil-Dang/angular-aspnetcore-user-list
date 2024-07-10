@@ -15,6 +15,8 @@ import { ListCheapestRoom } from './models/list-cheapest-room';
 import { AverageReview } from './models/average-review';
 import { TotalReview } from './models/total-review';
 import { FilterParams } from './models/filter-params';
+import { ListLocations } from './models/locations';
+import { ListLocationsCity } from './models/locationsCity';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +31,8 @@ export class ListService {
   private hotelsFilteredByReviews$: Subject<ListHotel[]> = new Subject();
   private hotelsFilteredByPriceHigh$: Subject<ListHotel[]> = new Subject();
   private hotelsFilteredByPriceLow$: Subject<ListHotel[]> = new Subject();
+  private locations$: Subject<ListLocations[]> = new Subject();
+  private locationsCity$: Subject<ListLocationsCity[]> = new Subject();
   private rooms$: Subject<ListRoom[]> = new Subject();
   private reviewsUser$: Subject<ListReview[]> = new Subject();
   private reviewsHotel$: Subject<ListReview[]> = new Subject();
@@ -216,6 +220,49 @@ export class ListService {
   filterHotelsByPriceLow(): Subject<ListHotel[]> {
     this.refreshHotelsByPriceLow();
     return this.hotelsFilteredByPriceLow$;
+  }
+
+  // ! Locations ------------------------------------------------------
+  private refreshLocations() {
+    this.httpClient
+      .get<ListLocations[]>(`${this.urlHotel}/locations`)
+      .subscribe((locations) => {
+        this.locations$.next(locations);
+      });
+  }
+  getLocations(): Subject<ListLocations[]> {
+    this.refreshLocations();
+    return this.locations$;
+  }
+
+  private refreshLocationsCity() {
+    this.httpClient
+      .get<ListLocationsCity[]>(`${this.urlHotel}/locations/city`)
+      .subscribe((locations) => {
+        this.locationsCity$.next(locations);
+      });
+  }
+  getLocationsCity(): Subject<ListLocationsCity[]> {
+    this.refreshLocationsCity();
+    return this.locationsCity$;
+  }
+
+  getLocation(id: number): Observable<ListLocations> {
+    return this.httpClient.get<ListLocations>(
+      `${this.urlHotel}/locations/${id}`
+    );
+  }
+
+  createLocation(list: object) {
+    return this.httpClient.post(`${this.urlHotel}/locations/register`, list, {
+      responseType: 'text',
+    });
+  }
+
+  deleteLocation(id: number): Observable<string> {
+    return this.httpClient.delete(`${this.urlHotel}/locations/${id}`, {
+      responseType: 'text',
+    });
   }
 
   // ! Rooms ------------------------------------------------------

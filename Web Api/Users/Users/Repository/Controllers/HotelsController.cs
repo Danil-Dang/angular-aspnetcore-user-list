@@ -158,6 +158,83 @@ namespace Users.Repository.Controllers
             }
         }
 
+        // ! Locations ----------------------------------------
+        [HttpGet("locations")]
+        public async Task<IActionResult> GetLocations()
+        {
+            try
+            {
+                var locations = await _hotelRepo.GetLocations();
+                return Ok(locations);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("locations/city")]
+        public async Task<IActionResult> GetLocationsCity()
+        {
+            try
+            {
+                var locations = await _hotelRepo.GetLocationsCity();
+                return Ok(locations);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("locations/{id}", Name = "LocationById")]
+        public async Task<IActionResult> GetLocation(int id)
+        {
+            try
+            {
+                var location = await _hotelRepo.GetLocation(id);
+                if (location == null) return NotFound();
+
+                return Ok(location);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("locations/register")]
+        public async Task<IActionResult> CreateLocation(LocationForCreationDto location)
+        {
+            try
+            {
+                var createdLocation = await _hotelRepo.CreateLocation(location);
+                return CreatedAtRoute("LocationById", new { id = createdLocation.Id }, createdLocation);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("locations/{id}")]
+        public async Task<IActionResult> DeleteLocation(int id)
+        {
+            try
+            {
+                var dbLocation = await _hotelRepo.GetLocation(id);
+                if (dbLocation == null)
+                    return NotFound();
+
+                await _hotelRepo.DeleteLocation(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         // ! Rooms ----------------------------------------
 
         [HttpGet("rooms-by-hotel/{id}")]

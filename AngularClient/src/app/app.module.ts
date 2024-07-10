@@ -30,6 +30,7 @@ import { ManagerBookingsComponent } from './manager-user/manager-bookings/manage
 import { BookingsEditComponent } from './manager-user/manager-bookings/bookings-edit/bookings-edit.component';
 import { PaymentComponent } from './cart/payment/payment.component';
 import { ManagerPaymentsComponent } from './manager-user/manager-payments/manager-payments.component';
+import { ClickOutsideDirective } from './_services/directives/click-outside.directive';
 // import { StorageService } from './_services/storage.service';
 
 export function tokenGetter() {
@@ -56,6 +57,7 @@ export function tokenGetter() {
     BookingsEditComponent,
     PaymentComponent,
     ManagerPaymentsComponent,
+    ClickOutsideDirective,
   ],
   imports: [
     BrowserModule,

@@ -8,9 +8,19 @@
 
 <div id="app">
   <nav class="navbar navbar-expand navbar-dark bg-dark px-2">
-    <a href="#" class="navbar-brand" (click)="isShowBoard = false">NgNet</a>
+    <a
+      href="/home"
+      class="navbar-brand"
+      routerLink="home"
+      (click)="isShowBoard = false"
+    >
+      <div class="nav-header">
+        <img src="../assets/nav/logo.png" alt="logo" />
+        <h1 class="fs-1">NgNet</h1>
+      </div>
+    </a>
     <ul class="navbar-nav mr-auto" routerLinkActive="active">
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a
           href="/home"
           class="nav-link"
@@ -18,7 +28,7 @@
           (click)="isShowBoard = false"
           >Home</a
         >
-      </li>
+      </li> -->
       <li class="nav-item">
         <a
           href="/hotels"
@@ -148,5 +158,6 @@
 
   <div class="container-fluid div-router" (click)="closeBoard()">
     <router-outlet class="px-4"></router-outlet>
+    <!-- <router-outlet></router-outlet> -->
   </div>
 </div>

@@ -9,6 +9,17 @@ nav {
     /* position: fixed; */
     z-index: 100;
 }
+.nav-header {
+    display: flex;
+    position: relative;
+    height: 40px;
+}
+.nav-header img {
+    height: 100%;
+}
+.nav-header {
+    
+}
 .nav-link {
     white-space: nowrap;
 }

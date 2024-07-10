@@ -40,8 +40,6 @@ export class CartComponent implements OnInit {
   bookingsWith$!: Observable<ListBookingWith[]>;
   cart = 0;
 
-  // bookedStartDay!: any;
-  // bookedEndDay!: any;
   bookedObj!: { [key: string]: ListBookingWith };
   bookedArray!: ListBookingWith[];
   bsValue = new Date();

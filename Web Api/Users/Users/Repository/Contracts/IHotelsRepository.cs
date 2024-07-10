@@ -18,6 +18,13 @@ namespace Users.Contracts
         public Task UpdateHotel(int id, HotelForUpdateDto hotel);
         public Task DeleteHotel(int id);
 
+        // ! Locations ------------------------------------------
+        public Task<IEnumerable<Location>> GetLocations();
+        public Task<IEnumerable<LocationCityGet>> GetLocationsCity();
+        public Task<Location> GetLocation(int id);
+        public Task<Location> CreateLocation(LocationForCreationDto location);
+        public Task DeleteLocation(int id);
+
         // ! Rooms ------------------------------------------
         public Task<IEnumerable<Room>> GetRooms(int id);
         public Task<Room> GetRoom(int id);

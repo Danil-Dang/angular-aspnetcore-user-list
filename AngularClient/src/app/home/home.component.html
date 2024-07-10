@@ -1,16 +1,67 @@
 <div class="container">
-  <header class="jumbotron">
-    <p>{{ content }}</p>
-    <p>Home</p>
-    <div>
-      <h1>Customers favourite</h1>
-      <ul>
-        <li>Ho Chi Minh City</li>
-        <li>Hanoi</li>
-        <li>Da Nang</li>
-        <li>Nha Trang</li>
-        <li>Dalat</li>
-      </ul>
+  <div class="row" align="center">
+    <div class="header-background"></div>
+    <!-- <div class="row justify-content-center">
+      <div class="col-9 border rounded">Bla</div>
+    </div> -->
+    <div class="row justify-content-center mt-3">
+      <div class="col-7 posit rounded px-3 pt-5 pb-3">
+        <div>
+          <div class="search-container col-9">
+            <input
+              type="text"
+              class="form-control"
+              [formControl]="cityInput"
+              placeholder="Enter Destination"
+              aria-label="Destination"
+              (focus)="showDropdown = true"
+              (blur)="handleBlur()"
+              appClickOutside
+              (appClickOutside)="showDropdown = false; isCityOpen = false"
+              (click)="isCityOpen = !isCityOpen"
+            />
+
+            <div
+              *ngIf="
+                showDropdown &&
+                isCityOpen &&
+                (filteredLocations$ | async) as filteredLocations
+              "
+              class="dropdown-menu show"
+              aria-labelledby="cityDropdown"
+            >
+              <li *ngFor="let location of filteredLocations">
+                <a class="dropdown-item" (click)="selectCity(location)">{{
+                  location
+                }}</a>
+              </li>
+            </div>
+          </div>
+
+          <div class="col-9">
+            <input
+              type="text"
+              class="form-control mt-3"
+              placeholder="Daterangepicker"
+              #dateRangePicker="bsDaterangepicker"
+              bsDaterangepicker
+              [(ngModel)]="bsRangeValue"
+              [datesDisabled]="disabledDates"
+              [datesEnabled]="enabledDates"
+              [bsConfig]="bsConfig"
+            />
+          </div>
+          <!-- [bsValue]="bsValue" -->
+
+          <button class="btn btn-primary mt-4">Search</button>
+        </div>
+      </div>
     </div>
-  </header>
+    <div class="row justify-content-center mt-5">
+      <div>
+        <h1>Top Destinations</h1>
+      </div>
+    </div>
+  </div>
 </div>
+<div class="main-background"></div>

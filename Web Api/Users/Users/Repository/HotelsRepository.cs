@@ -194,6 +194,73 @@ namespace Users.Repository
             }
         }
 
+        // ! Locations ---------------------------------------------
+        public async Task<IEnumerable<Location>> GetLocations()
+        {
+            var query = "SELECT * FROM Locations";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var hotels = await connection.QueryAsync<Location>(query);
+                return hotels.ToList();
+            }
+        }
+        public async Task<IEnumerable<LocationCityGet>> GetLocationsCity()
+        {
+            var query = "SELECT City FROM Locations";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var hotels = await connection.QueryAsync<LocationCityGet>(query);
+                return hotels.ToList();
+            }
+        }
+
+        public async Task<Location> GetLocation(int id)
+        {
+            var query = "SELECT * FROM Locations WHERE Id = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                var location = await connection.QuerySingleOrDefaultAsync<Location>(query, new { id });
+                return location;
+            }
+        }
+
+        public async Task<Location> CreateLocation(LocationForCreationDto location)
+        {
+            var query = "INSERT INTO Locations (City, IsActive) VALUES (@City, @IsActive)" +
+                "SELECT CAST(SCOPE_IDENTITY() as int)";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("City", location.City, DbType.String);
+            parameters.Add("IsActive", location.IsActive, DbType.Boolean);
+
+            using (var connection = _context.CreateConnection())
+            {
+                var id = await connection.QuerySingleAsync<int>(query, parameters);
+
+                var createdRoom = new Location
+                {
+                    Id = id,
+                    City = location.City,
+                    IsActive = location.IsActive,
+                };
+
+                return createdRoom;
+            }
+        }
+
+        public async Task DeleteLocation(int id)
+        {
+            var query = "DELETE FROM Locations WHERE Id = @Id";
+
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, new { id });
+            }
+        }
+
         // ! Rooms ---------------------------------------------
         public async Task<IEnumerable<Room>> GetRooms(int id)
         {
