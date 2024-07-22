@@ -7,4 +7,5 @@ export interface ListBooking {
   checkIn: Date;
   checkOut: Date;
   createdDate: Date;
+  createdDateFormatted?: string | null;
 }

@@ -12,6 +12,7 @@ import {
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 import { ListUser } from './list-user';
 import { ListService } from '../_services/list.service';
@@ -46,7 +47,8 @@ export class ManagerUserComponent implements OnInit {
     private listsService: ListService,
     private storageService: StorageService,
     private _router: Router,
-    private dataService: DataService
+    private dataService: DataService,
+    private datePipe: DatePipe
   ) {
     this.loggedIn = false;
     this.listLists = 0;
@@ -96,7 +98,17 @@ export class ManagerUserComponent implements OnInit {
   }
 
   private fetchLists(): void {
-    this.lists$ = this.listsService.getLists();
+    this.lists$ = this.listsService.getLists().pipe(
+      map((users) =>
+        users.map((user) => ({
+          ...user,
+          createdDateFormatted: this.datePipe.transform(
+            user.createdDate,
+            'yyyy-MM-dd'
+          ),
+        }))
+      )
+    );
   }
 
   onAddUser() {
