@@ -5,4 +5,6 @@ export interface ListRoom {
   price: number;
   isActive: boolean;
   createdDate: Date;
+
+  roomTotal?: number;
 }

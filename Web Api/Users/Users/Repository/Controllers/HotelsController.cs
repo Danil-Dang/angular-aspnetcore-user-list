@@ -37,11 +37,11 @@ namespace Users.Repository.Controllers
         }
 
         [HttpGet("filtered")]
-        public async Task<IActionResult> GetHotelsFiltered(string? city, bool? isByReview, bool? isByPriceHigh, bool? isByPriceLow)
+        public async Task<IActionResult> GetHotelsFiltered(string? city, bool? isByReview, bool? isByPriceHigh, bool? isByPriceLow, DateTime startDate, DateTime endDate, bool? isByStars, string? stars, bool? isByRating, string? rating)
         {
             try
             {
-                var hotels = await _hotelRepo.GetHotelsFiltered(city, isByReview, isByPriceHigh, isByPriceLow);
+                var hotels = await _hotelRepo.GetHotelsFiltered(city, isByReview, isByPriceHigh, isByPriceLow, startDate, endDate, isByStars, stars, isByRating, rating);
                 return Ok(hotels);
             }
             catch (Exception ex)
@@ -132,6 +132,23 @@ namespace Users.Repository.Controllers
                     return NotFound();
 
                 await _hotelRepo.UpdateHotel(id, hotel);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpPut("room-total/{id}")]
+        public async Task<IActionResult> UpdateHotelRoomTotal(int id, HotelRoomTotalForUpdateDto hotel)
+        {
+            try
+            {
+                var dbHotel = await _hotelRepo.GetHotel(id);
+                if (dbHotel == null)
+                    return NotFound();
+
+                await _hotelRepo.UpdateHotelRoomTotal(id, hotel);
                 return NoContent();
             }
             catch (Exception ex)

@@ -14,5 +14,8 @@ namespace Users.Entities.Models
         public decimal AverageReview { get; set; }
         public decimal LowestPrice { get; set; }
         public int TotalReviews { get; set; }
+        public IEnumerable<DateTime> AvailableDates { get; set; }
+        public DateTime BookingDate { get; set; }
+        public int BookedRooms { get; set; }
     }
 }

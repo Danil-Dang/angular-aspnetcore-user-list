@@ -155,6 +155,12 @@ export class ListService {
     });
   }
 
+  updateHotelRoomTotal(id: number, list: object) {
+    return this.httpClient.put(`${this.urlHotel}/room-total/${id}`, list, {
+      responseType: 'text',
+    });
+  }
+
   deleteHotelList(id: number): Observable<string> {
     return this.httpClient.delete(`${this.urlHotel}/${id}`, {
       responseType: 'text',
@@ -177,6 +183,24 @@ export class ListService {
     }
     if (filterParams.isByPriceLow) {
       params = params.set('isByPriceLow', filterParams.isByPriceLow.toString());
+    }
+    if (filterParams.startDate) {
+      params = params.set('startDate', filterParams.startDate);
+    }
+    if (filterParams.endDate) {
+      params = params.set('endDate', filterParams.endDate);
+    }
+    if (filterParams.isByStars) {
+      params = params.set('isByStars', filterParams.isByStars.toString());
+    }
+    if (filterParams.stars) {
+      params = params.set('stars', filterParams.stars);
+    }
+    if (filterParams.isByRating) {
+      params = params.set('isByRating', filterParams.isByRating.toString());
+    }
+    if (filterParams.rating) {
+      params = params.set('rating', filterParams.rating);
     }
     this.httpClient
       .get<ListHotel[]>(`${this.urlHotel}/filtered`, { params })

@@ -38,7 +38,9 @@ export class AppComponent implements OnInit {
       localStorage.removeItem('reloadOnce');
     }
 
-    this.cart = Number(localStorage.getItem('booking-total'));
+    if (localStorage.getItem('booking')) {
+      this.cart = Number(localStorage.getItem('booking-total'));
+    }
     this.isLoggedIn = this.storageService.isLoggedIn();
 
     if (this.isLoggedIn) {

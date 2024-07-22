@@ -4,6 +4,7 @@ using Users.Entities.Models;
 using Dapper;
 using Users.Entities.Dto.Hotels;
 using System.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Users.Repository
 {
@@ -11,45 +12,69 @@ namespace Users.Repository
     {
         private readonly DapperContext _context;
 
-        private const string reviewFilterQuery = @"SELECT 
-                h.Id,
-                h.HotelName,
-                h.HotelStar,
-                h.RoomTotal,
-                h.Location,
-                h.ImgPath,
-                r.LowestPrice,
-                CAST(AVG(rev.ReviewStar) AS DECIMAL(2, 1)) AS AverageReview,
-                COUNT(rev.ReviewStar) AS TotalReviews
-            FROM Hotels h
-            LEFT JOIN (
-                SELECT HotelId, MIN(Price) AS LowestPrice
-                FROM Rooms
+        private const string reviewFilterQuery = @"            
+            WITH HotelData AS (
+                SELECT 
+                    h.Id,
+                    h.HotelName,
+                    h.HotelStar,
+                    h.RoomTotal,
+                    h.Location,
+                    h.ImgPath,
+                    r.LowestPrice,
+                    CAST(AVG(rev.ReviewStar) AS DECIMAL(2, 1)) AS AverageReview,
+                    COUNT(rev.ReviewStar) AS TotalReviews
+                FROM Hotels h
+                LEFT JOIN (
+                    SELECT HotelId, MIN(Price) AS LowestPrice
+                    FROM Rooms
+                    GROUP BY HotelId
+                ) r ON h.Id = r.HotelId
+                LEFT JOIN Reviews rev ON h.Id = rev.HotelId 
+                WHERE 
+                    (@city IS NULL OR h.Location = @city)
+                    AND (@isByStars IS NULL OR h.hotelStar IN (SELECT Value FROM @stars))
+                    
+                GROUP BY h.Id, h.HotelName, h.HotelStar, h.RoomTotal, h.Location, h.ImgPath, r.LowestPrice 
+            )
+            , HotelAverageReview AS(
+                SELECT HotelId, CAST(AVG(ReviewStar) AS DECIMAL(2, 1)) AS AverageReview
+                FROM Reviews
                 GROUP BY HotelId
-            ) r ON h.Id = r.HotelId
-            LEFT JOIN Reviews rev ON h.Id = rev.HotelId 
+            )
+            SELECT * 
+            FROM HotelData hd
+            INNER JOIN HotelAverageReview har ON har.HotelId = hd.Id
             WHERE 
-                (@city IS NULL OR h.Location = @city)
-            GROUP BY h.Id, h.HotelName, h.HotelStar, h.RoomTotal, h.Location, h.ImgPath, r.LowestPrice 
+                (@isByRating IS NULL OR har.AverageReview >= @rating)
+                AND hd.RoomTotal > (
+                SELECT COUNT(*)
+                FROM Bookings b
+                WHERE b.RoomId IN (
+                    SELECT Id
+                    FROM Rooms rm
+                    WHERE rm.HotelId = hd.Id
+                ) AND (b.CheckIn <= @endDate AND b.CheckOut >= @startDate)
+            )
             ORDER BY
                 CASE WHEN @isByReview = 1 AND @isByPriceHigh = 1
-                    THEN CAST(AVG(rev.ReviewStar) AS DECIMAL(2, 1))
-                    WHEN @isByPriceHigh = 1 THEN r.LowestPrice 
+                    THEN hd.AverageReview
+                    WHEN @isByPriceHigh = 1 THEN hd.LowestPrice 
                     END DESC, 
                 CASE WHEN @isByReview = 1 AND @isByPriceLow = 1 
-                    THEN CAST(AVG(rev.ReviewStar) AS DECIMAL(2, 1)) 
+                    THEN hd.AverageReview
                     END DESC, 
                 CASE WHEN @isByReview = 1 AND @isByPriceLow = 1 
-                    THEN r.LowestPrice 
+                    THEN hd.LowestPrice 
                     END ASC,
                 CASE WHEN @isByReview = 1 
-                    THEN CAST(AVG(rev.ReviewStar) AS DECIMAL(2, 1)) 
+                    THEN hd.AverageReview
                     END DESC,
                 CASE WHEN @isByPriceHigh = 1
-                    THEN r.LowestPrice 
+                    THEN hd.LowestPrice 
                     END DESC,
                 CASE WHEN @isByPriceLow = 1
-                    THEN r.LowestPrice 
+                    THEN hd.LowestPrice 
                     END ASC";
 
         private const string reviewFilterQueryGroupBy = "GROUP BY h.Id, h.HotelName, h.HotelStar, h.RoomTotal, h.Location, h.ImgPath, r.LowestPrice ";
@@ -70,7 +95,7 @@ namespace Users.Repository
             }
         }
 
-        public async Task<IEnumerable<Hotel>> GetHotelsFiltered(string? city, bool? isByReview, bool? isByPriceHigh, bool? isByPriceLow)
+        public async Task<IEnumerable<Hotel>> GetHotelsFiltered(string? city, bool? isByReview, bool? isByPriceHigh, bool? isByPriceLow, DateTime startDate, DateTime endDate, bool? isByStars, string? stars, bool? isByRating, string? rating)
         {
             var query = reviewFilterQuery;
 
@@ -81,9 +106,43 @@ namespace Users.Repository
                 parameters.Add("@isByReview", isByReview);
                 parameters.Add("@isByPriceHigh", isByPriceHigh);
                 parameters.Add("@isByPriceLow", isByPriceLow);
+                parameters.Add("@startDate", startDate);
+                parameters.Add("@endDate", endDate);
+                parameters.Add("@isByStars", isByStars);
+                parameters.Add("@isByRating", isByRating);
+
+                // int[] starss = null;
+                if (!string.IsNullOrEmpty(stars))
+                {
+                    int[] starss = stars.Split(',').Select(int.Parse).ToArray();
+
+                    var starTable = new DataTable();
+                    starTable.Columns.Add("Value", typeof(int));
+                    foreach (var star in starss)
+                    {
+                        starTable.Rows.Add(star);
+                    }
+                    parameters.Add("@stars", starTable.AsTableValuedParameter("dbo.IntList"));
+                }
+                else
+                {
+                    // parameters.Add("@stars", null);
+                    var starTablee = new DataTable();
+                    starTablee.Columns.Add("Value", typeof(int));
+                    parameters.Add("@stars", starTablee.AsTableValuedParameter("dbo.IntList"));
+                }
+
+                if (!string.IsNullOrEmpty(rating))
+                {
+                    parameters.Add("@rating", decimal.Parse(rating) / 2);
+                }
+                else
+                {
+                    parameters.Add("@rating", null);
+                }
 
                 var hotels = await connection.QueryAsync<Hotel>(query, parameters);
-                // var hotels = await connection.QueryAsync<Hotel>(query);
+
                 return hotels.ToList();
             }
         }
@@ -183,6 +242,19 @@ namespace Users.Repository
                 await connection.ExecuteAsync(query, parameters);
             }
         }
+        public async Task UpdateHotelRoomTotal(int id, HotelRoomTotalForUpdateDto hotel)
+        {
+            var query = "UPDATE Hotels SET RoomTotal = @RoomTotal WHERE Id = @Id";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("Id", id, DbType.Int32);
+            parameters.Add("RoomTotal", hotel.RoomTotal, DbType.Int32);
+
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, parameters);
+            }
+        }
 
         public async Task DeleteHotel(int id)
         {
@@ -265,7 +337,7 @@ namespace Users.Repository
         public async Task<IEnumerable<Room>> GetRooms(int id)
         {
             // var query = "SELECT * FROM Rooms";
-            var query = "SELECT * FROM Rooms WHERE HotelId = @Id";
+            var query = "SELECT *, (SELECT COUNT(*) FROM Rooms WHERE HotelId = @Id) AS RoomTotal FROM Rooms WHERE HotelId = @Id";
 
             using (var connection = _context.CreateConnection())
             {

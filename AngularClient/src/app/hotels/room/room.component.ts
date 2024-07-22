@@ -1,8 +1,27 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { Observable, switchMap, forkJoin, map, catchError, of } from 'rxjs';
-import { Router } from '@angular/router';
-import { BsDaterangepickerDirective } from 'ngx-bootstrap/datepicker';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  TemplateRef,
+  ElementRef,
+  AfterViewInit,
+} from '@angular/core';
+import {
+  Observable,
+  switchMap,
+  forkJoin,
+  map,
+  catchError,
+  of,
+  filter,
+} from 'rxjs';
+import { Router, NavigationEnd } from '@angular/router';
+import {
+  BsDaterangepickerDirective,
+  BsDatepickerConfig,
+} from 'ngx-bootstrap/datepicker';
 import { getTime } from 'ngx-bootstrap/chronos/utils/date-getters';
+import { DecimalPipe } from '@angular/common';
 // import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 import { StorageService } from '../../_services/storage.service';
@@ -26,10 +45,14 @@ export class RoomComponent implements OnInit {
   roles: any;
 
   hotelId: number = 0;
+  averageReview!: number;
+  totalReview!: number;
   roomId: number = 0;
+  roomTotal = 0;
   userId = null;
   hoteList$: Observable<ListHotel> = new Observable();
   roomLists$: Observable<ListRoom[]> = new Observable();
+  roomListsFormatted$: Observable<ListRoomFormatted[]> = new Observable();
   room$: Observable<ListRoom> = new Observable();
   reviewLists$: Observable<ListReview[]> = new Observable();
   user$: Observable<ListUser> = new Observable();
@@ -51,7 +74,16 @@ export class RoomComponent implements OnInit {
   isReviewOpen = false;
   isSignUpFailed = false;
   isFirstReview = true;
+  isReviewLogin = false;
 
+  bsConfig: Partial<BsDatepickerConfig> = {
+    minDate: new Date(),
+    maxDate: new Date(2024, 12, 1),
+    showWeekNumbers: true,
+    rangeInputFormat: 'DD MMM YYYY',
+    dateInputFormat: 'DD MMM YYYY',
+    isAnimated: true,
+  };
   bsValue = new Date();
   bsRangeValue: Date[] = [];
   maxDate = new Date();
@@ -63,34 +95,44 @@ export class RoomComponent implements OnInit {
   @ViewChild('dateRangePicker') dateRangePicker!: BsDaterangepickerDirective;
   dateRoomId: number = 0;
 
+  scrollContainer = document.querySelector('.scrolling-container');
+  content = document.querySelector('.content');
+  scrollLeftBtn = document.querySelector('.scroll-left');
+  scrollRightBtn = document.querySelector('.scroll-right');
+  @ViewChild('content') contentt!: ElementRef;
+
   constructor(
     private storageService: StorageService,
     private dataService: DataService,
     private listService: ListService,
-    private _router: Router
+    private _router: Router,
+    private decimalPipe: DecimalPipe
   ) {
-    // this.bsConfig = Object.assign(
-    //   {},
-    //   {
-    //     containerClass: 'theme-default',
-    //     rangeInputFormat: 'YYYY-MM-DD',
-    //     minDate: new Date(),
-    //     maxDate: new Date(2025, 0, 1),
-    //   }
-    // );
-    // this.minDate.setDate(this.minDate.getDate() - 1);
-    // this.maxDate.setDate(this.maxDate.getDate() + 7);
+    this.maxDate.setDate(this.maxDate.getDate() + 1);
     this.bsRangeValue = [this.bsValue, this.maxDate];
+    this._router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        if (this._router.url.includes('#')) {
+          this._router.navigate([], { fragment: undefined });
+        }
+      });
   }
 
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
-    if (this.isLoggedIn) {
-    }
+    // if (this.isLoggedIn) {
+    // }
 
-    this.dataService.variableChangedNumber$.subscribe((newValue: number) => {
-      this.hotelId = newValue;
-    });
+    // this.dataService.variableChangedNumber$.subscribe((newValue: number) => {
+    //   this.hotelId = newValue;
+    // });
+    this.hotelId = JSON.parse(localStorage.getItem('room')!).hotelId;
+    this.averageReview = JSON.parse(
+      localStorage.getItem('room')!
+    ).averageReview;
+    this.totalReview = JSON.parse(localStorage.getItem('room')!).totalReview;
+
     if (this.hotelId === 0) {
       this._router.navigate(['/hotels']);
     } else {
@@ -107,12 +149,41 @@ export class RoomComponent implements OnInit {
     }
   }
 
+  ngAfterViewInit() {
+    if (this.contentt && this.contentt.nativeElement) {
+      console.log('ngAfter works');
+      this.adjustContentWidth();
+    }
+  }
+  adjustContentWidth() {
+    const contentElement = this.contentt.nativeElement;
+    const paragraphElements = contentElement.querySelectorAll('p');
+
+    let totalWidth = 0;
+    paragraphElements.forEach(
+      (p: HTMLParagraphElement) => (totalWidth += p.offsetWidth)
+    );
+
+    contentElement.style.width = totalWidth + 'px';
+  }
+
   fetchHotel(id: number) {
     this.hoteList$ = this.listService.getHotelList(id);
   }
 
   fetchRooms(id: number) {
     this.roomLists$ = this.listService.getRooms(id);
+    this.roomLists$.subscribe((data) => {
+      this.roomTotal = data.length;
+    });
+    this.roomListsFormatted$ = this.roomLists$.pipe(
+      map((rooms) =>
+        rooms.map((room) => ({
+          ...room,
+          priceFormatted: this.decimalPipe.transform(room.price, '1.0-0'),
+        }))
+      )
+    );
   }
 
   fetchReviews(id: number) {
@@ -141,6 +212,25 @@ export class RoomComponent implements OnInit {
     );
   }
 
+  scrollContent(direction: 'left' | 'right') {
+    const contentElement = this.contentt.nativeElement;
+    const scrollAmount = 120;
+
+    if (direction === 'left') {
+      contentElement.scrollLeft -= scrollAmount;
+    } else {
+      contentElement.scrollLeft += scrollAmount;
+    }
+
+    // const scrollPercentage = 25;
+    // const scrollAmount =
+    //   direction === 'left'
+    //     ? -contentElement.offsetWidth * (scrollPercentage / 100)
+    //     : contentElement.offsetWidth * (scrollPercentage / 100);
+
+    // contentElement.scrollLeft += scrollAmount;
+  }
+
   addRoom() {
     this.roomForm = true;
   }
@@ -152,8 +242,20 @@ export class RoomComponent implements OnInit {
 
   onSubmit() {
     const { hotelId = this.hotelId, roomType, price } = this.form;
+    const objUpdate = { roomTotal: this.roomTotal + 1 };
 
     this.listService.createRoom({ hotelId, roomType, price }).subscribe({
+      next: (data: any) => {
+        this.roomForm = false;
+        this.fetchRooms(this.hotelId);
+        this.fetchHotel(this.hotelId);
+      },
+      error: (err) => {
+        this.errorMessage = err.error.message;
+      },
+    });
+
+    this.listService.updateHotelRoomTotal(this.hotelId, objUpdate).subscribe({
       next: (data: any) => {
         this.roomForm = false;
         this.fetchRooms(this.hotelId);
@@ -197,8 +299,21 @@ export class RoomComponent implements OnInit {
   }
 
   deleteRoom(id: number) {
+    const objUpdate = { roomTotal: this.roomTotal - 1 };
+
     this.listService.deleteRoom(id).subscribe({
-      next: () => this.fetchRooms(this.hotelId),
+      next: () => {},
+    });
+
+    this.listService.updateHotelRoomTotal(this.hotelId, objUpdate).subscribe({
+      next: (data: any) => {
+        this.roomForm = false;
+        this.fetchRooms(this.hotelId);
+        this.fetchHotel(this.hotelId);
+      },
+      error: (err) => {
+        this.errorMessage = err.error.message;
+      },
     });
   }
 
@@ -231,10 +346,14 @@ export class RoomComponent implements OnInit {
   }
 
   onReviewOpen() {
-    this.isReviewOpen = !this.isReviewOpen;
-    this.formReview.reviewStar = 0;
-    this.formReview.description = null;
-    this.rating = 0;
+    if (this.isLoggedIn) {
+      this.isReviewOpen = !this.isReviewOpen;
+      this.formReview.reviewStar = 0;
+      this.formReview.description = null;
+      this.rating = 0;
+    } else {
+      this.isReviewLogin = true;
+    }
   }
 
   onAddReview() {
@@ -323,7 +442,72 @@ export class RoomComponent implements OnInit {
       window.location.reload();
     }
   }
+  book(roomId: number) {
+    const dates = JSON.parse(localStorage.getItem('search')!);
+
+    if (dates) {
+      // const startDate = this.bsRangeValue[0].toISOString().split('T')[0];
+      // const endDate = this.bsRangeValue[1].toISOString().split('T')[0];
+
+      const startDatee = new Date(dates.startDate);
+      const endDatee = new Date(dates.endDate);
+
+      const timeDifference = endDatee.getTime() - startDatee.getTime();
+      const numberOfDays = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+      let i = localStorage.getItem('booking-total');
+      if (i !== null) {
+        localStorage.setItem('booking-total', JSON.stringify(Number(i) + 1));
+        let objOld = JSON.parse(localStorage.getItem('booking')!);
+        let arr = Object.keys(objOld!).map(Number);
+        let x = 1;
+        const max = Math.max(...arr) + 1;
+
+        while (x <= max) {
+          if (!arr.includes(x)) {
+            objOld[x] = {
+              bookingStartDate: dates.startDate,
+              bookingEndDate: dates.endDate,
+              bookingRoomId: roomId,
+              bookingHotelId: this.hotelId,
+              numberOfDays: numberOfDays,
+            };
+            break;
+          }
+          x++;
+        }
+        localStorage.setItem('booking', JSON.stringify(objOld));
+      } else {
+        localStorage.setItem('booking-total', '1');
+        let objNew = {
+          1: {
+            bookingStartDate: dates.startDate,
+            bookingEndDate: dates.endDate,
+            bookingRoomId: roomId,
+            bookingHotelId: this.hotelId,
+            numberOfDays: numberOfDays,
+          },
+        };
+        localStorage.setItem('booking', JSON.stringify(objNew));
+      }
+
+      window.location.reload();
+    }
+  }
+
   clearDate() {
     window.localStorage.clear();
   }
+}
+
+interface ListRoomFormatted {
+  id: number;
+  hotelId: number;
+  roomType?: number;
+  price: number;
+  isActive: boolean;
+  createdDate: Date;
+
+  roomTotal?: number;
+  priceFormatted?: string | null;
 }

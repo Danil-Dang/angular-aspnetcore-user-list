@@ -14,8 +14,8 @@
               [formControl]="cityInput"
               placeholder="Enter Destination"
               aria-label="Destination"
+              [(ngModel)]="citySelected"
               (focus)="showDropdown = true"
-              (blur)="handleBlur()"
               appClickOutside
               (appClickOutside)="showDropdown = false; isCityOpen = false"
               (click)="isCityOpen = !isCityOpen"
@@ -42,7 +42,7 @@
             <input
               type="text"
               class="form-control mt-3"
-              placeholder="Daterangepicker"
+              placeholder="Date"
               #dateRangePicker="bsDaterangepicker"
               bsDaterangepicker
               [(ngModel)]="bsRangeValue"
@@ -53,11 +53,16 @@
           </div>
           <!-- [bsValue]="bsValue" -->
 
-          <button class="btn btn-primary mt-4">Search</button>
+          <button
+            class="btn btn-success mt-4 search-button"
+            (click)="onSearch()"
+          >
+            Search
+          </button>
         </div>
       </div>
     </div>
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center home-after-header">
       <div>
         <h1>Top Destinations</h1>
       </div>

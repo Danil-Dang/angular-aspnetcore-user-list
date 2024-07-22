@@ -10,6 +10,7 @@ import {
   BsDatepickerConfig,
 } from 'ngx-bootstrap/datepicker';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DecimalPipe } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -76,7 +77,7 @@ export function tokenGetter() {
     BsDatepickerModule.forRoot(),
     BrowserAnimationsModule,
   ],
-  providers: [BsDatepickerConfig],
+  providers: [BsDatepickerConfig, DecimalPipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -2,188 +2,290 @@
   <div class="container-fluid">
     <div class="row justify-content-center">
       <div class="col-12">
-        <div class="border rounded p-3 my-3 hotel-header">
-          <h2 class="text-center m-5 mt-4">Hotel List</h2>
-          <div class="d-flex justify-content-evenly">
-            <div class="dropdown inline-block loc-flex">
-              <button
-                class="btn dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                {{ selectedCity || "Location" }}
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <a
-                    class="dropdown-item"
-                    (click)="setSelectedCity(''); filterByReviews()"
-                    >Choose</a
-                  >
-                </li>
-                <li *ngFor="let city of cities">
-                  <a
-                    class="dropdown-item"
-                    (click)="setSelectedCity(city.value); filterByReviews()"
-                    >{{ city.name }}</a
-                  >
-                </li>
-              </ul>
-            </div>
+        <div
+          class="hotel-search border rounded d-flex justify-content-center gap-3"
+          align="start"
+        >
+          <div class="search-container">
+            <input
+              type="text"
+              class="form-control"
+              [ngClass]="isCityInvalid ? 'is-invalid' : ''"
+              [formControl]="cityInput"
+              placeholder="Enter Destination"
+              aria-label="Destination"
+              [(ngModel)]="selectedCity"
+              (focus)="showDropdown = true"
+              appClickOutside
+              (appClickOutside)="showDropdown = false; isCityOpen = false"
+              (click)="isCityOpen = !isCityOpen"
+            />
+            <div class="invalid-feedback">Please choose a valid lcoation</div>
+
             <div
-              class="loc-flex py-1"
-              (click)="onReviewSelect(); filterByReviews()"
+              *ngIf="
+                showDropdown &&
+                isCityOpen &&
+                (filteredLocations$ | async) as filteredLocations
+              "
+              class="dropdown-menu show"
+              aria-labelledby="cityDropdown"
             >
-              Rating
+              <li *ngFor="let location of filteredLocations">
+                <a class="dropdown-item" (click)="selectCity(location)">{{
+                  location
+                }}</a>
+              </li>
             </div>
-            <!-- <div class="loc-flex py-1">Price</div> -->
-            <div class="dropdown inline-block loc-flex">
-              <button
-                class="btn dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                {{ selectedPrice || "Price" }}
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <a
-                    class="dropdown-item"
-                    (click)="setSelectedPrice(''); filterByReviews()"
-                    >Choose</a
-                  >
-                </li>
-                <li *ngFor="let price of prices">
-                  <a
-                    class="dropdown-item"
-                    (click)="setSelectedPrice(price.name); filterByReviews()"
-                    >{{ price.name }}</a
-                  >
-                </li>
-              </ul>
-            </div>
-            <!-- <div class="loc-flex py-1">{{ cheapestRooms }}</div> -->
-            <!-- <div class="loc-flex py-1">{{ cheapestRooms$ }}</div> -->
+          </div>
+
+          <div class="">
+            <input
+              type="text"
+              class="form-control"
+              [ngClass]="isDateInvalid ? 'is-invalid' : ''"
+              placeholder="Date"
+              #dateRangePicker="bsDaterangepicker"
+              bsDaterangepicker
+              [(ngModel)]="bsRangeValue"
+              [datesDisabled]="disabledDates"
+              [datesEnabled]="enabledDates"
+              [bsConfig]="bsConfig"
+            />
+            <div class="invalid-feedback">Please select a valid date range</div>
+          </div>
+          <div class="">
+            <button class="btn btn-success search-button" (click)="onSearch()">
+              Search
+            </button>
           </div>
         </div>
 
-        <div class="container-fluid">
-          <div class="row justify-content-evenly">
-            <div
-              *ngFor="let hoteList of hoteLists$ | async; let i = index"
-              class="col-sm-12 col-md-5 border rounded p-3 my-3 hotel-card"
-            >
-              <a
-                href="hotels/rooms"
-                class="nav-link"
-                routerLink="rooms"
-                (click)="showRooms(hoteList.id)"
+        <div class="space-after-header"></div>
+
+        <div class="container-fluid row p-0 main-part">
+          <div class="col-3 col-filter p-0 pe-2">
+            <!-- <div class="image-filter">
+              <img src="../../assets/hotels/filter.png" alt="" />
+            </div> -->
+            <div class="border rounded p-2">
+              <h2>Review score</h2>
+              <!-- sel: {{ selectedReviewss }} -->
+              <!-- {{ selectedReviews }} - {{ iReviews }} - {{ isFilterByReviews }} -->
+              <div *ngFor="let review of reviews" class="d-flex gap-2">
+                <div class="form-check">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    name="review"
+                    [id]="review.value"
+                    [value]="review.value"
+                    [(ngModel)]="selectedReviewss"
+                    (change)="onReviewCheckboxChange($event, review.value)"
+                    (click)="
+                      selectedReviewss == review.value
+                        ? (selectedReviewss = '')
+                        : (selectedReviewss = review.value);
+                      selectedReviewss == ''
+                        ? onReviewCheckboxCancel()
+                        : (selectedReviewss = review.value)
+                    "
+                  />
+
+                  <label class="form-check-label m-0" [for]="review.value">{{
+                    review.name
+                  }}</label>
+                </div>
+              </div>
+            </div>
+            <div class="border p-2">
+              <h2>Property star</h2>
+              <!-- {{ selectedStars }} - {{ iStars }} - {{ isFIlterByStars }} -->
+              <div *ngFor="let star of stars" class="d-flex gap-2">
+                <input
+                  type="checkbox"
+                  class="checkbox"
+                  (change)="onStarCheckboxChange($event, star.value)"
+                />
+                <p class="m-0">{{ star.name }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-9">
+            <div>
+              <h1 class="fs-3">
+                {{ selectedCityy }}: {{ totalPropertiesFound }} properties found
+              </h1>
+              <div class="dropdown dropdown-custom">
+                <button
+                  class="btn dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <img src="../../assets/hotels/filter-arrow.png" alt="" />
+                  Sort By: {{ selectedPrice || "Choose" }}
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      (click)="setSelectedPrice(''); filterByReviews()"
+                      >Choose</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      (click)="onReviewSelect(); filterByReviews()"
+                      >Reviews</a
+                    >
+                  </li>
+                  <li *ngFor="let price of prices">
+                    <a
+                      class="dropdown-item"
+                      (click)="setSelectedPrice(price.name); filterByReviews()"
+                      >{{ price.name }}</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <!-- <div class="row justify-content-evenly"> -->
+            <div class="row gapping">
+              <div
+                *ngFor="
+                  let hoteList of hoteListsFormatted$ | async;
+                  let i = index
+                "
+                class="col-sm-12 col-md-12 col-lg-5 border rounded p-3 my-3 hotel-card"
               >
-                <div class="row row-room">
-                  <div class="col-sm-5 col-md-12 img-room">
-                    <img
-                      class="rounded"
-                      src="../../assets/rooms/sample_room.jpeg"
-                      alt=""
-                    />
-                  </div>
-                  <div class="col-sm-7 col-md-12">
-                    <div class="row">
-                      <div class="col-sm-7 col-md-12 py-2">
-                        <div class="row row-roomm">
-                          <div class="col-7">
-                            <h1 class="fs-3 m-0">
-                              {{ hoteList.hotelName }}
-                            </h1>
-                            <div class="star-rating">
-                              <img
-                                class="star empty"
-                                *ngFor="
-                                  let star of generateStars(hoteList.hotelStar!)
-                                "
-                                src="../../assets/rooms/star.png"
-                              />
-                            </div>
-                            <h2 class="fs-6">{{ hoteList.location }}</h2>
-                          </div>
-                          <div class="col-5 ps-0" align="right">
-                            <div>
-                              <div class="reviews-header mt-1">
-                                <h2
-                                  *ngIf="hoteList.averageReview * 2 >= 9"
-                                  class="fs-6 m-0"
-                                >
-                                  Exceptional
-                                </h2>
-                                <h2
-                                  *ngIf="
-                                    hoteList.averageReview * 2 >= 8 &&
-                                    hoteList.averageReview * 2 < 9
+                <a
+                  href="hotels/rooms"
+                  class="nav-link"
+                  routerLink="rooms"
+                  (click)="
+                    showRooms(
+                      hoteList.id,
+                      hoteList.averageReview,
+                      hoteList.totalReviews
+                    )
+                  "
+                >
+                  <div class="row row-room">
+                    <div class="col-md-5 col-lg-12 img-room">
+                      <!-- <div class="img-room"> -->
+                      <img
+                        class="rounded"
+                        src="../../assets/rooms/sample_room.jpeg"
+                        alt=""
+                      />
+                    </div>
+                    <div class="col-md-7 col-lg-12 card-half-two">
+                      <!-- <div class=""> -->
+                      <div class="row">
+                        <div
+                          class="col-sm-12 col-md-7 col-lg-12 py-2 card-middle"
+                        >
+                          <div class="row row-roomm">
+                            <div class="col-7 col-md-12 col-lg-7">
+                              <h1 class="fs-3 m-0">
+                                {{ hoteList.hotelName }}
+                              </h1>
+                              <div class="star-rating">
+                                <img
+                                  class="star empty"
+                                  *ngFor="
+                                    let star of generateStars(
+                                      hoteList.hotelStar!
+                                    )
                                   "
-                                  class="fs-6 m-0"
-                                >
-                                  Excellent
-                                </h2>
-                                <h2
-                                  *ngIf="
-                                    hoteList.averageReview * 2 >= 7 &&
-                                    hoteList.averageReview * 2 < 8
-                                  "
-                                  class="fs-6 m-0"
-                                >
-                                  Very good
-                                </h2>
-                                <h2
-                                  *ngIf="
-                                    hoteList.averageReview * 2 >= 6 &&
-                                    hoteList.averageReview * 2 < 7
-                                  "
-                                  class="fs-6 m-0"
-                                >
-                                  Good
-                                </h2>
-                                <div
-                                  *ngIf="hoteList.averageReview > 0"
-                                  class="average-review"
-                                >
-                                  <h2 class="fs-6 m-0">
-                                    {{ hoteList.averageReview * 2 }}
-                                  </h2>
-                                </div>
+                                  src="../../assets/rooms/star.png"
+                                />
                               </div>
-                              <p class="fs-6">
-                                {{ hoteList.totalReviews }} reviews
-                              </p>
+                              <h2 class="fs-6">{{ hoteList.location }}</h2>
                             </div>
-                            <div></div>
+                            <div class="col-5 col-md-12 col-lg-5 ps-0 reviews">
+                              <div class="reviews-flex">
+                                <div class="reviews-header mt-1">
+                                  <h2
+                                    *ngIf="hoteList.averageReview * 2 >= 9"
+                                    class="fs-6 m-0"
+                                  >
+                                    Exceptional
+                                  </h2>
+                                  <h2
+                                    *ngIf="
+                                      hoteList.averageReview * 2 >= 8 &&
+                                      hoteList.averageReview * 2 < 9
+                                    "
+                                    class="fs-6 m-0"
+                                  >
+                                    Excellent
+                                  </h2>
+                                  <h2
+                                    *ngIf="
+                                      hoteList.averageReview * 2 >= 7 &&
+                                      hoteList.averageReview * 2 < 8
+                                    "
+                                    class="fs-6 m-0"
+                                  >
+                                    Very good
+                                  </h2>
+                                  <h2
+                                    *ngIf="
+                                      hoteList.averageReview * 2 >= 6 &&
+                                      hoteList.averageReview * 2 < 7
+                                    "
+                                    class="fs-6 m-0"
+                                  >
+                                    Good
+                                  </h2>
+                                  <div
+                                    *ngIf="hoteList.averageReview > 0"
+                                    class="average-review"
+                                  >
+                                    <h2 class="fs-6 m-0">
+                                      {{ hoteList.averageReview * 2 }}
+                                    </h2>
+                                  </div>
+                                </div>
+                                <p class="fs-6 m-0">
+                                  ({{ hoteList.totalReviews }} reviews)
+                                </p>
+                              </div>
+                              <div></div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="col-sm-5 col-md-12">
-                        <div class="row rounded hotel-price p-2">
-                          <div
-                            *ngIf="hoteList.lowestPrice"
-                            class="col-md-6 col-sm-12"
-                          >
-                            <!-- <p class="m-0" align="left">From 100$</p> -->
-                            <p class="m-0" align="left">
-                              From {{ hoteList.lowestPrice }}$
-                            </p>
-                          </div>
-                          <div
-                            class="col-md-6 col-sm-12 hotel-price-button p-0"
-                            align="end"
-                          >
-                            <button class="btn btn-primary">See Prices</button>
+                        <div
+                          class="col-12 col-sm-12 col-md-5 col-lg-12 card-price"
+                        >
+                          <div class="row rounded hotel-price p-2">
+                            <div
+                              *ngIf="hoteList.lowestPrice"
+                              class="col-md-12 col-sm-6 col-6 col-lg-6"
+                            >
+                              <!-- <p class="m-0" align="left">From 100$</p> -->
+                              <p class="m-0" align="left">
+                                From {{ hoteList.lowestPricee }} ₫
+                              </p>
+                            </div>
+                            <div
+                              class="col-md-12 col-sm-6 col-6 col-lg-6 hotel-price-button p-0"
+                              align="end"
+                            >
+                              <button class="btn btn-primary">
+                                See Prices
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </a>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -191,3 +293,67 @@
     </div>
   </div>
 </div>
+
+<!-- <div class="border rounded p-3 my-3 hotel-header">
+  <h2 class="text-center m-5 mt-4">Hotel List</h2>
+  <div class="d-flex justify-content-evenly">
+    <div class="dropdown inline-block loc-flex">
+      <button
+        class="btn dropdown-toggle"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        {{ selectedCity || "Location" }}
+      </button>
+      <ul class="dropdown-menu">
+        <li>
+          <a
+            class="dropdown-item"
+            (click)="setSelectedCity(''); filterByReviews()"
+            >Choose</a
+          >
+        </li>
+        <li *ngFor="let city of cities">
+          <a
+            class="dropdown-item"
+            (click)="setSelectedCity(city.value); filterByReviews()"
+            >{{ city.name }}</a
+          >
+        </li>
+      </ul>
+    </div>
+    <div
+      class="loc-flex py-1"
+      (click)="onReviewSelect(); filterByReviews()"
+    >
+      Rating
+    </div>
+    <div class="dropdown inline-block loc-flex">
+      <button
+        class="btn dropdown-toggle"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        {{ selectedPrice || "Price" }}
+      </button>
+      <ul class="dropdown-menu">
+        <li>
+          <a
+            class="dropdown-item"
+            (click)="setSelectedPrice(''); filterByReviews()"
+            >Choose</a
+          >
+        </li>
+        <li *ngFor="let price of prices">
+          <a
+            class="dropdown-item"
+            (click)="setSelectedPrice(price.name); filterByReviews()"
+            >{{ price.name }}</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</div> -->

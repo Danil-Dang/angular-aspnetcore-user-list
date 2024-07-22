@@ -1,18 +1,206 @@
-.reviews-header {
+/* ? search bar ------------------------------- */
+.hotel-search {
+    position: absolute;
+    top: 65px;
+    left: 0;
+    width: 100%;
+    padding: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: rgb(168, 196, 178);
+  }
+
+  .hotel-search .search-container,
+  .hotel-search .search-container + div {
+    width: 35%;
+  }
+
+  .search-container {
+    position: relative;
+  }
+  
+  .search-container .dropdown-menu.show {
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* .invalid-feedback {
+  position: absolute;
+} */
+  /* .search-button {
+    width: 100px;
+    border: 2px solid rgb(29, 84, 29);
+    box-shadow: 0 8px 10px -2px rgba(0, 0, 0, 0.2);
+} */
+
+/* .space-after-header {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  margin-top: 10px;
+  background-color: rgba(144, 207, 173, 0.731);
+} */
+
+.main-part {
+  margin-top: 70px;
+}
+/* ? Filter - side --------------------------------- */
+.col-filter {
+  margin-top: 110px;
+  max-width: 230px;
+  }
+
+  .image-filter {
+    position: relative;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .image-filter img {
+    width: 40%;
+  }
+
+  .checkbox {
+    width: 18px;
+  }
+
+  .col-filter h2 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    /* line-height: 1.5; */
+  }
+  .col-filter p {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+.dropdown-custom button {
+    border: 1px solid black;
+    border-radius: 50px;
+  }
+  
+  .dropdown-custom img {
+    height: 20px;
+    width: 20px;
+}
+
+
+.hotel-header {
+  /* background-color: rgb(131, 162, 177); */
+  /* background-color: rgb(99, 135, 154); */
+  background-color: rgb(64, 74, 79);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  .hotel-header h2 {
+    color: rgb(252, 252, 53);
+    }
+    .loc-flex {
+      width: 110px;
+      text-align: center;
+      color: rgb(217, 226, 241);
+      cursor: pointer;
+      }
+      .loc-flex button {
+        color: rgb(217, 226, 241);
+        }
+        
+/* ? Card ----------------------------------------- */
+.hotel-card {
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    border-radius: 5px;
+    transition: all 0.2s ease-in-out;
+  }
+  .hotel-card:hover {
+    transform: translateY(-5px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .img-room img {
+    width: 100%;
+  }
+
+  .star-rating img {
+    width: 16px;
+    height: 16px;
+    margin-right: 2px;
+  }
+
+  .reviews-header {
     display: flex;
     justify-content: end;
     align-items: center;
     gap: 0.5rem;
+  }
+  .average-review {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 30px;
+      height: 30px;
+      /* padding: 3px; */
+      background-color: rgb(243, 123, 96);
+      /* border: 1px solid wheat; */
+      border-radius: 50%;
+  }
+
+  .hotel-price {
+    height: 60px;
+    align-items: center;
+    text-align: center;
+    background-color: rgb(179, 216, 243);
+  }
+  .card-price {
+    /* align-self: self-end; */
+    /* align-self: flex-end; */
+}
+.card-half-two .row {
+  height: 100%;
 }
 
-.average-review {
+@media (min-width: 992px) {
+  .gapping {
+    gap: 20px;
+  }
+    .hotel-card {
+    width: 48%;
+    max-width: 400px;
+  }
+  .reviews-flex {
+    text-align: right;
+  }
+  .card-middle {
+    margin-bottom: 1rem;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+   .card-price {
+    height: 100%;
+   }
+  .hotel-price {
+    height: 100%;
+  }
+  .reviews-flex {
     display: flex;
-    justify-content: center;
+    gap: 1px;
     align-items: center;
-    width: 30px;
-    height: 30px;
-    /* padding: 3px; */
-    background-color: rgb(243, 123, 96);
-    /* border: 1px solid wheat; */
-    border-radius: 50%;
+  }
+  .reviews-header {
+    justify-content: start;
+  }
+  .hotel-price-button {
+      margin-top: auto;
+  }
+  .reviews {
+    margin-top: auto;
+  }
+}
+@media (max-width: 767.99px) {
+  .reviews {
+    text-align: right;
+  }
+  .card-middle {
+    margin-bottom: 1rem;
+  }
 }

@@ -9,6 +9,10 @@ export interface ListHotel {
   createdDate?: Date;
 
   lowestPrice?: number;
+  lowestPricee?: string | null;
   averageReview: number;
   totalReviews: number;
+  availableDates: Date;
+  bookingDate: Date;
+  bookedRooms: number;
 }

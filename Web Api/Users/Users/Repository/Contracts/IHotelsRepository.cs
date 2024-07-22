@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.Mvc;
 using Users.Entities.Dto.Hotels;
 using Users.Entities.Models;
 using Users.Repository;
@@ -9,13 +10,14 @@ namespace Users.Contracts
     {
         // ! Hotels ------------------------------------------
         public Task<IEnumerable<Hotel>> GetHotels();
-        public Task<IEnumerable<Hotel>> GetHotelsFiltered(string? city, bool? isByReview, bool? isByPriceHigh, bool? isByPriceLow);
+        public Task<IEnumerable<Hotel>> GetHotelsFiltered(string? city, bool? isByReview, bool? isByPriceHigh, bool? isByPriceLow, DateTime startDate, DateTime endDate, bool? isByStars, string? stars, bool? isByRating, string? rating);
         public Task<IEnumerable<Hotel>> GetHotelsByReviews();
         public Task<IEnumerable<Hotel>> GetHotelsByLowestPrice();
         public Task<IEnumerable<Hotel>> GetHotelsByHighestPrice();
         public Task<Hotel> GetHotel(int id);
         public Task<Hotel> CreateHotel(HotelForCreationDto hotel);
         public Task UpdateHotel(int id, HotelForUpdateDto hotel);
+        public Task UpdateHotelRoomTotal(int id, HotelRoomTotalForUpdateDto hotel);
         public Task DeleteHotel(int id);
 
         // ! Locations ------------------------------------------

@@ -9,5 +9,7 @@ namespace Users.Entities.Models
         public decimal Price { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
+
+        public int RoomTotal { get; set; }
     }
 }

@@ -6,7 +6,7 @@ namespace Users.Entities.Dto.Hotels
         public int Id { get; set; }
         public string? HotelName { get; set; }
         public byte HotelStar { get; set; }
-        public int RoomTotal { get; set; }
+        public int RoomTotal { get; set; } = 0;
         public string? Location { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime CreatedDate { get; set; } = DateTime.Now;

@@ -14,9 +14,11 @@ import {
   BsDatepickerConfig,
   BsDaterangepickerDirective,
 } from 'ngx-bootstrap/datepicker';
+import { Router } from '@angular/router';
 
 import { ListBookingWith } from '../manager-user/list-bookingsWith';
 import { ListService } from '../_services/list.service';
+import { DataService } from '../_services/data.service';
 
 @Component({
   selector: 'app-home',
@@ -32,9 +34,9 @@ export class HomeComponent implements OnInit {
   cityInput = new FormControl('');
   selectedCity: string = '';
   showDropdown: boolean = false;
+  citySelected = '';
+  isCityOpen = false;
 
-  // bookedObj!: { [key: string]: ListBookingWith };
-  // bookedArray!: ListBookingWith[];
   bsConfig: Partial<BsDatepickerConfig> = {
     minDate: new Date(),
     maxDate: new Date(2024, 12, 1),
@@ -48,12 +50,12 @@ export class HomeComponent implements OnInit {
   maxDate = new Date();
   enabledDates: Date[] = [];
   disabledDates: Date[] = [];
-  @ViewChild('dateRangePicker') dateRangePicker!: BsDaterangepickerDirective;
-  isCityOpen = false;
-  // dateRoomId: number = 0;
-  // currentIndex!: number;
 
-  constructor(private listService: ListService) {
+  constructor(
+    private listService: ListService,
+    private dataService: DataService,
+    private _router: Router
+  ) {
     this.maxDate.setDate(this.maxDate.getDate() + 1);
     this.bsRangeValue = [this.bsValue, this.maxDate];
   }
@@ -85,9 +87,22 @@ export class HomeComponent implements OnInit {
     this.showDropdown = false;
   }
 
-  handleBlur() {
-    // setTimeout(() => {
-    //   this.showDropdown = false;
-    // }, 200);
+  onSearch() {
+    if (this.citySelected) {
+      const startDate = this.bsRangeValue[0].toISOString().split('T')[0];
+      const endDate = this.bsRangeValue[1].toISOString().split('T')[0];
+      // this.dataService.changeHomeStringCity(this.citySelected);
+      // this.dataService.changeHomeStringDateStart(startDate);
+      // this.dataService.changeHomeStringDateEnd(endDate);
+      const obj = {
+        citySelected: this.citySelected,
+        startDate: startDate,
+        endDate: endDate,
+      };
+      localStorage.setItem('search', JSON.stringify(obj));
+      this._router.navigate(['/hotels']);
+    } else {
+      console.log('no city');
+    }
   }
 }
