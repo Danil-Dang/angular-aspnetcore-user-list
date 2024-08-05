@@ -1,3 +1,4 @@
+/* ! Header -------------------------------------- */
 .main-background {
   position: fixed;
   top: 0;
@@ -44,7 +45,227 @@
     /* box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); */
     box-shadow: 0 8px 10px -2px rgba(0, 0, 0, 0.2);
 }
-  
+
+
+/* ! After Header -------------------------------------- */
 .home-after-header {
-  margin-top: 5em;
+  margin: 5em 0 0 0;
+  padding: 0;
+}
+
+/* ? Last viewed --------- */
+/* ? Card ----------------------------------------- */
+.hotel-card {
+  position: relative;
+
+  background-color: rgb(172, 185, 185);
+  border: 1px solid rgba(0, 0, 0, 0.11);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+}
+.hotel-card:hover {
+  transform: translateY(-5px);
+box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.img-room img {
+  width: 100%;
+}
+
+.star-rating img {
+  width: 16px;
+  height: 16px;
+  margin-right: 2px;
+}
+
+.reviews-header {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 0.5rem;
+}
+.average-review {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    /* padding: 3px; */
+    background-color: rgb(243, 123, 96);
+    /* border: 1px solid wheat; */
+    border-radius: 50%;
+}
+
+.hotel-price {
+  height: 60px;
+  align-items: center;
+  text-align: center;
+  background-color: rgb(179, 216, 243);
+}
+
+.card-half-two .row {
+height: 100%;
+}
+
+@media (min-width: 992px) {
+  .gapping {
+    gap: 20px;
+  }
+    .hotel-card {
+    width: 31%;
+    max-width: 400px;
+  }
+  .reviews-flex {
+    text-align: right;
+  }
+  .card-middle {
+    margin-bottom: 1rem;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+   .card-price {
+    height: 100%;
+   }
+  .hotel-price {
+    height: 100%;
+  }
+  .reviews-flex {
+    display: flex;
+    gap: 1px;
+    align-items: center;
+  }
+  .reviews-header {
+    justify-content: start;
+  }
+  .hotel-price-button {
+      margin-top: auto;
+  }
+  .reviews {
+    margin-top: auto;
+  }
+}
+@media (max-width: 767.99px) {
+  .reviews {
+    text-align: right;
+  }
+  .card-middle {
+    margin-bottom: 1rem;
+  }
+}
+
+/* ? Offers --------- */
+.home-offers {
+  padding: 0;
+}
+.home-offers div {
+  border-radius: 10px;
+  height: 130px;
+  width: 100%;
+  padding: 8px;
+
+  background-image: url('../../assets/home/offers.jpeg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+.home-offers div p,
+.home-offers div h2 {
+  color: white;
+  max-width: 30%;
+  margin-left: 15px;
+  /* padding: 8px; */
+  /* margin: 0; */
+}
+
+.div-router {
+  padding: 0;
+}
+
+.top-dest > div {
+  max-width: 1000px;
+}
+
+.top-dest-img-1,
+.top-dest-img-2,
+.top-dest-img-3,
+.top-dest-img-4,
+.top-dest-img-5 {
+  position: relative;
+  height: 180px;
+  border-radius: 10px;
+  cursor: pointer;
+  
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+
+.top-dest-img-1 {
+  height: 200px;
+  width: 50%;
+  background-position: 50% 60%;
+  background-image: url('../../assets/home/hcmc.jpg');
+}
+.top-dest-img-2 {
+  height: 200px;
+  width: 49%;
+  background-position: 50% 40%;
+  background-image: url('../../assets/home/vungtau.jpg');
+}
+.top-dest-img-3 {
+  width: 33%;
+  background-image: url('../../assets/home/danang.jpg');
+}
+.top-dest-img-4 {
+  width: 33%;
+  background-image: url('../../assets/home/dalat.jpg');
+}
+.top-dest-img-5 {
+  width: 33%;
+  background-image: url('../../assets/home/hanoi.jpg');
+}
+
+.top-dest-img-1::before,
+.top-dest-img-2::before,
+.top-dest-img-3::before,
+.top-dest-img-4::before,
+.top-dest-img-5::before {
+  content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    transition: background-color 0.3s ease;
+    border-radius: 10px;
+}
+.top-dest-img-1:hover::before,
+.top-dest-img-2:hover::before,
+.top-dest-img-3:hover::before,
+.top-dest-img-4:hover::before,
+.top-dest-img-5:hover::before {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.top-dest-img-1 img,
+.top-dest-img-2 img,
+.top-dest-img-3 img,
+.top-dest-img-4 img,
+.top-dest-img-5 img {
+  height: 25px;
+  width: 25px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.top-dest-img-1 h1,
+.top-dest-img-2 h1,
+.top-dest-img-3 h1,
+.top-dest-img-4 h1,
+.top-dest-img-5 h1 {
+  color: white;
+  font-family: "Blue Sans";
+  font-weight: 500;
 }

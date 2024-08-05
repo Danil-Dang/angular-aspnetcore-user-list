@@ -2,6 +2,7 @@
   <div class="row justify-content-center">
     <div class="col-12 formRegister">
       <div class="card card-container border rounded p-3 my-3">
+        @if (!roomForm) {
         <form name="form" (ngSubmit)="(f.form.valid)" #f="ngForm" novalidate>
           @if (hotelId === 0.5) {
           <h1>Add Hotel</h1>
@@ -124,7 +125,91 @@
           </div>
           }
         </form>
+        } @else {
+        <form name="formRoom" #ff="ngForm" novalidate>
+          <!-- (ngSubmit)="(ff.formRoom.valid)" -->
+          <!-- @if (editUser) {
+            <h1>Edit Room</h1>
+            } @else { -->
+          <h1>Add Room</h1>
+          <!-- } -->
+          <div class="form-group row pb-3">
+            <div class="col-6">
+              <label for="roomType">Room Type</label>
+              <input
+                type="text"
+                class="form-control"
+                name="roomType"
+                [(ngModel)]="formRoom.roomType"
+                required
+                #roomType="ngModel"
+                [ngClass]="{
+                  'is-invalid': ff.submitted && roomType.errors
+                }"
+              />
+              @if (roomType.errors && ff.submitted) {
+              <div class="invalid-feedback">
+                @if (roomType.errors['required']) {
+                <div>Room Type is required</div>
+                }
+              </div>
+              }
+            </div>
+            <div class="col-6">
+              <label for="price">Price</label>
+              <input
+                type="text"
+                class="form-control"
+                name="price"
+                [(ngModel)]="formRoom.price"
+                required
+                #price="ngModel"
+                [ngClass]="{ 'is-invalid': ff.submitted && price.errors }"
+              />
+              @if (price.errors && ff.submitted) {
+              <div class="invalid-feedback">
+                @if (price.errors['required']) {
+                <div>Price is required</div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+          <!-- @if (editUser) {
+            <div class="form-group mt-3" align="center">
+              <button
+                type="button"
+                (click)="onCancel()"
+                class="btn btn-danger btn-block me-3"
+              >
+                Cancel
+              </button>
+              <button class="btn btn-primary btn-block" (click)="onEditRoom()">
+                Edit
+              </button>
+            </div>
+            } @else { -->
+          <div class="form-group mt-3" align="center">
+            <button
+              type="button"
+              (click)="onCancelRoom()"
+              class="btn btn-danger btn-block me-3"
+            >
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-block" (click)="onSubmitRoom()">
+              Add
+            </button>
+          </div>
+          <!-- } -->
+        </form>
+        }
       </div>
+      @if (hotelId > 0.5) {
+      <div>
+        <button class="btn btn-primary" (click)="addRoom()">Add Room</button>
+      </div>
+      }
     </div>
   </div>
 </div>

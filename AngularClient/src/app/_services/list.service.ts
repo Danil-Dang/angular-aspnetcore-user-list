@@ -290,8 +290,18 @@ export class ListService {
   }
 
   // ! Rooms ------------------------------------------------------
+  // private refreshRoomLists(id: number, filterParams: FilterParams) {
   private refreshRoomLists(id: number) {
+    // let params = new HttpParams();
+    // if (filterParams.startDate) {
+    //   params = params.set('startDate', filterParams.startDate);
+    // }
+    // if (filterParams.endDate) {
+    //   params = params.set('endDate', filterParams.endDate);
+    // }
+
     this.httpClient
+      // .get<ListRoom[]>(`${this.urlHotel}/rooms-by-hotel/${id}`, { params })
       .get<ListRoom[]>(`${this.urlHotel}/rooms-by-hotel/${id}`)
       .subscribe((rooms) => {
         this.rooms$.next(rooms);
@@ -299,6 +309,8 @@ export class ListService {
   }
 
   getRooms(id: number): Subject<ListRoom[]> {
+    // getRooms(filterParams: FilterParams): Subject<ListRoom[]> {
+    // this.refreshRoomLists(filterParams);
     this.refreshRoomLists(id);
     return this.rooms$;
   }

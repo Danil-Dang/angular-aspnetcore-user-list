@@ -18,9 +18,20 @@
                 "
                 class="pb-3"
               >
-                <div class="border rounded p-3 m-0">
+                <div
+                  class="border rounded p-3 m-0"
+                  (click)="toggleSelection(i + (currentPage - 1) * 3)"
+                  style="cursor: pointer"
+                >
                   <div class="row custom-row">
-                    <p class="col-4 mb-1">
+                    <div class="col-1 checkbox mb-1">
+                      <input
+                        type="checkbox"
+                        [(ngModel)]="selectedItems[i + (currentPage - 1) * 3]"
+                      />
+                      <!-- (click)="toggleSelection(i + (currentPage - 1) * 3)" -->
+                    </div>
+                    <p class="col-3 mb-1">
                       {{ book?.hotel?.hotelName || "Null" }} -
                       {{ book?.room?.roomType || "Null" }}
                     </p>
@@ -33,7 +44,9 @@
                       *ngIf="book?.room && book?.numberOfDays"
                       class="col-2 mb-1"
                     >
-                      {{ book.room!.price * book.numberOfDays }}
+                      <!-- {{ book.room!.price * book.numberOfDays }} -->
+                      <!-- {{ book.room!.price }} -->
+                      ₫ {{ book.room!.priceFormatted }}
                     </p>
                     <div
                       class="col-1 mb-1 delete-container p-0"
@@ -48,7 +61,7 @@
                       />
                     </div>
                   </div>
-                  <div class="row">
+                  <!-- <div class="row">
                     <div class="col-4">
                       <input
                         type="checkbox"
@@ -57,7 +70,6 @@
                       />
                     </div>
                     <div class="col-5">
-                      <!-- <div class="d-flex flex-nowrap"> -->
                       <div>
                         <button
                           class="btn btn-secondary"
@@ -75,7 +87,7 @@
                       </div>
                     </div>
                     <div class="col-3"></div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -139,7 +151,7 @@
               @if (totalPrice == 0) {
               <div>No items selected yet</div>
               } @else {
-              <div>{{ calculateTotalPrice() }}</div>
+              <div>{{ calculateTotalPrice() }} ₫</div>
               }
             </div>
             <div>

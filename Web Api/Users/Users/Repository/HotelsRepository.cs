@@ -44,7 +44,7 @@ namespace Users.Repository
             )
             SELECT * 
             FROM HotelData hd
-            INNER JOIN HotelAverageReview har ON har.HotelId = hd.Id
+            LEFT JOIN HotelAverageReview har ON har.HotelId = hd.Id
             WHERE 
                 (@isByRating IS NULL OR har.AverageReview >= @rating)
                 AND hd.RoomTotal > (
@@ -334,14 +334,53 @@ namespace Users.Repository
         }
 
         // ! Rooms ---------------------------------------------
+        // public async Task<IEnumerable<Room>> GetRooms(int id, DateTime? startDate, DateTime? endDate)
         public async Task<IEnumerable<Room>> GetRooms(int id)
         {
             // var query = "SELECT * FROM Rooms";
             var query = "SELECT *, (SELECT COUNT(*) FROM Rooms WHERE HotelId = @Id) AS RoomTotal FROM Rooms WHERE HotelId = @Id";
+            // var queryy = @"
+            //     SELECT *, 
+            //         (SELECT COUNT(*) FROM Rooms WHERE HotelId = @Id) AS RoomTotal 
+            //     FROM Rooms 
+            //     WHERE HotelId = @Id";
+
+            // var query = @"
+            // WITH HotelData AS (
+            //     SELECT 
+            //         h.Id
+            //     FROM Hotels h    
+            // )
+            // , Rooms AS(
+            //     SELECT *, (SELECT COUNT(*) FROM Rooms WHERE HotelId = @Id) AS RoomTotal FROM Rooms
+            //     GROUP BY HotelId
+            // )
+            // SELECT * 
+            // FROM HotelData hd
+            // INNER JOIN Rooms r ON r.HotelId = hd.Id
+            // WHERE 
+            //     hd.RoomTotal > (
+            //     SELECT COUNT(*)
+            //     FROM Bookings b
+            //     WHERE b.RoomId IN (
+            //         SELECT Id
+            //         FROM Rooms rm
+            //         WHERE rm.HotelId = hd.Id
+            //     ) AND (b.CheckIn <= @endDate AND b.CheckOut >= @startDate)
+            // )
+            // ";
+
+            // var parameters = new DynamicParameters();
+            // parameters.Add("@Id", id);
+            // parameters.Add("@startDate", startDate);
+            // parameters.Add("@endDate", endDate);
+
+            // GROUP BY h.Id, h.HotelName, h.HotelStar, h.RoomTotal, h.Location, h.ImgPath, r.LowestPrice 
 
             using (var connection = _context.CreateConnection())
             {
                 var rooms = await connection.QueryAsync<Room>(query, new { id });
+                // var rooms = await connection.QueryAsync<Room>(query, parameters );
                 return rooms.ToList();
             }
         }
@@ -539,7 +578,18 @@ namespace Users.Repository
         // ! Bookings ---------------------------------------------
         public async Task<IEnumerable<Booking>> GetBookings()
         {
-            var query = "SELECT * FROM Bookings";
+            // var query = "SELECT * FROM Bookings";
+            var query = @"
+                SELECT 
+                    b.*,
+                    u.Username,
+                    h.HotelName,
+                    h.Location,
+                    r.RoomType
+                FROM Bookings b
+                INNER JOIN Users u ON b.UserId = u.Id
+                INNER JOIN Hotels h ON b.HotelId = h.Id
+                INNER JOIN Rooms r ON b.RoomId = r.Id";
 
             using (var connection = _context.CreateConnection())
             {
@@ -561,7 +611,7 @@ namespace Users.Repository
 
         public async Task<IEnumerable<Booking>> GetRoomBookings(int id)
         {
-            var query = "SELECT Id, HotelId, RoomId, UserId, CheckIn, CheckOut, IsActive, CreatedDate FROM Bookings WHERE RoomId = @Id";
+            var query = "SELECT Id, HotelId, RoomId, UserId, CheckIn, CheckOut FROM Bookings WHERE RoomId = @Id";
 
             using (var connection = _context.CreateConnection())
             {
@@ -572,7 +622,23 @@ namespace Users.Repository
 
         public async Task<IEnumerable<Booking>> GetUserBookings(int id)
         {
-            var query = "SELECT Id, HotelId, RoomId, UserId, CheckIn, CheckOut, IsActive, CreatedDate FROM Bookings WHERE UserId = @Id";
+            // var query = "SELECT Id, HotelId, RoomId, UserId, CheckIn, CheckOut FROM Bookings WHERE UserId = @Id";
+            var query = @"
+                SELECT 
+                    b.Id,
+                    b.HotelId,
+                    b.UserId,
+                    b.CheckIn,
+                    b.CheckOut,
+                    h.HotelName,
+                    h.Location,
+                    r.RoomType,
+                    p.Price
+                FROM Bookings b
+                INNER JOIN Hotels h ON b.HotelId = h.Id
+                INNER JOIN Rooms r ON b.RoomId = r.Id
+                INNER JOIN Payments p ON b.Id = p.BookingId
+                WHERE b.UserId = @Id";
 
             using (var connection = _context.CreateConnection())
             {
@@ -657,7 +723,12 @@ namespace Users.Repository
         // ! Payments ---------------------------------------------
         public async Task<IEnumerable<Payment>> GetPayments()
         {
-            var query = "SELECT * FROM Payments";
+            var query = @"
+            SELECT
+                p.*,
+                u.Username
+            FROM Payments p
+            INNER JOIN Users u ON p.UserId = u.Id";
 
             using (var connection = _context.CreateConnection())
             {

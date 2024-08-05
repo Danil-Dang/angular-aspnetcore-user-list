@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, ɵDomRendererFactory2 } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 // import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -32,6 +32,8 @@ import { BookingsEditComponent } from './manager-user/manager-bookings/bookings-
 import { PaymentComponent } from './cart/payment/payment.component';
 import { ManagerPaymentsComponent } from './manager-user/manager-payments/manager-payments.component';
 import { ClickOutsideDirective } from './_services/directives/click-outside.directive';
+import { UserBookingsComponent } from './user-bookings/user-bookings.component';
+import { UserPaymentsComponent } from './user-payments/user-payments.component';
 // import { StorageService } from './_services/storage.service';
 
 export function tokenGetter() {
@@ -59,6 +61,8 @@ export function tokenGetter() {
     PaymentComponent,
     ManagerPaymentsComponent,
     ClickOutsideDirective,
+    UserBookingsComponent,
+    UserPaymentsComponent,
   ],
   imports: [
     BrowserModule,
@@ -77,7 +81,7 @@ export function tokenGetter() {
     BsDatepickerModule.forRoot(),
     BrowserAnimationsModule,
   ],
-  providers: [BsDatepickerConfig, DecimalPipe, DatePipe],
+  providers: [BsDatepickerConfig, DecimalPipe, DatePipe, ɵDomRendererFactory2],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 
 import { ListService } from '../../_services/list.service';
 import { StorageService } from '../../_services/storage.service';
@@ -29,6 +29,7 @@ export class ManagerPaymentsComponent implements OnInit {
   roomId?: number;
   isByRoom = false;
   payments$: Observable<ListPayment[]> = new Observable();
+  paymentsFormatted$: Observable<ListPayment[]> = new Observable();
   // payment$: Observable<ListPayment> = new Observable();
   listLists: number;
 
@@ -36,7 +37,8 @@ export class ManagerPaymentsComponent implements OnInit {
     private listsService: ListService,
     private storageService: StorageService,
     private _router: Router,
-    private datePipe: DatePipe // private dataService: DataService
+    private datePipe: DatePipe,
+    private decimalPipe: DecimalPipe // private dataService: DataService
   ) {
     this.loggedIn = false;
     this.listLists = 0;
@@ -56,6 +58,14 @@ export class ManagerPaymentsComponent implements OnInit {
     }
 
     this.fetchLists();
+    this.paymentsFormatted$ = this.payments$.pipe(
+      map((payments) =>
+        payments.map((payment) => ({
+          ...payment,
+          priceFormatted: this.decimalPipe.transform(payment.price, '1.0-0'),
+        }))
+      )
+    );
     // this.currentUser = this.storageService.getUser();
   }
 

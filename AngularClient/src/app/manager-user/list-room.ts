@@ -1,3 +1,4 @@
+// import { ListBooking } from './list-bookings';
 export interface ListRoom {
   id: number;
   hotelId: number;
@@ -7,4 +8,6 @@ export interface ListRoom {
   createdDate: Date;
 
   roomTotal?: number;
+  priceFormatted?: string | null;
+  // booking?: ListBooking | null;
 }

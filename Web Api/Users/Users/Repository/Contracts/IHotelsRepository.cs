@@ -28,6 +28,7 @@ namespace Users.Contracts
         public Task DeleteLocation(int id);
 
         // ! Rooms ------------------------------------------
+        // public Task<IEnumerable<Room>> GetRooms(int id, DateTime? startDate, DateTime? endDate);
         public Task<IEnumerable<Room>> GetRooms(int id);
         public Task<Room> GetRoom(int id);
         public Task<RoomCheapestResponse> GetCheapestRoom(int id);

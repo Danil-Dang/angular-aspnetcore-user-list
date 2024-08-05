@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { loadStripe } from '@stripe/stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
 import { from, concatMap } from 'rxjs';
+import { DecimalPipe } from '@angular/common';
 
 import { AuthService } from '../../_services/auth.service';
 import { StorageService } from '../../_services/storage.service';
@@ -19,9 +20,11 @@ export class PaymentComponent implements OnInit {
 
   // selectedBookings!: [];
   selectedBookings: SelectedBooking[] = [];
+  selectedBookingss: SelectedBooking[] = [];
   totalPrice!: number;
+  totalPricee!: string;
 
-  stripePromise = loadStripe('YOUR_STRIPE_PUBLISHABLE_KEY');
+  // stripePromise = loadStripe('YOUR_STRIPE_PUBLISHABLE_KEY');
   cardElement: any;
   @ViewChild('cardElement') cardElementRef!: ElementRef;
   isVisa = false;
@@ -38,7 +41,8 @@ export class PaymentComponent implements OnInit {
     private _router: Router,
     private storageService: StorageService,
     private paymentService: PaymentService,
-    private listService: ListService
+    private listService: ListService,
+    private decimalPipe: DecimalPipe
   ) {}
 
   async ngOnInit() {
@@ -57,32 +61,16 @@ export class PaymentComponent implements OnInit {
     this.selectedBookings = preSelectedBookings
       ? Object.values(preSelectedBookings)
       : [];
+    this.selectedBookingss = this.selectedBookings.map((item) => {
+      return {
+        ...item,
+        priceFormatted: this.decimalPipe.transform(item.roomPrice, '1.0-0'),
+      };
+    });
+
     this.totalPrice! =
       JSON.parse(localStorage.getItem('booking-payment-price')!) / 2;
-
-    // const stripe = await this.stripePromise;
-
-    // const elements = stripe!.elements();
-    // const style = {
-    //   base: {
-    //     color: '#32325d',
-    //     fontFamily: 'Arial, sans-serif',
-    //     fontSmoothing: 'antialiased',
-    //     fontSize: '16px',
-    //     '::placeholder': {
-    //       color: '#aab7c4',
-    //     },
-    //   },
-    //   invalid: {
-    //     color: '#fa755a',
-    //     iconColor: '#fa755a',
-    //   },
-    // };
-
-    // this.cardElement = elements.create('card', { style });
-    // this.cardElement.mount('#card-element');
-    // this.cardElement.addEventListener('focus', () => (this.isVisa = true));
-    // this.cardElement.addEventListener('click', () => (this.isVisa = true));
+    this.totalPricee = this.decimalPipe.transform(this.totalPrice, '1.0-0')!;
   }
 
   onCancel() {
@@ -180,6 +168,8 @@ export interface SelectedBooking {
   checkIn: string;
   checkOut: string;
   selectedIndex: number;
+
+  priceFormatted?: string | null;
 }
 
 export interface BookingResponse {

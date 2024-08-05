@@ -11,5 +11,11 @@ namespace Users.Entities.Models
         public DateTime CheckOut { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
+
+        public string? Username { get; set; }
+        public string? HotelName { get; set; }
+        public string? RoomType { get; set; }
+        public string? Location { get; set; }
+        public string? Price { get; set; }
     }
 }

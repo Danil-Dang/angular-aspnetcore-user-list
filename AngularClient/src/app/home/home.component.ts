@@ -51,6 +51,8 @@ export class HomeComponent implements OnInit {
   enabledDates: Date[] = [];
   disabledDates: Date[] = [];
 
+  viewedHotels: ViewedHotels[] = [];
+
   constructor(
     private listService: ListService,
     private dataService: DataService,
@@ -72,6 +74,11 @@ export class HomeComponent implements OnInit {
       startWith(''),
       map((value) => this._filterLocations(value || ''))
     );
+
+    const viewedHotelss = JSON.parse(localStorage.getItem('last-viewed')!);
+    this.viewedHotels = viewedHotelss || [];
+    // if (viewedHotelss) {
+    // }
   }
 
   private _filterLocations(value: string): string[] {
@@ -105,4 +112,36 @@ export class HomeComponent implements OnInit {
       console.log('no city');
     }
   }
+
+  showRooms(hotelId: number, averageReview: number, totalReviews: number) {
+    const startDate = this.bsRangeValue[0].toISOString().split('T')[0];
+    const endDate = this.bsRangeValue[1].toISOString().split('T')[0];
+
+    const obj = {
+      hotelId: hotelId,
+      averageReview: averageReview,
+      totalReview: totalReviews,
+      startDate: startDate,
+      endDate: endDate,
+    };
+    localStorage.setItem('room', JSON.stringify(obj));
+  }
+
+  generateStars(ratingValue: number): any[] {
+    const stars = [];
+    for (let i = 0; i < ratingValue; i++) {
+      stars.push({});
+    }
+    return stars;
+  }
+}
+
+interface ViewedHotels {
+  hotelId: number;
+  hotelName: string;
+  hotelStar: number;
+  hotelLocation: number;
+  averageReview: number;
+  totalReview: number;
+  hotelPrice: number;
 }

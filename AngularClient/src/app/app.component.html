@@ -45,7 +45,8 @@
         > -->
         <a class="nav-link" (click)="showBoard()">Admin Board</a>
       </li>
-      } @if (showModeratorBoard) {
+      }
+      <!-- @if (showModeratorBoard) {
       <li class="nav-item">
         <a
           href="/mod"
@@ -55,7 +56,8 @@
           >Moderator Board</a
         >
       </li>
-      } @if (isLoggedIn && !showModeratorBoard && !showAdminBoard) {
+      }  -->
+      @if (isLoggedIn && !showModeratorBoard && !showAdminBoard) {
       <li class="nav-item">
         <a href="user" class="nav-link" routerLink="user">User</a>
       </li>
@@ -120,7 +122,16 @@
             />
           </a>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li>
+              <a class="dropdown-item" href="/bookings" routerLink="bookings"
+                >Bookings</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="/payments" routerLink="payments"
+                >Payments</a
+              >
+            </li>
             <li><hr class="dropdown-divider" /></li>
             <li align="center">
               <button class="btn btn-danger" (click)="logout()">Log out</button>
@@ -160,4 +171,10 @@
     <router-outlet class="px-4"></router-outlet>
     <!-- <router-outlet></router-outlet> -->
   </div>
+
+  <footer class="footer mt-5">
+    <h1 class="col-12 text-center m-0 fs-6">
+      Copyright © 2024 AngNet. All rights reserved.
+    </h1>
+  </footer>
 </div>

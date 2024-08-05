@@ -8,4 +8,7 @@ export interface ListPayment {
   isActive: boolean;
   date: Date;
   dateFormatted?: string | null;
+
+  username?: string;
+  priceFormatted?: string | null;
 }

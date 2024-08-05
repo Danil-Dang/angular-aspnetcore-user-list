@@ -17,6 +17,8 @@ import { CartComponent } from './cart/cart.component';
 import { PaymentComponent } from './cart/payment/payment.component';
 import { BookingsEditComponent } from './manager-user/manager-bookings/bookings-edit/bookings-edit.component';
 import { ManagerPaymentsComponent } from './manager-user/manager-payments/manager-payments.component';
+import { UserBookingsComponent } from './user-bookings/user-bookings.component';
+import { UserPaymentsComponent } from './user-payments/user-payments.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -32,6 +34,8 @@ const routes: Routes = [
   // { path: 'hotels/edit', component: EditComponent },
 
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: 'bookings', component: UserBookingsComponent },
+  { path: 'payments', component: UserPaymentsComponent },
   // { path: 'user', component: BoardUserComponent },
   // { path: 'mod', component: BoardModeratorComponent },
   // { path: 'admin', component: BoardAdminComponent },

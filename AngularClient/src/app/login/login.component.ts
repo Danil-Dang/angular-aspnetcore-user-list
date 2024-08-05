@@ -64,6 +64,8 @@ export class LoginComponent implements OnInit {
 
           this.isLoginFailed = false;
           this.isLoggedIn = true;
+          localStorage.setItem('logoutOnce', 'false');
+
           this.reloadPage();
         },
         error: (err) => {

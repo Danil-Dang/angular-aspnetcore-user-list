@@ -158,10 +158,13 @@ export class HotelsComponent implements OnInit {
       const currentDay = new Date().getDate();
 
       if (
-        storedStartYear >= currentYear &&
-        storedStartMonth >= currentMonth &&
-        storedStartDay >= currentDay
+        storedStartYear > currentYear ||
+        (storedStartYear == currentYear && storedStartMonth > currentMonth) ||
+        (storedStartYear == currentYear &&
+          storedStartMonth == currentMonth &&
+          storedStartDay >= currentDay)
       ) {
+        console.log('date correct');
         this.selectedCity = search.citySelected;
         this.selectedCityy = search.citySelected;
         this.selectedDateStart = search.startDate;
@@ -173,6 +176,7 @@ export class HotelsComponent implements OnInit {
         this.isFilterByCity = true;
         this.isFilterByDate = true;
         this.filterByReviews();
+        // this.fetchLists();
 
         this.listsService
           .getLocationsCity()
@@ -186,6 +190,7 @@ export class HotelsComponent implements OnInit {
           map((value) => this._filterLocations(value || ''))
         );
       } else {
+        console.log('date incorrect');
         localStorage.removeItem('search');
         this._router.navigate(['/home']);
       }
@@ -238,9 +243,9 @@ export class HotelsComponent implements OnInit {
     });
   }
 
-  fetchRooms(id: number) {
-    this.roomLists$ = this.listsService.getRooms(id);
-  }
+  // fetchRooms(id: number) {
+  //   this.roomLists$ = this.listsService.getRooms(id);
+  // }
 
   generateStars(ratingValue: number): any[] {
     const stars = [];
@@ -259,6 +264,45 @@ export class HotelsComponent implements OnInit {
       totalReview: totalReview,
     };
     localStorage.setItem('room', JSON.stringify(obj));
+  }
+  saveViewed(
+    id: number,
+    hotelName?: string | null,
+    hotelStar?: number | null,
+    hotelLocation?: string | null,
+    averageReview?: number | null,
+    totalReview?: number | null,
+    hotelPrice?: string | null
+  ) {
+    const obj = {
+      hotelId: id,
+      hotelName: hotelName,
+      hotelStar: hotelStar,
+      hotelLocation: hotelLocation,
+      averageReview: averageReview,
+      totalReview: totalReview,
+      hotelPrice: hotelPrice,
+    };
+
+    let objOld = JSON.parse(localStorage.getItem('last-viewed')!) || [];
+
+    let isUsedId = 0;
+    for (let i = objOld.length, x = 0; i != 0; i--) {
+      if (objOld[i - 1].hotelId == id) {
+        isUsedId++;
+      }
+    }
+    while (objOld.length > 3) {
+      objOld.shift();
+    }
+    if (objOld.length >= 3 && isUsedId == 0) {
+      objOld.shift();
+    }
+    if (isUsedId == 0) {
+      objOld.push(obj);
+    }
+
+    localStorage.setItem('last-viewed', JSON.stringify(objOld));
   }
 
   setSelectedCity(cityValue: string) {

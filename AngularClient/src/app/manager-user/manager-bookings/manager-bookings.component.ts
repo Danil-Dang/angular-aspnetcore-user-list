@@ -73,6 +73,14 @@ export class ManagerBookingsComponent implements OnInit {
             booking.createdDate,
             'yyyy-MM-dd'
           ),
+          checkInFormatted: this.datePipe.transform(
+            booking.checkIn,
+            'yyyy-MM-dd'
+          ),
+          checkOutFormatted: this.datePipe.transform(
+            booking.checkOut,
+            'yyyy-MM-dd'
+          ),
         }))
       )
     );
