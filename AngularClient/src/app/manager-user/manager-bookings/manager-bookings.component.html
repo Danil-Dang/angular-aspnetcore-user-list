@@ -13,38 +13,43 @@
                 <th>Id</th>
                 <th>
                   <div class="d-flex flex-nowrap">
-                    <span>UserId</span>
-                    <input
+                    <span>Username</span>
+                    <!-- <span>UserId</span> -->
+                    <!-- <input
                       type="text"
                       [(ngModel)]="userId"
                       (ngModelChange)="onUserIdFilterChange($event)"
-                    />
+                    /> -->
                   </div>
                 </th>
+                <th>Location</th>
                 <th>
                   <div class="d-flex flex-nowrap">
-                    <span>HotelId</span>
-                    <input
+                    <span>HotelName</span>
+                    <!-- <span>HotelId</span> -->
+                    <!-- <input
                       type="text"
                       [(ngModel)]="hotelId"
                       (ngModelChange)="onHotelIdFilterChange($event)"
-                    />
+                    /> -->
                   </div>
                 </th>
                 <th>
                   <div class="d-flex flex-nowrap">
-                    <span>RoomId</span>
-                    <input
+                    <span>RoomType</span>
+                    <!-- <span>RoomId</span> -->
+                    <!-- <input
                       type="text"
                       [(ngModel)]="roomId"
                       (ngModelChange)="onRoomIdFilterChange($event)"
-                    />
+                    /> -->
                   </div>
                 </th>
                 <th>CheckIn</th>
                 <th>CheckOut</th>
                 <th>IsActive</th>
                 <th>CreatedDate</th>
+                <th></th>
               </tr>
             </thead>
 
@@ -53,13 +58,17 @@
               <tr *ngFor="let booking of bookings$ | async; let i = index">
                 <td class="table-primary">{{ i + 1 }}</td>
                 <td>{{ booking.id }}</td>
-                <td>{{ booking.userId }}</td>
-                <td>{{ booking.hotelId }}</td>
-                <td>{{ booking.roomId }}</td>
-                <td>{{ booking.checkIn }}</td>
-                <td>{{ booking.checkOut }}</td>
+                <!-- <td>{{ booking.userId }}</td> -->
+                <!-- <td>{{ booking.hotelId }}</td> -->
+                <!-- <td>{{ booking.roomId }}</td> -->
+                <td>{{ booking.username }}</td>
+                <td>{{ booking.location }}</td>
+                <td>{{ booking.hotelName }}</td>
+                <td>{{ booking.roomType }}</td>
+                <td>{{ booking.checkInFormatted }}</td>
+                <td>{{ booking.checkOutFormatted }}</td>
                 <td>{{ booking.isActive }}</td>
-                <td>{{ booking.createdDate }}</td>
+                <td>{{ booking.createdDateFormatted }}</td>
                 <td align="center">
                   <div class="d-flex flex-nowrap">
                     <button

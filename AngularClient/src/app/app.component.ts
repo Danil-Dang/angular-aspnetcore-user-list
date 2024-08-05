@@ -21,6 +21,8 @@ export class AppComponent implements OnInit {
   isShowBoard = false;
   cart = 0;
 
+  whereNavigate: string = '';
+
   constructor(
     private storageService: StorageService,
     private authService: AuthService,
@@ -31,16 +33,84 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.reloadOnce = JSON.parse(localStorage.getItem('reloadOnce')!);
-    if (!this.reloadOnce && !this.isUserAuthenticated()) {
+    const logoutOnce = JSON.parse(localStorage.getItem('logoutOnce')!);
+
+    if (!this.reloadOnce && !this.isUserAuthenticated() && !logoutOnce) {
       this.logout();
       this.router.navigate(['/home']);
     } else {
       localStorage.removeItem('reloadOnce');
     }
 
-    if (localStorage.getItem('booking')) {
+    this.whereNavigate = localStorage.getItem('whereNavigate')!;
+    if (this.whereNavigate === 'cart') {
+      this.router.navigate(['/cart']);
+    }
+
+    const bookings = JSON.parse(localStorage.getItem('booking')!);
+    if (bookings != null) {
+      const filteredBookings = Object.values(bookings).filter(
+        (booking: any) => {
+          const storedStartYear = new Date(
+            booking.bookingStartDate
+          ).getFullYear();
+          const storedStartMonth = new Date(
+            booking.bookingStartDate
+          ).getMonth();
+          const storedStartDay = new Date(booking.bookingStartDate).getDate();
+
+          const currentYear = new Date().getFullYear();
+          const currentMonth = new Date().getMonth();
+          const currentDay = new Date().getDate();
+          // (storedStartYear >= currentYear && storedStartMonth > currentMonth) ||
+          // (storedStartMonth == currentMonth && storedStartDay >= currentDay)
+          if (
+            storedStartYear < currentYear ||
+            (storedStartYear == currentYear &&
+              storedStartMonth < currentMonth) ||
+            (storedStartYear == currentYear &&
+              storedStartMonth == currentMonth &&
+              storedStartDay < currentDay)
+          ) {
+            let i = localStorage.getItem('booking-total');
+            if (i !== null) {
+              localStorage.setItem(
+                'booking-total',
+                JSON.stringify(Number(i) + 1)
+              );
+            }
+          }
+
+          return (
+            storedStartYear > currentYear ||
+            (storedStartYear == currentYear &&
+              storedStartMonth > currentMonth) ||
+            (storedStartYear == currentYear &&
+              storedStartMonth == currentMonth &&
+              storedStartDay >= currentDay)
+          );
+        }
+      );
+      localStorage.setItem('booking', JSON.stringify(filteredBookings));
+    }
+
+    let bookingTotal = JSON.parse(localStorage.getItem('booking-total')!);
+    if (bookingTotal != null) {
+      while (bookingTotal > bookings.length) {
+        bookingTotal--;
+      }
+      localStorage.setItem('booking-total', JSON.stringify(bookingTotal));
+    }
+
+    // const bookingStorage = localStorage.getItem('booking');
+    // if (bookings === null || bookings === '') {
+    if (bookingTotal < 1) {
+      localStorage.removeItem('booking');
+      localStorage.removeItem('booking-total');
+    } else {
       this.cart = Number(localStorage.getItem('booking-total'));
     }
+
     this.isLoggedIn = this.storageService.isLoggedIn();
 
     if (this.isLoggedIn) {
@@ -61,6 +131,7 @@ export class AppComponent implements OnInit {
     this.authService.logout();
     this.storageService.clean();
     localStorage.setItem('reloadOnce', 'true');
+    localStorage.setItem('logoutOnce', 'true');
     window.location.reload();
   }
 

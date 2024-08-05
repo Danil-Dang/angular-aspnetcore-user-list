@@ -11,5 +11,7 @@ namespace Users.Entities.Models
         public int? VisaCard { get; set; }
         public bool IsActive { get; set; }
         public DateTime Date { get; set; }
+
+        public string? Username { get; set; }
     }
 }

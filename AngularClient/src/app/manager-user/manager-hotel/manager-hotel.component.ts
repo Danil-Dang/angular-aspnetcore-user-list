@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
+import { DatePipe } from '@angular/common';
 
 import { StorageService } from '../../_services/storage.service';
 import { ListService } from '../../_services/list.service';
@@ -24,7 +25,8 @@ export class ManagerHotelComponent implements OnInit {
     private listsService: ListService,
     private storageService: StorageService,
     private _router: Router,
-    private dataService: DataService
+    private dataService: DataService,
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {
@@ -44,7 +46,17 @@ export class ManagerHotelComponent implements OnInit {
   }
 
   private fetchLists(): void {
-    this.hoteLists$ = this.listsService.getHotelLists();
+    this.hoteLists$ = this.listsService.getHotelLists().pipe(
+      map((hotels) =>
+        hotels.map((hotel) => ({
+          ...hotel,
+          createdDateFormatted: this.datePipe.transform(
+            hotel.createdDate,
+            'yyyy-MM-dd'
+          ),
+        }))
+      )
+    );
   }
 
   addHotel() {

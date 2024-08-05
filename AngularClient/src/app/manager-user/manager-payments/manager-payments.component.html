@@ -23,7 +23,8 @@
                 </th>
                 <th>
                   <div class="d-flex flex-nowrap">
-                    <span>UserId</span>
+                    <!-- <span>UserId</span> -->
+                    <span>Username</span>
                     <!-- <input
                           type="text"
                           [(ngModel)]="hotelId"
@@ -41,8 +42,8 @@
                         /> -->
                   </div>
                 </th>
-                <th>PaymentMethod</th>
-                <th>Card</th>
+                <!-- <th>PaymentMethod</th> -->
+                <!-- <th>Card</th> -->
                 <th>IsActive</th>
                 <th>CreatedDate</th>
               </tr>
@@ -50,16 +51,22 @@
 
             <tbody class="table-group-divider">
               @if (listLists == 0) {
-              <tr *ngFor="let payment of payments$ | async; let i = index">
+              <tr
+                *ngFor="
+                  let payment of paymentsFormatted$ | async;
+                  let i = index
+                "
+              >
                 <td class="table-primary">{{ i + 1 }}</td>
                 <td>{{ payment.id }}</td>
                 <td>{{ payment.bookingId }}</td>
-                <td>{{ payment.userId }}</td>
-                <td>{{ payment.price }}</td>
-                <td>{{ payment.paymentMethod }}</td>
-                <td>{{ payment.visaCard }}</td>
+                <!-- <td>{{ payment.userId }}</td> -->
+                <td>{{ payment.username }}</td>
+                <td>{{ payment.priceFormatted }}</td>
+                <!-- <td>{{ payment.paymentMethod }}</td> -->
+                <!-- <td>{{ payment.visaCard }}</td> -->
                 <td>{{ payment.isActive }}</td>
-                <td>{{ payment.date }}</td>
+                <td>{{ payment.dateFormatted }}</td>
                 <td align="center">
                   <div class="d-flex flex-nowrap">
                     <button

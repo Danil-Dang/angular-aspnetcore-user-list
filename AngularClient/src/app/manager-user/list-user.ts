@@ -6,4 +6,5 @@ export interface ListUser {
   email?: string;
   isActive: boolean;
   createdDate: Date;
+  createdDateFormatted?: string | null;
 }

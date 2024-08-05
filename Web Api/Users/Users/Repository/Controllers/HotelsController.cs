@@ -256,9 +256,11 @@ namespace Users.Repository.Controllers
 
         [HttpGet("rooms-by-hotel/{id}")]
         public async Task<IActionResult> GetRooms(int id)
+        // public async Task<IActionResult> GetRooms(int id, DateTime? startDate, DateTime? endDate)
         {
             try
             {
+                // var rooms = await _hotelRepo.GetRooms(id, startDate, endDate);
                 var rooms = await _hotelRepo.GetRooms(id);
                 return Ok(rooms);
             }

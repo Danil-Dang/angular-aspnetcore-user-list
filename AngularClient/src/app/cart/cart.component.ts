@@ -10,7 +10,7 @@ import {
 } from 'rxjs';
 import { Router } from '@angular/router';
 import { BsDaterangepickerDirective } from 'ngx-bootstrap/datepicker';
-// import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { DecimalPipe } from '@angular/common';
 
 import { StorageService } from '../_services/storage.service';
 import { DataService } from '../_services/data.service';
@@ -31,6 +31,8 @@ import { BookingStorage } from './booking-storage';
 })
 export class CartComponent implements OnInit {
   isLoggedIn: any;
+  reloadOnce = false;
+  whereNavigate = '';
 
   hotelId: number = 0;
   roomId: number = 0;
@@ -38,6 +40,7 @@ export class CartComponent implements OnInit {
 
   bookings$: Observable<ListBooking[]> = new Observable();
   bookingsWith$!: Observable<ListBookingWith[]>;
+  cartFormatted$!: Observable<ListBookingWith[]>;
   cart = 0;
 
   bookedObj!: { [key: string]: ListBookingWith };
@@ -68,7 +71,8 @@ export class CartComponent implements OnInit {
     private storageService: StorageService,
     private dataService: DataService,
     private listService: ListService,
-    private _router: Router
+    private _router: Router,
+    private decimalPipe: DecimalPipe
   ) {
     // this.minDate.setDate(this.minDate.getDate() - 1);
     // this.maxDate.setDate(this.maxDate.getDate() + 7);
@@ -76,12 +80,28 @@ export class CartComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isLoggedIn = this.storageService.isLoggedIn();
-    if (this.isLoggedIn) {
+    // this.reloadOnce = JSON.parse(localStorage.getItem('reloadOncee')!);
+    // if (!this.reloadOnce) {
+    //   console.log('this.reloadOnce in');
+    //   localStorage.setItem('reloadOncee', 'true');
+    //   window.location.reload();
+    // } else {
+    //   localStorage.setItem('reloadOnce', 'false');
+    // }
+    this.whereNavigate = localStorage.getItem('whereNavigate')!;
+    if (this.whereNavigate === 'cart') {
+      localStorage.setItem('whereNavigate', '');
     }
+
+    this.isLoggedIn = this.storageService.isLoggedIn();
+    // if (this.isLoggedIn) {
+    // }
 
     this.cart = Number(localStorage.getItem('booking-total'));
 
+    for (let index = this.cart; index > 0; index--) {
+      this.selectedItems[index - 1] = !this.selectedItems[index - 1];
+    }
     this.fetchBookingWith();
 
     for (let i = 1; i <= this.cart; i++) {
@@ -105,7 +125,15 @@ export class CartComponent implements OnInit {
         const bookingObservables = bookings.map((booking) =>
           forkJoin({
             hotel: this.listService.getHotelList(booking.bookingHotelId!),
-            room: this.listService.getRoom(booking.bookingRoomId!),
+            room: this.listService.getRoom(booking.bookingRoomId!).pipe(
+              map((room) => ({
+                ...room,
+                priceFormatted: this.decimalPipe.transform(
+                  room.price * booking.numberOfDays,
+                  '1.0-0'
+                ),
+              }))
+            ),
           }).pipe(
             tap(({ hotel, room }) => {
               booking.hotel = hotel;
@@ -126,6 +154,15 @@ export class CartComponent implements OnInit {
 
     this.bookingsWith$.subscribe((bookingsWith) => {
       this.bookedArray = bookingsWith;
+      this.totalPrice = 0;
+      this.bookedArray.forEach((booking, index) => {
+        if (this.selectedItems[index] && booking.room) {
+          // console.log('totalPrice before', this.totalPrice);
+          this.totalPrice += booking.room.price * (booking.numberOfDays ?? 0);
+          // console.log('totalPrice after', this.totalPrice);
+        }
+      });
+      this.decimalPipe.transform(this.totalPrice, '1.0-0');
       this.calculateTotalPages();
     });
   }
@@ -206,14 +243,14 @@ export class CartComponent implements OnInit {
     this.selectedItems[index] = !this.selectedItems[index];
     this.calculateTotalPrice();
   }
-  calculateTotalPrice(): number {
+  calculateTotalPrice() {
     this.totalPrice = 0;
     this.bookedArray.forEach((booking, index) => {
       if (this.selectedItems[index] && booking.room) {
         this.totalPrice += booking.room.price * (booking.numberOfDays ?? 0);
       }
     });
-    return this.totalPrice;
+    return this.decimalPipe.transform(this.totalPrice, '1.0-0');
   }
 
   calculateTotalPages() {

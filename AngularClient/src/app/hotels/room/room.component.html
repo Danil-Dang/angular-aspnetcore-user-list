@@ -173,12 +173,24 @@
         </div>
 
         <div>
+          <div *ngIf="bookings$ | async as bookings">
+            <div>
+              <div *ngFor="let booking of bookings; let i = index">
+                <div>{{ booking.id }}</div>
+                <div>{{ booking.isRoomAvailable }}</div>
+                <div>{{ booking.checkInFormatted }}</div>
+                <div>{{ booking.checkOutFormatted }}</div>
+              </div>
+            </div>
+          </div>
+
           <div *ngIf="roomListsFormatted$ | async as rooms; else loading">
             <div
-              *ngFor="let room of rooms"
+              *ngFor="let room of rooms; let i = index"
               class="border row mb-3 p-3 my-3 justify-content-between"
             >
-              <h1 class="fs-4 mb-3">{{ room.roomType }}</h1>
+              <h1 class="fs-4 mb-3">{{ room.id }} - {{ room.roomType }}</h1>
+
               <div class="col-4">
                 <div class="room-img mb-2">
                   <div class="room-img-main room-img-on-hover"></div>
@@ -251,10 +263,59 @@
                 <div class="col-5" align="center">
                   <div class="justify-content-center mt-4">
                     <div>
-                      <button class="btn btn-primary" (click)="book(room.id)">
+                      <button
+                        class="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop"
+                      >
                         <!-- (click)="openDatePicker(room.id)" -->
-                        Book
+                        Add to cart
                       </button>
+                      <div
+                        class="modal fade"
+                        id="staticBackdrop"
+                        data-bs-backdrop="static"
+                        data-bs-keyboard="false"
+                        tabindex="-1"
+                        aria-labelledby="staticBackdropLabel"
+                        aria-hidden="true"
+                      >
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <!-- <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div> -->
+                            <div class="modal-body fs-5">
+                              Please confirm booking
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                              <button
+                                type="button"
+                                class="btn btn-secondary btn-closee"
+                                data-bs-dismiss="modal"
+                              >
+                                Close
+                              </button>
+                              <button
+                                type="button"
+                                (click)="book(room.id)"
+                                class="btn btn-primary btn-add"
+                              >
+                                Add to cart
+                              </button>
+                              <button
+                                type="button"
+                                class="btn btn-success btn-book"
+                                (click)="isGoToCart = true; book(room.id)"
+                                data-bs-dismiss="modal"
+                              >
+                                Book
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       <!-- <button class="btn btn-danger mx-3" (click)="clearDate()">
                         Clear
                       </button> -->

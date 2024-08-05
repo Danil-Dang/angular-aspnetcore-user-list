@@ -116,3 +116,17 @@ nav .d-flex a:hover {
   .board a:hover {
     transform: translateX(10px);
   }
+
+  .div-router {
+    min-height: 85vh;
+  }
+
+  .footer {
+    border-top: 1px solid #555454;
+    /* border-top: 2px solid #dee2e6; */
+    /* background-color: #82a1c1; */
+    /* background-color: #7694b2; */
+    /* background-color: #76b29d; */
+    background-color: #699f8c;
+    padding: 25px 0;
+  }

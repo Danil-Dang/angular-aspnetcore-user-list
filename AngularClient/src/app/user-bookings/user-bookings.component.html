@@ -1,0 +1,71 @@
+@if (isLoggedIn) {
+<div>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div style="overflow-y: hidden">
+          <h2 class="text-center m-5">My Bookings</h2>
+
+          <div class="inner-div" style="overflow-x: auto; width: fit-content">
+            <div
+              class="d-flex mb-2 p-2"
+              style="
+                background-color: rgb(128, 187, 154);
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                overflow-x: auto;
+                white-space: nowrap;
+              "
+            >
+              <span class="coll-1">#</span>
+              <span class="coll-2">Id</span>
+              <span class="coll-3">Location</span>
+              <span class="coll-4">Hotel name</span>
+              <span class="coll-5">Room type</span>
+              <span class="coll-6" style="padding-left: 95px">Dates</span>
+              <span class="coll-8">Days in total</span>
+              <!-- <span class="col-2">Check Out</span> -->
+              <span class="coll-7">Price</span>
+            </div>
+            <div
+              *ngFor="let booking of bookings$ | async; let i = index"
+              style="white-space: nowrap"
+            >
+              <div
+                class="d-flex border rounded mb-2 p-2"
+                style="white-space: nowrap"
+              >
+                <span class="coll-1" style="flex-shrink: 0">{{ i + 1 }}</span>
+                <span class="coll-2" style="flex-shrink: 0">{{
+                  booking.id
+                }}</span>
+                <span class="coll-3" style="flex-shrink: 0">{{
+                  booking.location
+                }}</span>
+                <span class="coll-4" style="flex-shrink: 0">{{
+                  booking.hotelName
+                }}</span>
+                <span class="coll-5" style="flex-shrink: 0">{{
+                  booking.roomType
+                }}</span>
+                <span class="coll-6" style="flex-shrink: 0"
+                  >( {{ booking.checkInFormatted }} ) - (
+                  {{ booking.checkOutFormatted }} )</span
+                >
+                <span class="coll-8" style="padding-left: 37px">{{
+                  booking.daysTotal
+                }}</span>
+                <span class="coll-7" style="flex-shrink: 0"
+                  >{{ booking.priceChanged }} ₫</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+} @else {
+<p class="mt-3">Please login.</p>
+}

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
+import { DatePipe, DecimalPipe } from '@angular/common';
 
 import { ListService } from '../../_services/list.service';
 import { StorageService } from '../../_services/storage.service';
@@ -28,13 +29,16 @@ export class ManagerPaymentsComponent implements OnInit {
   roomId?: number;
   isByRoom = false;
   payments$: Observable<ListPayment[]> = new Observable();
+  paymentsFormatted$: Observable<ListPayment[]> = new Observable();
   // payment$: Observable<ListPayment> = new Observable();
   listLists: number;
 
   constructor(
     private listsService: ListService,
     private storageService: StorageService,
-    private _router: Router // private dataService: DataService
+    private _router: Router,
+    private datePipe: DatePipe,
+    private decimalPipe: DecimalPipe // private dataService: DataService
   ) {
     this.loggedIn = false;
     this.listLists = 0;
@@ -54,11 +58,26 @@ export class ManagerPaymentsComponent implements OnInit {
     }
 
     this.fetchLists();
+    this.paymentsFormatted$ = this.payments$.pipe(
+      map((payments) =>
+        payments.map((payment) => ({
+          ...payment,
+          priceFormatted: this.decimalPipe.transform(payment.price, '1.0-0'),
+        }))
+      )
+    );
     // this.currentUser = this.storageService.getUser();
   }
 
   private fetchLists(): void {
-    this.payments$ = this.listsService.getPayments();
+    this.payments$ = this.listsService.getPayments().pipe(
+      map((payments) =>
+        payments.map((payment) => ({
+          ...payment,
+          dateFormatted: this.datePipe.transform(payment.date, 'yyyy-MM-dd'),
+        }))
+      )
+    );
   }
 
   editList(id: number): void {

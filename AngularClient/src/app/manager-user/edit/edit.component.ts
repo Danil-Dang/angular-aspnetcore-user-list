@@ -42,6 +42,12 @@ export class EditComponent implements OnInit {
   // message!: string;
   // @Output() public onUploadFinished = new EventEmitter();
   // selectedFile: File | null = null;
+  roomForm = false;
+  formRoom: any = {
+    roomType: null,
+    price: null,
+  };
+  roomTotal: number | undefined;
 
   constructor(
     private authService: AuthService,
@@ -80,7 +86,14 @@ export class EditComponent implements OnInit {
         this.form.hotelStar = data.hotelStar;
         this.form.roomTotal = data.roomTotal;
         this.form.location = data.location;
+
+        this.roomTotal = data.roomTotal;
       });
+
+      // this.roomLists$ = this.listService.getRooms(id);
+      // this.roomLists$.subscribe((data) => {
+      //   this.roomTotal = data.length;
+      // });
     }
   }
 
@@ -142,6 +155,42 @@ export class EditComponent implements OnInit {
           console.error(error);
         },
       });
+  }
+
+  addRoom() {
+    this.roomForm = true;
+  }
+  onCancelRoom() {
+    this.roomForm = false;
+    this.form.reset();
+  }
+
+  onSubmitRoom() {
+    const { hotelId = this.hotelId, roomType, price } = this.formRoom;
+    const objUpdate = { roomTotal: this.roomTotal! + 1 };
+
+    console.log('{ hotelId, roomType, price }', { hotelId, roomType, price });
+
+    this.listService.createRoom({ hotelId, roomType, price }).subscribe({
+      next: (data: any) => {
+        this.roomForm = false;
+      },
+      error: (err) => {
+        this.errorMessage = err.error.message;
+      },
+    });
+
+    this.listService.updateHotelRoomTotal(this.hotelId, objUpdate).subscribe({
+      next: (data: any) => {
+        this.roomForm = false;
+      },
+      error: (err) => {
+        this.errorMessage = err.error.message;
+      },
+    });
+
+    this.formRoom.roomType = '';
+    this.formRoom.price = undefined;
   }
 
   // uploadFile = (files: any) => {

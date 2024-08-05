@@ -153,6 +153,7 @@
             </div>
             <!-- <div class="row justify-content-evenly"> -->
             <div class="row gapping">
+              <!-- *ngFor="let hoteList of hoteLists$ | async; let i = index" -->
               <div
                 *ngFor="
                   let hoteList of hoteListsFormatted$ | async;
@@ -169,6 +170,15 @@
                       hoteList.id,
                       hoteList.averageReview,
                       hoteList.totalReviews
+                    );
+                    saveViewed(
+                      hoteList.id,
+                      hoteList.hotelName,
+                      hoteList.hotelStar,
+                      hoteList.location,
+                      hoteList.averageReview,
+                      hoteList.totalReviews,
+                      hoteList.lowestPricee
                     )
                   "
                 >

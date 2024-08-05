@@ -14,6 +14,9 @@ import {
   catchError,
   of,
   filter,
+  tap,
+  flatMap,
+  from,
 } from 'rxjs';
 import { Router, NavigationEnd } from '@angular/router';
 import {
@@ -22,7 +25,7 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { getTime } from 'ngx-bootstrap/chronos/utils/date-getters';
 import { DecimalPipe } from '@angular/common';
-// import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { DatePipe } from '@angular/common';
 
 import { StorageService } from '../../_services/storage.service';
 import { DataService } from '../../_services/data.service';
@@ -31,6 +34,7 @@ import { ListHotel } from '../../manager-user/list-hotel';
 import { ListRoom } from '../../manager-user/list-room';
 import { ListReview } from '../../manager-user/list-review';
 import { ListUser } from '../../manager-user/list-user';
+import { ListBooking } from '../../manager-user/list-bookings';
 import { ReviewWithUser } from '../../manager-user/list-revieWithUser';
 
 @Component({
@@ -47,6 +51,16 @@ export class RoomComponent implements OnInit {
   hotelId: number = 0;
   averageReview!: number;
   totalReview!: number;
+  startDate!: string;
+  startDatee!: Date;
+  startDateYear!: number;
+  startDateMonth!: number;
+  startDateDay!: number;
+  endDate!: string;
+  endDatee!: Date;
+  endDateYear!: number;
+  endDateMonth!: number;
+  endDateDay!: number;
   roomId: number = 0;
   roomTotal = 0;
   userId = null;
@@ -57,6 +71,7 @@ export class RoomComponent implements OnInit {
   reviewLists$: Observable<ListReview[]> = new Observable();
   user$: Observable<ListUser> = new Observable();
   reviewsWithUsers$!: Observable<ReviewWithUser[]>;
+  bookings$: Observable<ListBooking[]> = new Observable();
 
   form: any = {
     roomType: null,
@@ -101,12 +116,15 @@ export class RoomComponent implements OnInit {
   scrollRightBtn = document.querySelector('.scroll-right');
   @ViewChild('content') contentt!: ElementRef;
 
+  isGoToCart = false;
+
   constructor(
     private storageService: StorageService,
     private dataService: DataService,
     private listService: ListService,
     private _router: Router,
-    private decimalPipe: DecimalPipe
+    private decimalPipe: DecimalPipe,
+    private datePipe: DatePipe
   ) {
     this.maxDate.setDate(this.maxDate.getDate() + 1);
     this.bsRangeValue = [this.bsValue, this.maxDate];
@@ -132,6 +150,18 @@ export class RoomComponent implements OnInit {
       localStorage.getItem('room')!
     ).averageReview;
     this.totalReview = JSON.parse(localStorage.getItem('room')!).totalReview;
+    // this.startDate = JSON.parse(localStorage.getItem('room')!).startDate;
+    // this.endDate = JSON.parse(localStorage.getItem('room')!).endDate;
+    this.startDate = JSON.parse(localStorage.getItem('search')!).startDate;
+    this.endDate = JSON.parse(localStorage.getItem('search')!).endDate;
+    this.startDatee = new Date(this.startDate);
+    this.endDatee = new Date(this.endDate);
+    this.startDateYear = this.startDatee.getFullYear();
+    this.startDateMonth = this.startDatee.getMonth();
+    this.startDateDay = this.startDatee.getDay();
+    this.endDateYear = this.endDatee.getFullYear();
+    this.endDateMonth = this.endDatee.getMonth();
+    this.endDateDay = this.endDatee.getDay();
 
     if (this.hotelId === 0) {
       this._router.navigate(['/hotels']);
@@ -140,6 +170,14 @@ export class RoomComponent implements OnInit {
       this.fetchRooms(this.hotelId);
       this.fetchReviews(this.hotelId);
       this.fetchUserReview();
+      // this.roomListsFormatted$.subscribe((rooms) => {
+      //   for (const room of rooms) {
+
+      //   }
+      // }
+      // );
+      // const isAvailable = await this.fetchBookings(7);
+      // console.log(isAvailable);
 
       this.userId = JSON.parse(localStorage.getItem('user-id')!);
       this.roles = JSON.parse(localStorage.getItem('user-role')!);
@@ -181,9 +219,81 @@ export class RoomComponent implements OnInit {
         rooms.map((room) => ({
           ...room,
           priceFormatted: this.decimalPipe.transform(room.price, '1.0-0'),
+          // isAvailable: await this.fetchBookings(room.id),
+          // booking: this.listService.getBookingsRoom(room.id),
         }))
       )
     );
+  }
+  fetchBookings(id: number) {
+    return new Promise((resolve, reject) => {
+      this.bookings$ = this.listService.getBookingsRoom(id).pipe(
+        map((bookings) =>
+          bookings.map((booking) => ({
+            ...booking,
+            isRoomAvailable:
+              (this.startDateYear > new Date().getFullYear() ||
+                (this.startDateYear == new Date().getFullYear() &&
+                  this.startDateMonth > new Date().getMonth()) ||
+                (this.startDateYear == new Date().getFullYear() &&
+                  this.startDateMonth == new Date().getMonth() &&
+                  this.startDateDay >= new Date().getDay())) &&
+              (this.endDateYear < new Date(booking.checkIn).getFullYear() ||
+                (this.endDateYear == new Date(booking.checkIn).getFullYear() &&
+                  this.endDateMonth < new Date(booking.checkIn).getMonth()) ||
+                (this.endDateYear == new Date(booking.checkIn).getFullYear() &&
+                  this.endDateMonth == new Date(booking.checkIn).getMonth() &&
+                  this.endDateDay < new Date(booking.checkIn).getDay()) ||
+                this.startDateYear > new Date(booking.checkOut).getFullYear() ||
+                (this.startDateYear ==
+                  new Date(booking.checkOut).getFullYear() &&
+                  this.startDateMonth >
+                    new Date(booking.checkOut).getMonth()) ||
+                (this.startDateYear ==
+                  new Date(booking.checkOut).getFullYear() &&
+                  this.startDateMonth ==
+                    new Date(booking.checkOut).getMonth() &&
+                  this.startDateDay > new Date(booking.checkOut).getDay()))
+                ? true
+                : false,
+            // checkOutFormatted: this.datePipe.transform(
+            //   booking.checkOut,
+            //   'yyyy-MM-dd'
+            // ),
+            // checkInFormatted: this.datePipe.transform(
+            //   booking.checkIn,
+            //   'yyyy-MM-dd'
+            // ),
+          }))
+        )
+      );
+
+      this.bookings$
+        .pipe(
+          map((bookings) =>
+            bookings.every((booking) => booking.isRoomAvailable)
+          )
+        )
+        .subscribe(
+          (allRoomsAvailable) => resolve(allRoomsAvailable),
+          (error) => reject(error)
+        );
+    });
+    // bookings.forEach((booking) =>
+    //   console.log(booking.id + ': ' + booking.isRoomAvailable)
+    // )
+    // this.bookings$
+    //   .pipe(
+    //     flatMap((bookings) =>
+    //       from(bookings).pipe(
+    //         map((booking) => {
+    //           console.log(booking.id + ': ' + booking.isRoomAvailable);
+    //           return booking;
+    //         })
+    //       )
+    //     )
+    //   )
+    //   .subscribe();
   }
 
   fetchReviews(id: number) {
@@ -455,7 +565,7 @@ export class RoomComponent implements OnInit {
       const timeDifference = endDatee.getTime() - startDatee.getTime();
       const numberOfDays = Math.ceil(timeDifference / (1000 * 3600 * 24));
 
-      let i = localStorage.getItem('booking-total');
+      let i = JSON.parse(localStorage.getItem('booking-total')!);
       if (i !== null) {
         localStorage.setItem('booking-total', JSON.stringify(Number(i) + 1));
         let objOld = JSON.parse(localStorage.getItem('booking')!);
@@ -463,6 +573,7 @@ export class RoomComponent implements OnInit {
         let x = 1;
         const max = Math.max(...arr) + 1;
 
+        console.log('booking total >');
         while (x <= max) {
           if (!arr.includes(x)) {
             objOld[x] = {
@@ -476,9 +587,11 @@ export class RoomComponent implements OnInit {
           }
           x++;
         }
+        console.log('booking objOld: ', objOld);
         localStorage.setItem('booking', JSON.stringify(objOld));
       } else {
         localStorage.setItem('booking-total', '1');
+        console.log('booking total <');
         let objNew = {
           1: {
             bookingStartDate: dates.startDate,
@@ -488,15 +601,20 @@ export class RoomComponent implements OnInit {
             numberOfDays: numberOfDays,
           },
         };
+        console.log('booking objNew: ', objNew[1]);
         localStorage.setItem('booking', JSON.stringify(objNew));
       }
 
-      window.location.reload();
+      // window.location.reload();
+      if (this.isGoToCart) {
+        // this._router.navigate(['/cart'], { onSameUrlNavigation: 'reload' });
+        // this._router.navigate(['/cart']);
+        localStorage.setItem('whereNavigate', 'cart');
+        window.location.reload();
+      } else {
+        window.location.reload();
+      }
     }
-  }
-
-  clearDate() {
-    window.localStorage.clear();
   }
 }
 
@@ -510,4 +628,6 @@ interface ListRoomFormatted {
 
   roomTotal?: number;
   priceFormatted?: string | null;
+  booking?: Observable<ListBooking[]> | null;
+  isAvailable?: boolean | null;
 }

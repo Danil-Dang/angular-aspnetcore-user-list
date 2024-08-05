@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
 import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 import { ListUser } from '../list-user';
 import { ListService } from '../../_services/list.service';
@@ -39,7 +40,8 @@ export class ManagerBookingsComponent implements OnInit {
     private listsService: ListService,
     private storageService: StorageService,
     private _router: Router,
-    private dataService: DataService
+    private dataService: DataService,
+    private datePipe: DatePipe
   ) {
     this.loggedIn = false;
     this.listLists = 0;
@@ -63,7 +65,25 @@ export class ManagerBookingsComponent implements OnInit {
   }
 
   private fetchLists(): void {
-    this.bookings$ = this.listsService.getBookings();
+    this.bookings$ = this.listsService.getBookings().pipe(
+      map((bookings) =>
+        bookings.map((booking) => ({
+          ...booking,
+          createdDateFormatted: this.datePipe.transform(
+            booking.createdDate,
+            'yyyy-MM-dd'
+          ),
+          checkInFormatted: this.datePipe.transform(
+            booking.checkIn,
+            'yyyy-MM-dd'
+          ),
+          checkOutFormatted: this.datePipe.transform(
+            booking.checkOut,
+            'yyyy-MM-dd'
+          ),
+        }))
+      )
+    );
   }
 
   onAddBooking() {

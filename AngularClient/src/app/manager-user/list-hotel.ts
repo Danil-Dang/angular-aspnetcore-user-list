@@ -7,6 +7,7 @@ export interface ListHotel {
   imgPath?: string;
   isActive?: boolean;
   createdDate?: Date;
+  createdDateFormatted?: string | null;
 
   lowestPrice?: number;
   lowestPricee?: string | null;
